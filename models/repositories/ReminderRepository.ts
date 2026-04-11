@@ -1,6 +1,7 @@
-import { randomUUID } from 'expo-crypto';
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from 'uuid';
 import db from '../db/client';
-import { Reminder, CreateReminderInput } from '../types/Reminder';
+import { CreateReminderInput, Reminder } from '../types/Reminder';
 
 function rowToReminder(row: Record<string, unknown>): Reminder {
   return {
@@ -36,7 +37,7 @@ export const ReminderRepository = {
   },
 
   create(input: CreateReminderInput): Reminder {
-    const id = randomUUID();
+    const id = uuidv4();
     const now = new Date().toISOString();
     db.runSync(
       `INSERT INTO reminders (id, pet_id, type, title, frequency, time, date, enabled, created_at)

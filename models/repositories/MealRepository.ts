@@ -1,6 +1,7 @@
-import { randomUUID } from 'expo-crypto';
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from "uuid";
 import db from '../db/client';
-import { Meal, CreateMealInput } from '../types/Meal';
+import { CreateMealInput, Meal } from '../types/Meal';
 
 function rowToMeal(row: Record<string, unknown>): Meal {
   return {
@@ -35,7 +36,7 @@ export const MealRepository = {
   },
 
   create(input: CreateMealInput): Meal {
-    const id = randomUUID();
+    const id = uuidv4();
     const timestamp = input.timestamp ?? new Date().toISOString();
     db.runSync(
       `INSERT INTO meals (id, pet_id, type, food, amount, unit, brand, notes, timestamp)

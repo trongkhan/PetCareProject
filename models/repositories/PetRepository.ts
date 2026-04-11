@@ -1,6 +1,7 @@
-import { randomUUID } from 'expo-crypto';
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from 'uuid';
 import db from '../db/client';
-import { Pet, CreatePetInput } from '../types/Pet';
+import { CreatePetInput, Pet } from '../types/Pet';
 
 function rowToPet(row: Record<string, unknown>): Pet {
   return {
@@ -37,7 +38,7 @@ export const PetRepository = {
   },
 
   create(input: CreatePetInput): Pet {
-    const id = randomUUID();
+    const id = uuidv4();
     const now = new Date().toISOString();
     db.runSync(
       `INSERT INTO pets (id, name, photo, species, breed, birthday, adopted_date, gender, weight, microchip, allergies, notes, created_at)

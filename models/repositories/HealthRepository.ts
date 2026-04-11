@@ -1,6 +1,7 @@
-import { randomUUID } from 'expo-crypto';
+import "react-native-get-random-values";
+import { v4 as uuidv4 } from 'uuid';
 import db from '../db/client';
-import { HealthRecord, CreateHealthRecordInput, WeightEntry } from '../types/HealthRecord';
+import { CreateHealthRecordInput, HealthRecord, WeightEntry } from '../types/HealthRecord';
 
 function rowToRecord(row: Record<string, unknown>): HealthRecord {
   return {
@@ -48,7 +49,7 @@ export const HealthRepository = {
   },
 
   create(input: CreateHealthRecordInput): HealthRecord {
-    const id = randomUUID();
+    const id = uuidv4();
     const now = new Date().toISOString();
     db.runSync(
       `INSERT INTO health_records (id, pet_id, type, title, date, next_due, notes, cost, attachments, created_at)
