@@ -76,6 +76,7 @@ const RemindersScreenComp = () => {
                   icon="delete-outline"
                   iconColor={theme.colors.error}
                   size={20}
+                  style={styles.deleteIcon}
                   onPress={() => handlers.deleteReminder(reminder.id)}
                 />
               </View>

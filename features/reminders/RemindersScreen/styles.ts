@@ -14,6 +14,7 @@ export const useStyles = createStyles((_theme) => ({
   disabled: { opacity: 0.5 },
   cardContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   cardText: { flex: 1, gap: 2 },
-  actions: { flexDirection: 'row', alignItems: 'center' },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: 0 },
+  deleteIcon: { margin: 0 },
   fab: { position: 'absolute', right: Spacing.lg, bottom: Spacing.lg },
 }));

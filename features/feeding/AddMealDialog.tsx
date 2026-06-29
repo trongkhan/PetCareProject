@@ -40,7 +40,7 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
   }, []);
 
   const handleSubmit = useCallback(() => {
-    if (!food.trim() || !amount.trim()) return;
+    if (!food.trim()) return;
     onSubmit({
       type,
       food: food.trim(),
@@ -81,7 +81,7 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
         placeholder="VD: Hạt Royal Canin, Pate Whiskas..."
       />
       <TextInput
-        label="Lượng *"
+        label="Lượng (tùy chọn)"
         value={amount}
         onChangeText={setAmount}
         mode="outlined"
@@ -142,7 +142,7 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
           <Button
             mode="contained"
             onPress={handleSubmit}
-            disabled={!food.trim() || parseFloat(amount) <= 0}
+            disabled={!food.trim()}
           >
             Lưu
           </Button>
