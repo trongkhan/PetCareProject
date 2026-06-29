@@ -4,6 +4,7 @@ import {
   Appbar, Button, Chip, SegmentedButtons, Surface, Text, TextInput, useTheme,
 } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { DatePickerField } from '@/components/DatePickerField';
 import { PetGender, PetSpecies } from '@/models/types/Pet';
 import { Spacing } from '@/constants/theme';
 import { useStyles } from './CreatePetScreen.styles';
@@ -29,6 +30,8 @@ const CreatePetScreenComp = () => {
   const [breed, setBreed] = useState('');
   const [gender, setGender] = useState<PetGender>('male');
   const [weight, setWeight] = useState('');
+  const [birthday, setBirthday] = useState('');
+  const [notes, setNotes] = useState('');
 
   const handleUICallbackFn = useCallback(
     (action: ICreatePetScreenUICallback) => handleUICallback(action),
@@ -45,6 +48,8 @@ const CreatePetScreenComp = () => {
       breed: breed.trim(),
       gender,
       weight: parseFloat(weight) || 0,
+      birthday: birthday || undefined,
+      notes: notes.trim() || undefined,
     });
   }, [name, species, breed, gender, weight, handlers]);
 
@@ -136,6 +141,23 @@ const CreatePetScreenComp = () => {
           keyboardType="decimal-pad"
           style={styles.input}
           right={<TextInput.Affix text="kg" />}
+        />
+
+        <DatePickerField
+          label="Ngày sinh (tùy chọn)"
+          value={birthday}
+          onChange={setBirthday}
+        />
+
+        <TextInput
+          label="Ghi chú (tùy chọn)"
+          value={notes}
+          onChangeText={setNotes}
+          mode="outlined"
+          multiline
+          numberOfLines={3}
+          style={styles.input}
+          placeholder="Dị ứng, bệnh nền, đặc điểm..."
         />
 
         {renderSubmitButton()}
