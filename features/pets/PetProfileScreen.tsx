@@ -1,86 +1,151 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
-import { router } from 'expo-router';
-import { usePetProfileViewModel } from './usePetProfileViewModel';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import React, { useCallback } from 'react';
+import { ScrollView, View } from 'react-native';
+import {
+  ActivityIndicator, Appbar, Button, Card, Chip, Divider, List, Text, useTheme,
+} from 'react-native-paper';
+import { BaseScreen } from '@/components/BaseScreen';
+import { Spacing } from '@/constants/theme';
+import { useStyles } from './PetProfileScreen.styles';
+import { useViewModel } from './PetProfileScreen.viewModel';
+import { handleUICallback } from './PetProfileScreen.uiCallback';
+import type { IPetProfileScreenUICallback } from './PetProfileScreen.types';
 
 interface Props {
   petId: string;
 }
 
-export function PetProfileScreen({ petId }: Props) {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
-  const vm = usePetProfileViewModel(petId);
+const SPECIES_LABELS: Record<string, string> = {
+  dog: 'Chó', cat: 'Mèo', bird: 'Chim', hamster: 'Hamster', fish: 'Cá', rabbit: 'Thỏ', other: 'Khác',
+};
 
-  if (vm.isLoading) {
+const PetProfileScreenComp = ({ petId }: Props) => {
+  const theme = useTheme();
+  const styles = useStyles(theme);
+
+  const handleUICallbackFn = useCallback(
+    (action: IPetProfileScreenUICallback) => handleUICallback(action),
+    [],
+  );
+
+  const { selectors, handlers } = useViewModel({ petId, handleUICallback: handleUICallbackFn });
+
+  const renderHeroCard = useCallback(() => {
+    if (!selectors.pet) return null;
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.tint} />
-      </View>
+      <Card mode="elevated" style={styles.heroCard}>
+        <Card.Content style={styles.heroContent}>
+          <View style={[styles.avatar, { backgroundColor: theme.colors.primaryContainer }]}>
+            <Text variant="displaySmall" style={{ color: theme.colors.primary }}>
+              {selectors.pet.name.charAt(0).toUpperCase()}
+            </Text>
+          </View>
+          <Text variant="headlineMedium" style={{ color: theme.colors.onSurface, fontWeight: '700' }}>
+            {selectors.pet.name}
+          </Text>
+          <View style={styles.chipRow}>
+            <Chip compact icon="paw">{SPECIES_LABELS[selectors.pet.species] ?? selectors.pet.species}</Chip>
+            <Chip compact icon={selectors.pet.gender === 'male' ? 'gender-male' : 'gender-female'}>
+              {selectors.pet.gender === 'male' ? 'Đực' : 'Cái'}
+            </Chip>
+          </View>
+        </Card.Content>
+      </Card>
+    );
+  }, [selectors.pet, styles, theme]);
+
+  const renderDetails = useCallback(() => {
+    if (!selectors.pet) return null;
+    return (
+      <Card mode="outlined">
+        <List.Item
+          title="Giống"
+          description={selectors.pet.breed || 'Chưa cập nhật'}
+          left={props => <List.Icon {...props} icon="dog" />}
+        />
+        <Divider />
+        <List.Item
+          title="Cân nặng"
+          description={`${selectors.pet.weight} kg`}
+          left={props => <List.Icon {...props} icon="scale-bathroom" />}
+        />
+        {selectors.pet.birthday && (
+          <>
+            <Divider />
+            <List.Item
+              title="Ngày sinh"
+              description={new Date(selectors.pet.birthday).toLocaleDateString('vi-VN')}
+              left={props => <List.Icon {...props} icon="cake-variant" />}
+            />
+          </>
+        )}
+        {selectors.pet.microchip && (
+          <>
+            <Divider />
+            <List.Item
+              title="Microchip"
+              description={selectors.pet.microchip}
+              left={props => <List.Icon {...props} icon="chip" />}
+            />
+          </>
+        )}
+        {selectors.pet.notes && (
+          <>
+            <Divider />
+            <List.Item
+              title="Ghi chú"
+              description={selectors.pet.notes}
+              left={props => <List.Icon {...props} icon="note-text" />}
+            />
+          </>
+        )}
+      </Card>
+    );
+  }, [selectors.pet]);
+
+  const renderDeleteButton = useCallback(() => (
+    <Button
+      mode="outlined"
+      textColor={theme.colors.error}
+      style={[styles.deleteButton, { borderColor: theme.colors.error }]}
+      icon="delete"
+      onPress={handlers.confirmDeletePet}
+    >
+      Xóa thú cưng
+    </Button>
+  ), [handlers.confirmDeletePet, styles, theme]);
+
+  if (selectors.isLoading) {
+    return (
+      <BaseScreen edges={['bottom']} style={styles.center}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </BaseScreen>
     );
   }
 
-  if (!vm.pet) {
+  if (!selectors.pet) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <Text style={{ color: colors.text }}>Không tìm thấy thú cưng</Text>
-      </View>
+      <BaseScreen edges={['bottom']} style={styles.center}>
+        <Text variant="bodyLarge" style={{ color: theme.colors.onSurface }}>Không tìm thấy thú cưng</Text>
+        <Button onPress={handlers.navigateBack} style={{ marginTop: Spacing.md }}>Quay lại</Button>
+      </BaseScreen>
     );
   }
 
-  const handleDelete = () => {
-    Alert.alert('Xóa thú cưng', `Bạn có chắc muốn xóa ${vm.pet!.name}?`, [
-      { text: 'Hủy', style: 'cancel' },
-      { text: 'Xóa', style: 'destructive', onPress: () => { vm.deletePet(); router.replace('/'); } },
-    ]);
-  };
-
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.header, { backgroundColor: colors.tint }]}>
-        <Text style={styles.name}>{vm.pet.name}</Text>
-        <Text style={styles.species}>{vm.pet.species} • {vm.pet.gender}</Text>
-      </View>
+    <BaseScreen edges={['bottom']}>
+      <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
+        <Appbar.BackAction onPress={handlers.navigateBack} />
+        <Appbar.Content title="Hồ sơ thú cưng" />
+      </Appbar.Header>
 
-      <View style={styles.section}>
-        <InfoRow label="Giống" value={vm.pet.breed} colors={colors} />
-        <InfoRow label="Cân nặng" value={`${vm.pet.weight} kg`} colors={colors} />
-        {vm.pet.birthday && <InfoRow label="Ngày sinh" value={new Date(vm.pet.birthday).toLocaleDateString('vi-VN')} colors={colors} />}
-        {vm.pet.microchip && <InfoRow label="Microchip" value={vm.pet.microchip} colors={colors} />}
-        {vm.pet.notes && <InfoRow label="Ghi chú" value={vm.pet.notes} colors={colors} />}
-      </View>
-
-      <View style={styles.footer}>
-        <TouchableOpacity style={[styles.deleteButton]} onPress={handleDelete}>
-          <Text style={styles.deleteText}>Xóa thú cưng</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      <ScrollView contentContainerStyle={styles.content}>
+        {renderHeroCard()}
+        {renderDetails()}
+        {renderDeleteButton()}
+      </ScrollView>
+    </BaseScreen>
   );
-}
+};
 
-function InfoRow({ label, value, colors }: { label: string; value: string; colors: typeof Colors.light }) {
-  return (
-    <View style={styles.infoRow}>
-      <Text style={[styles.label, { color: colors.icon }]}>{label}</Text>
-      <Text style={[styles.value, { color: colors.text }]}>{value}</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { padding: 24, paddingTop: 32, alignItems: 'center', gap: 4 },
-  name: { fontSize: 28, fontWeight: '700', color: '#fff' },
-  species: { fontSize: 14, color: 'rgba(255,255,255,0.8)' },
-  section: { padding: 16, gap: 12 },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  label: { fontSize: 14 },
-  value: { fontSize: 14, fontWeight: '500' },
-  footer: { padding: 16 },
-  deleteButton: { padding: 14, borderRadius: 8, borderWidth: 1, borderColor: 'red', alignItems: 'center' },
-  deleteText: { color: 'red', fontWeight: '600' },
-});
+PetProfileScreenComp.displayName = 'PetProfileScreen';
+export const PetProfileScreen = React.memo(PetProfileScreenComp);
