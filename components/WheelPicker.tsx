@@ -14,16 +14,24 @@ interface Props {
 export function WheelPicker({ items, selectedIndex, onChange, flex = 1 }: Props) {
   const theme = useTheme();
   const ref = useRef<ScrollView>(null);
+  // -1 so the mount effect always fires the initial scroll
+  const internalIdx = useRef(-1);
 
   useEffect(() => {
-    const y = Math.max(0, selectedIndex) * ITEM_H;
-    setTimeout(() => ref.current?.scrollTo({ y, animated: false }), 80);
+    // Skip if this selectedIndex change came from us (internal scroll)
+    if (internalIdx.current === selectedIndex) return;
+    internalIdx.current = selectedIndex;
+    setTimeout(() => {
+      ref.current?.scrollTo({ y: selectedIndex * ITEM_H, animated: false });
+    }, 80);
   }, [selectedIndex]);
 
   const settle = useCallback((y: number) => {
     const idx = Math.max(0, Math.min(items.length - 1, Math.round(y / ITEM_H)));
+    if (idx === internalIdx.current) return;
+    internalIdx.current = idx;
     onChange(idx);
-    ref.current?.scrollTo({ y: idx * ITEM_H, animated: true });
+    // No scrollTo here — snapToInterval handles snapping, calling scrollTo causes the loop
   }, [items.length, onChange]);
 
   return (
