@@ -62,7 +62,7 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
         setUpcomingVaccinations(
           vaccinations.filter(v => {
             if (!v.nextDue) return false;
-            const due = new Date(v.nextDue);
+            const due = new Date(v.nextDue + 'T00:00:00');
             return due >= now && due <= in30Days;
           })
         );

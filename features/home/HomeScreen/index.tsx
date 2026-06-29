@@ -115,7 +115,7 @@ const HomeScreenComp = () => {
             </Text>
             {selectors.upcomingVaccinations.map(v => (
               <Text key={v.id} variant="bodySmall" style={{ color: '#BF360C', marginTop: 2 }}>
-                {v.title} — {new Date(v.nextDue!).toLocaleDateString('vi-VN')}
+                {v.title} — {new Date(v.nextDue! + 'T00:00:00').toLocaleDateString('vi-VN')}
               </Text>
             ))}
           </View>

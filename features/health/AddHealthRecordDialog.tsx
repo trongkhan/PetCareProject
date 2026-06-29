@@ -153,7 +153,7 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
           <ScrollView contentContainerStyle={styles.content}>
             {renderTypeSection(theme)}
             {renderMainFields()}
-            {renderExtraFields()}
+            {!isWeightType && renderExtraFields()}
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>

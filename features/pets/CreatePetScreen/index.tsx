@@ -51,7 +51,7 @@ const CreatePetScreenComp = () => {
       birthday: birthday || undefined,
       notes: notes.trim() || undefined,
     });
-  }, [name, species, breed, gender, weight, handlers]);
+  }, [name, species, breed, gender, weight, birthday, notes, handlers]);
 
   const renderSpeciesSelector = useCallback(() => (
     <View style={styles.field}>

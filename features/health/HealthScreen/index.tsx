@@ -58,8 +58,8 @@ const HealthScreenComp = () => {
               <View style={styles.cardText}>
                 <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>{record.title}</Text>
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                  {new Date(record.date).toLocaleDateString('vi-VN')}
-                  {record.nextDue ? ` → tiếp theo: ${new Date(record.nextDue).toLocaleDateString('vi-VN')}` : ''}
+                  {new Date(record.date + 'T00:00:00').toLocaleDateString('vi-VN')}
+                  {record.nextDue ? ` → tiếp theo: ${new Date(record.nextDue + 'T00:00:00').toLocaleDateString('vi-VN')}` : ''}
                 </Text>
                 {record.cost ? (
                   <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
@@ -105,7 +105,7 @@ const HealthScreenComp = () => {
                 </Chip>
               </View>
               <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                {new Date(record.date).toLocaleDateString('vi-VN')}
+                {new Date(record.date + 'T00:00:00').toLocaleDateString('vi-VN')}
                 {record.cost ? ` · ${record.cost.toLocaleString('vi-VN')}đ` : ''}
               </Text>
               {record.type !== 'weight' && record.notes ? (
