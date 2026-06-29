@@ -1,88 +1,150 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useHealthViewModel } from './useHealthViewModel';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import React, { useCallback, useState } from 'react';
+import { ScrollView, View } from 'react-native';
+import { ActivityIndicator, Card, Chip, FAB, IconButton, Text, useTheme } from 'react-native-paper';
+import { BaseScreen } from '@/components/BaseScreen';
+import { Spacing } from '@/constants/theme';
+import { AddHealthRecordDialog } from './AddHealthRecordDialog';
+import { useStyles } from './HealthScreen.styles';
+import { useViewModel } from './HealthScreen.viewModel';
+import { handleUICallback } from './HealthScreen.uiCallback';
+import type { IHealthScreenUICallback } from './HealthScreen.types';
 
-export function HealthScreen() {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
-  const vm = useHealthViewModel();
+const TYPE_LABELS: Record<string, string> = {
+  vaccination: 'Tiêm phòng',
+  vet_visit: 'Khám thú y',
+  medication: 'Thuốc',
+  weight: 'Cân nặng',
+  deworming: 'Tẩy giun',
+  other: 'Khác',
+};
 
-  if (vm.isLoading) {
+const HealthScreenComp = () => {
+  const theme = useTheme();
+  const styles = useStyles(theme);
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  const handleUICallbackFn = useCallback(
+    (action: IHealthScreenUICallback) => handleUICallback(action),
+    [],
+  );
+
+  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+
+  const renderVaccinationsHeader = useCallback(() => (
+    <View style={styles.sectionHeader}>
+      <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+        Tiêm phòng ({selectors.vaccinations.length})
+      </Text>
+    </View>
+  ), [selectors.vaccinations.length, styles, theme]);
+
+  const renderVaccinations = useCallback(() => {
+    if (selectors.vaccinations.length === 0) {
+      return (
+        <Card mode="outlined">
+          <Card.Content>
+            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
+              Chưa có lịch sử tiêm phòng
+            </Text>
+          </Card.Content>
+        </Card>
+      );
+    }
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.tint} />
-      </View>
+      <>
+        {selectors.vaccinations.map(record => (
+          <Card key={record.id} mode="outlined" style={styles.card}>
+            <Card.Content style={styles.cardContent}>
+              <View style={styles.cardText}>
+                <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>{record.title}</Text>
+                <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                  {new Date(record.date).toLocaleDateString('vi-VN')}
+                  {record.nextDue ? ` → tiếp theo: ${new Date(record.nextDue).toLocaleDateString('vi-VN')}` : ''}
+                </Text>
+                {record.cost ? (
+                  <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                    {record.cost.toLocaleString('vi-VN')}đ
+                  </Text>
+                ) : null}
+              </View>
+              <IconButton
+                icon="delete-outline"
+                iconColor={theme.colors.error}
+                size={20}
+                onPress={() => handlers.deleteRecord(record.id)}
+              />
+            </Card.Content>
+          </Card>
+        ))}
+      </>
+    );
+  }, [selectors.vaccinations, handlers, styles, theme]);
+
+  const renderAllRecords = useCallback(() => {
+    if (selectors.records.length === 0) return null;
+    return (
+      <>
+        <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+          Tất cả hồ sơ ({selectors.records.length})
+        </Text>
+        {selectors.records.map(record => (
+          <Card key={record.id} mode="outlined" style={styles.card}>
+            <Card.Content style={{ gap: Spacing.xs }}>
+              <View style={styles.recordHeader}>
+                <Text variant="titleSmall" style={{ color: theme.colors.onSurface, flex: 1 }}>
+                  {record.title}
+                </Text>
+                <Chip compact textStyle={{ fontSize: 11 }}>
+                  {TYPE_LABELS[record.type] ?? record.type}
+                </Chip>
+              </View>
+              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                {new Date(record.date).toLocaleDateString('vi-VN')}
+                {record.cost ? ` · ${record.cost.toLocaleString('vi-VN')}đ` : ''}
+              </Text>
+              {record.notes ? (
+                <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                  {record.notes}
+                </Text>
+              ) : null}
+            </Card.Content>
+          </Card>
+        ))}
+      </>
+    );
+  }, [selectors.records, styles, theme]);
+
+  if (selectors.isLoading) {
+    return (
+      <BaseScreen edges={[]} style={styles.center}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </BaseScreen>
     );
   }
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Vaccinations */}
-      <View style={styles.section}>
-        <View style={styles.row}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Tiêm phòng ({vm.vaccinations.length})</Text>
-          <TouchableOpacity
-            style={[styles.addButton, { backgroundColor: colors.tint }]}
-            onPress={() => vm.addRecord({
-              type: 'vaccination',
-              title: 'Vắc-xin dại',
-              date: new Date().toISOString().split('T')[0],
-              nextDue: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-            })}
-          >
-            <Text style={styles.addButtonText}>+ Thêm</Text>
-          </TouchableOpacity>
-        </View>
+    <BaseScreen edges={[]}>
+      <AddHealthRecordDialog
+        visible={dialogVisible}
+        onDismiss={() => setDialogVisible(false)}
+        onSubmit={handlers.addRecord}
+      />
 
-        {vm.vaccinations.length === 0 ? (
-          <Text style={[styles.emptyText, { color: colors.icon }]}>Chưa có lịch sử tiêm phòng</Text>
-        ) : (
-          vm.vaccinations.map(record => (
-            <View key={record.id} style={[styles.card, { borderColor: colors.icon }]}>
-              <View style={styles.cardContent}>
-                <Text style={[styles.cardTitle, { color: colors.text }]}>{record.title}</Text>
-                <Text style={[styles.cardSub, { color: colors.icon }]}>
-                  {new Date(record.date).toLocaleDateString('vi-VN')}
-                  {record.nextDue ? ` → ${new Date(record.nextDue).toLocaleDateString('vi-VN')}` : ''}
-                </Text>
-              </View>
-              <TouchableOpacity onPress={() => vm.deleteRecord(record.id)}>
-                <Text style={{ color: 'red', fontSize: 13 }}>Xóa</Text>
-              </TouchableOpacity>
-            </View>
-          ))
-        )}
-      </View>
+      <ScrollView contentContainerStyle={styles.content}>
+        {renderVaccinationsHeader()}
+        {renderVaccinations()}
+        {renderAllRecords()}
+      </ScrollView>
 
-      {/* All records */}
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Tất cả hồ sơ ({vm.records.length})</Text>
-        {vm.records.map(record => (
-          <View key={record.id} style={[styles.card, { borderColor: colors.icon }]}>
-            <Text style={[styles.cardTitle, { color: colors.text }]}>{record.title}</Text>
-            <Text style={[styles.cardSub, { color: colors.icon }]}>
-              {record.type} • {new Date(record.date).toLocaleDateString('vi-VN')}
-            </Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+      <FAB
+        icon="plus"
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+        color={theme.colors.onPrimary}
+        onPress={() => setDialogVisible(true)}
+      />
+    </BaseScreen>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  section: { padding: 16, gap: 8 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  sectionTitle: { fontSize: 18, fontWeight: '600' },
-  card: { padding: 12, borderRadius: 8, borderWidth: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardContent: { gap: 4, flex: 1 },
-  cardTitle: { fontSize: 15, fontWeight: '500' },
-  cardSub: { fontSize: 13 },
-  emptyText: { fontSize: 14, fontStyle: 'italic' },
-  addButton: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8 },
-  addButtonText: { color: '#fff', fontWeight: '600', fontSize: 14 },
-});
+HealthScreenComp.displayName = 'HealthScreen';
+export const HealthScreen = React.memo(HealthScreenComp);

@@ -2,18 +2,26 @@ import { useState, useEffect, useCallback } from 'react';
 import { HealthRecord, CreateHealthRecordInput, WeightEntry } from '@/models/types/HealthRecord';
 import { HealthRepository } from '@/models/repositories/HealthRepository';
 import { useActivePetStore } from '@/store/activePetStore';
+import { IHealthScreenUICallback } from './HealthScreen.types';
 
-interface HealthViewModel {
+interface UseViewModelProps {
+  handleUICallback: (action: IHealthScreenUICallback) => void;
+}
+
+interface Selectors {
   records: HealthRecord[];
   vaccinations: HealthRecord[];
   weightHistory: WeightEntry[];
   isLoading: boolean;
+}
+
+interface Handlers {
   addRecord: (input: Omit<CreateHealthRecordInput, 'petId'>) => void;
   deleteRecord: (id: string) => void;
   refresh: () => void;
 }
 
-export function useHealthViewModel(): HealthViewModel {
+export const useViewModel = ({ handleUICallback: _handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
   const { activePetId } = useActivePetStore();
   const [records, setRecords] = useState<HealthRecord[]>([]);
   const [vaccinations, setVaccinations] = useState<HealthRecord[]>([]);
@@ -47,5 +55,8 @@ export function useHealthViewModel(): HealthViewModel {
     setVaccinations(prev => prev.filter(r => r.id !== id));
   }, []);
 
-  return { records, vaccinations, weightHistory, isLoading, addRecord, deleteRecord, refresh: load };
-}
+  return {
+    selectors: { records, vaccinations, weightHistory, isLoading },
+    handlers: { addRecord, deleteRecord, refresh: load },
+  };
+};
