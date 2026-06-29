@@ -74,7 +74,7 @@ const PetProfileScreenComp = ({ petId }: Props) => {
             <Divider />
             <List.Item
               title="Ngày sinh"
-              description={new Date(selectors.pet.birthday).toLocaleDateString('vi-VN')}
+              description={new Date(selectors.pet.birthday + 'T00:00:00').toLocaleDateString('vi-VN')}
               left={props => <List.Icon {...props} icon="cake-variant" />}
             />
           </>
@@ -86,6 +86,25 @@ const PetProfileScreenComp = ({ petId }: Props) => {
               title="Microchip"
               description={selectors.pet.microchip}
               left={props => <List.Icon {...props} icon="chip" />}
+            />
+          </>
+        )}
+        {selectors.pet.allergies.length > 0 && (
+          <>
+            <Divider />
+            <List.Item
+              title="Dị ứng / Bệnh nền"
+              description={() => (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
+                  {selectors.pet!.allergies.map((item, idx) => (
+                    <Chip key={idx} compact icon="alert-circle" style={{ backgroundColor: '#FFF3E0' }}
+                      textStyle={{ color: '#E65100', fontSize: 11 }}>
+                      {item}
+                    </Chip>
+                  ))}
+                </View>
+              )}
+              left={props => <List.Icon {...props} icon="alert-circle" color={theme.colors.error} />}
             />
           </>
         )}
