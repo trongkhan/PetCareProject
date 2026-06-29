@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { Meal, CreateMealInput } from '@/models/types/Meal';
 import { MealRepository } from '@/models/repositories/MealRepository';
 import { useActivePetStore } from '@/store/activePetStore';
@@ -38,6 +39,7 @@ export const useViewModel = ({ handleUICallback: _handleUICallback }: UseViewMod
   }, [activePetId]);
 
   useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const logMeal = useCallback((input: Omit<CreateMealInput, 'petId'>) => {
     if (!activePetId) return;

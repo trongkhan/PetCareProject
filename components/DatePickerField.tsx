@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Modal, StyleSheet, View } from 'react-native';
-import { Button, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Button, Portal, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { Spacing } from '@/constants/theme';
 import { WheelPicker } from './WheelPicker';
 
@@ -64,28 +64,31 @@ export function DatePickerField({ label, value, onChange }: Props) {
         </View>
       </TouchableRipple>
 
-      <Modal visible={show} transparent animationType="slide">
-        <View style={styles.overlay}>
-          <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={3}>
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
-              {label}
-            </Text>
-            <View style={styles.colLabels}>
-              {['Ngày', 'Tháng', 'Năm'].map(l => (
-                <Text key={l} style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: l === 'Ngày' ? 1 : l === 'Tháng' ? 1 : 2 }]}>{l}</Text>
-              ))}
-            </View>
-            <View style={styles.pickers}>
-              <WheelPicker flex={1} items={days} selectedIndex={safeDay - 1} onChange={i => setDay(i + 1)} />
-              <WheelPicker flex={1} items={Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'))} selectedIndex={month - 1} onChange={i => setMonth(i + 1)} />
-              <WheelPicker flex={2} items={YEARS} selectedIndex={yearIdx} onChange={i => setYear(parseInt(YEARS[i]))} />
-            </View>
-            <Button mode="contained" onPress={handleConfirm} style={{ marginTop: Spacing.md }}>
-              Xác nhận
-            </Button>
-          </Surface>
-        </View>
-      </Modal>
+      {show && (
+        <Portal>
+          <View style={styles.overlay}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => setShow(false)} />
+            <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={4}>
+              <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+                {label}
+              </Text>
+              <View style={styles.colLabels}>
+                {[{ label: 'Ngày', flex: 1 }, { label: 'Tháng', flex: 1 }, { label: 'Năm', flex: 2 }].map(c => (
+                  <Text key={c.label} style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: c.flex }]}>{c.label}</Text>
+                ))}
+              </View>
+              <View style={styles.pickers}>
+                <WheelPicker flex={1} items={days} selectedIndex={safeDay - 1} onChange={i => setDay(i + 1)} />
+                <WheelPicker flex={1} items={Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'))} selectedIndex={month - 1} onChange={i => setMonth(i + 1)} />
+                <WheelPicker flex={2} items={YEARS} selectedIndex={yearIdx} onChange={i => setYear(parseInt(YEARS[i]))} />
+              </View>
+              <Button mode="contained" onPress={handleConfirm} style={{ marginTop: Spacing.md }}>
+                Xác nhận
+              </Button>
+            </Surface>
+          </View>
+        </Portal>
+      )}
     </>
   );
 }
@@ -98,8 +101,15 @@ const styles = StyleSheet.create({
   },
   fieldContent: { gap: 2 },
   label: { fontSize: 12 },
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: Spacing.lg, paddingBottom: Spacing.xxl },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    borderTopLeftRadius: 16, borderTopRightRadius: 16,
+    padding: Spacing.lg, paddingBottom: Spacing.xxl,
+  },
   colLabels: { flexDirection: 'row', marginBottom: 4 },
   colLabel: { fontSize: 11, textAlign: 'center' },
   pickers: { flexDirection: 'row', gap: Spacing.xs },

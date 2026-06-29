@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { Reminder, CreateReminderInput } from '@/models/types/Reminder';
 import { ReminderRepository } from '@/models/repositories/ReminderRepository';
 import { NotificationService } from '@/services/NotificationService';
@@ -37,6 +38,7 @@ export const useViewModel = ({ handleUICallback: _handleUICallback }: UseViewMod
   }, [activePetId]);
 
   useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const addReminder = useCallback(async (input: Omit<CreateReminderInput, 'petId'>) => {
     if (!activePetId) return;

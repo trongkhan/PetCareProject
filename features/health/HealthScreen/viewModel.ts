@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { HealthRecord, CreateHealthRecordInput, WeightEntry } from '@/models/types/HealthRecord';
 import { HealthRepository } from '@/models/repositories/HealthRepository';
 import { useActivePetStore } from '@/store/activePetStore';
@@ -41,6 +42,7 @@ export const useViewModel = ({ handleUICallback: _handleUICallback }: UseViewMod
   }, [activePetId]);
 
   useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const addRecord = useCallback((input: Omit<CreateHealthRecordInput, 'petId'>) => {
     if (!activePetId) return;

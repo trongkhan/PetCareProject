@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Modal, StyleSheet, View } from 'react-native';
-import { Button, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Button, Portal, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { Spacing } from '@/constants/theme';
 import { WheelPicker } from './WheelPicker';
 
@@ -50,30 +50,33 @@ export function TimePickerField({ label, value, onChange }: Props) {
         </View>
       </TouchableRipple>
 
-      <Modal visible={show} transparent animationType="slide">
-        <View style={styles.overlay}>
-          <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={3}>
-            <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
-              {label}
-            </Text>
-            <View style={styles.colLabels}>
-              <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>Giờ</Text>
-              <View style={styles.colonSpace} />
-              <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>Phút</Text>
-            </View>
-            <View style={styles.pickers}>
-              <WheelPicker flex={1} items={HOURS} selectedIndex={hour} onChange={setHour} />
-              <View style={styles.colon}>
-                <Text style={[styles.colonText, { color: theme.colors.onSurface }]}>:</Text>
+      {show && (
+        <Portal>
+          <View style={styles.overlay}>
+            <Pressable style={StyleSheet.absoluteFill} onPress={() => setShow(false)} />
+            <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={4}>
+              <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+                {label}
+              </Text>
+              <View style={styles.colLabels}>
+                <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>Giờ</Text>
+                <View style={styles.colonSpace} />
+                <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>Phút</Text>
               </View>
-              <WheelPicker flex={1} items={MINUTES} selectedIndex={minute} onChange={setMinute} />
-            </View>
-            <Button mode="contained" onPress={handleConfirm} style={{ marginTop: Spacing.md }}>
-              Xác nhận
-            </Button>
-          </Surface>
-        </View>
-      </Modal>
+              <View style={styles.pickers}>
+                <WheelPicker flex={1} items={HOURS} selectedIndex={hour} onChange={setHour} />
+                <View style={styles.colon}>
+                  <Text style={[styles.colonText, { color: theme.colors.onSurface }]}>:</Text>
+                </View>
+                <WheelPicker flex={1} items={MINUTES} selectedIndex={minute} onChange={setMinute} />
+              </View>
+              <Button mode="contained" onPress={handleConfirm} style={{ marginTop: Spacing.md }}>
+                Xác nhận
+              </Button>
+            </Surface>
+          </View>
+        </Portal>
+      )}
     </>
   );
 }
@@ -86,8 +89,15 @@ const styles = StyleSheet.create({
   },
   fieldContent: { gap: 2 },
   label: { fontSize: 12 },
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  sheet: { borderTopLeftRadius: 16, borderTopRightRadius: 16, padding: Spacing.lg, paddingBottom: Spacing.xxl },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    borderTopLeftRadius: 16, borderTopRightRadius: 16,
+    padding: Spacing.lg, paddingBottom: Spacing.xxl,
+  },
   colLabels: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   colLabel: { fontSize: 11, textAlign: 'center' },
   colonSpace: { width: 28 },

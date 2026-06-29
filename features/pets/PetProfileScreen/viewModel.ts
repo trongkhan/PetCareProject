@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { Pet, CreatePetInput } from '@/models/types/Pet';
 import { WeightEntry } from '@/models/types/HealthRecord';
 import { PetRepository } from '@/models/repositories/PetRepository';
@@ -31,12 +32,12 @@ export const useViewModel = ({ petId, handleUICallback }: UseViewModelProps): { 
   const [weightHistory, setWeightHistory] = useState<WeightEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     setIsLoading(true);
     setPet(PetRepository.getById(petId));
     setWeightHistory(HealthRepository.getWeightHistory(petId));
     setIsLoading(false);
-  }, [petId]);
+  }, [petId]));
 
   const updatePet = useCallback((input: Partial<CreatePetInput>) => {
     const updated = PetRepository.update(petId, input);
