@@ -1,81 +1,121 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Switch, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useRemindersViewModel } from './useRemindersViewModel';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import React, { useCallback, useState } from 'react';
+import { ScrollView, View } from 'react-native';
+import { ActivityIndicator, Card, FAB, IconButton, Switch, Text, useTheme } from 'react-native-paper';
+import { BaseScreen } from '@/components/BaseScreen';
+import { AddReminderDialog } from './AddReminderDialog';
+import { useStyles } from './RemindersScreen.styles';
+import { useViewModel } from './RemindersScreen.viewModel';
+import { handleUICallback } from './RemindersScreen.uiCallback';
+import type { IRemindersScreenUICallback } from './RemindersScreen.types';
 
-export function RemindersScreen() {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
-  const vm = useRemindersViewModel();
+const FREQ_LABELS: Record<string, string> = {
+  once: 'Một lần',
+  daily: 'Hàng ngày',
+  weekly: 'Hàng tuần',
+  monthly: 'Hàng tháng',
+  quarterly: 'Mỗi quý',
+  yearly: 'Hàng năm',
+};
 
-  if (vm.isLoading) {
+const RemindersScreenComp = () => {
+  const theme = useTheme();
+  const styles = useStyles(theme);
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  const handleUICallbackFn = useCallback(
+    (action: IRemindersScreenUICallback) => handleUICallback(action),
+    [],
+  );
+
+  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+
+  const renderSectionHeader = useCallback(() => (
+    <View style={styles.sectionHeader}>
+      <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
+        Nhắc nhở ({selectors.reminders.length})
+      </Text>
+    </View>
+  ), [selectors.reminders.length, styles, theme]);
+
+  const renderReminderList = useCallback(() => {
+    if (selectors.reminders.length === 0) {
+      return (
+        <Card mode="outlined">
+          <Card.Content>
+            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
+              Chưa có nhắc nhở nào
+            </Text>
+          </Card.Content>
+        </Card>
+      );
+    }
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.tint} />
-      </View>
-    );
-  }
-
-  return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={styles.section}>
-        <View style={styles.row}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Nhắc nhở ({vm.reminders.length})</Text>
-          <TouchableOpacity
-            style={[styles.addButton, { backgroundColor: colors.tint }]}
-            onPress={() => vm.addReminder({
-              type: 'feeding',
-              title: 'Cho ăn buổi sáng',
-              frequency: 'daily',
-              time: '07:00',
-            })}
+      <>
+        {selectors.reminders.map(reminder => (
+          <Card
+            key={reminder.id}
+            mode="outlined"
+            style={[styles.card, !reminder.enabled && styles.disabled]}
           >
-            <Text style={styles.addButtonText}>+ Thêm</Text>
-          </TouchableOpacity>
-        </View>
-
-        {vm.reminders.length === 0 ? (
-          <Text style={[styles.emptyText, { color: colors.icon }]}>Chưa có nhắc nhở nào</Text>
-        ) : (
-          vm.reminders.map(reminder => (
-            <View key={reminder.id} style={[styles.card, { borderColor: colors.icon }]}>
-              <View style={styles.cardContent}>
-                <Text style={[styles.cardTitle, { color: colors.text }]}>{reminder.title}</Text>
-                <Text style={[styles.cardSub, { color: colors.icon }]}>
-                  {reminder.time} • {reminder.frequency}
+            <Card.Content style={styles.cardContent}>
+              <View style={styles.cardText}>
+                <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>
+                  {reminder.title}
+                </Text>
+                <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                  {reminder.time} · {FREQ_LABELS[reminder.frequency] ?? reminder.frequency}
                 </Text>
               </View>
               <View style={styles.actions}>
                 <Switch
                   value={reminder.enabled}
-                  onValueChange={(val) => vm.toggleReminder(reminder.id, val)}
-                  trackColor={{ true: colors.tint }}
+                  onValueChange={val => handlers.toggleReminder(reminder.id, val)}
+                  color={theme.colors.primary}
                 />
-                <TouchableOpacity onPress={() => vm.deleteReminder(reminder.id)}>
-                  <Text style={{ color: 'red', fontSize: 13 }}>Xóa</Text>
-                </TouchableOpacity>
+                <IconButton
+                  icon="delete-outline"
+                  iconColor={theme.colors.error}
+                  size={20}
+                  onPress={() => handlers.deleteReminder(reminder.id)}
+                />
               </View>
-            </View>
-          ))
-        )}
-      </View>
-    </ScrollView>
-  );
-}
+            </Card.Content>
+          </Card>
+        ))}
+      </>
+    );
+  }, [selectors.reminders, handlers, styles, theme]);
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  section: { padding: 16, gap: 8 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  sectionTitle: { fontSize: 18, fontWeight: '600' },
-  card: { padding: 12, borderRadius: 8, borderWidth: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cardContent: { gap: 4, flex: 1 },
-  cardTitle: { fontSize: 15, fontWeight: '500' },
-  cardSub: { fontSize: 13 },
-  emptyText: { fontSize: 14, fontStyle: 'italic' },
-  addButton: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8 },
-  addButtonText: { color: '#fff', fontWeight: '600', fontSize: 14 },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-});
+  if (selectors.isLoading) {
+    return (
+      <BaseScreen edges={[]} style={styles.center}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </BaseScreen>
+    );
+  }
+
+  return (
+    <BaseScreen edges={[]}>
+      <AddReminderDialog
+        visible={dialogVisible}
+        onDismiss={() => setDialogVisible(false)}
+        onSubmit={handlers.addReminder}
+      />
+
+      <ScrollView contentContainerStyle={styles.content}>
+        {renderSectionHeader()}
+        {renderReminderList()}
+      </ScrollView>
+
+      <FAB
+        icon="plus"
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+        color={theme.colors.onPrimary}
+        onPress={() => setDialogVisible(true)}
+      />
+    </BaseScreen>
+  );
+};
+
+RemindersScreenComp.displayName = 'RemindersScreen';
+export const RemindersScreen = React.memo(RemindersScreenComp);

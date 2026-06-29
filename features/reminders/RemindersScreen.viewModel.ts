@@ -3,17 +3,25 @@ import { Reminder, CreateReminderInput } from '@/models/types/Reminder';
 import { ReminderRepository } from '@/models/repositories/ReminderRepository';
 import { NotificationService } from '@/services/NotificationService';
 import { useActivePetStore } from '@/store/activePetStore';
+import { IRemindersScreenUICallback } from './RemindersScreen.types';
 
-interface RemindersViewModel {
+interface UseViewModelProps {
+  handleUICallback: (action: IRemindersScreenUICallback) => void;
+}
+
+interface Selectors {
   reminders: Reminder[];
   isLoading: boolean;
+}
+
+interface Handlers {
   addReminder: (input: Omit<CreateReminderInput, 'petId'>) => Promise<void>;
   toggleReminder: (id: string, enabled: boolean) => Promise<void>;
   deleteReminder: (id: string) => Promise<void>;
   refresh: () => void;
 }
 
-export function useRemindersViewModel(): RemindersViewModel {
+export const useViewModel = ({ handleUICallback: _handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
   const { activePetId } = useActivePetStore();
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -62,5 +70,8 @@ export function useRemindersViewModel(): RemindersViewModel {
     setReminders(prev => prev.filter(r => r.id !== id));
   }, [reminders]);
 
-  return { reminders, isLoading, addReminder, toggleReminder, deleteReminder, refresh: load };
-}
+  return {
+    selectors: { reminders, isLoading },
+    handlers: { addReminder, toggleReminder, deleteReminder, refresh: load },
+  };
+};
