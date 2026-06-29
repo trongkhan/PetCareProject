@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { CreatePetScreenActionsEnum, ICreatePetScreenUICallback } from './CreatePetScreen.types';
+import { CreatePetScreenActionsEnum, ICreatePetScreenUICallback } from './types';
 
 export const handleUICallback = (action: ICreatePetScreenUICallback): void => {
   switch (action.type) {

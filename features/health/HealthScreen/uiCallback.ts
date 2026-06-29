@@ -1,4 +1,4 @@
-import { HealthScreenActionsEnum, IHealthScreenUICallback } from './HealthScreen.types';
+import { HealthScreenActionsEnum, IHealthScreenUICallback } from './types';
 
 export const handleUICallback = (action: IHealthScreenUICallback): void => {
   switch (action.type) {

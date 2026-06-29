@@ -3,10 +3,10 @@ import { Spacing } from '@/constants/theme';
 import React, { useCallback } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Chip, FAB, Surface, Text, useTheme } from 'react-native-paper';
-import { useStyles } from './HomeScreen.styles';
-import type { IHomeScreenUICallback } from './HomeScreen.types';
-import { handleUICallback } from './HomeScreen.uiCallback';
-import { useViewModel } from './HomeScreen.viewModel';
+import { useStyles } from './styles';
+import type { IHomeScreenUICallback } from './types';
+import { handleUICallback } from './uiCallback';
+import { useViewModel } from './viewModel';
 
 const HomeScreenComp = () => {
   const theme = useTheme();

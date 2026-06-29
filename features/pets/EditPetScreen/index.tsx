@@ -1,16 +1,20 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import {
-  Appbar, Button, Chip, SegmentedButtons, Surface, Text, TextInput, useTheme,
+  ActivityIndicator, Appbar, Button, Chip, SegmentedButtons, Surface, Text, TextInput, useTheme,
 } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { DatePickerField } from '@/components/DatePickerField';
 import { PetGender, PetSpecies } from '@/models/types/Pet';
 import { Spacing } from '@/constants/theme';
-import { useStyles } from './CreatePetScreen.styles';
-import { useViewModel } from './CreatePetScreen.viewModel';
-import { handleUICallback } from './CreatePetScreen.uiCallback';
-import type { ICreatePetScreenUICallback } from './CreatePetScreen.types';
+import { useStyles } from './styles';
+import { useViewModel } from './viewModel';
+import { handleUICallback } from './uiCallback';
+import type { IEditPetScreenUICallback } from './types';
+
+interface Props {
+  petId: string;
+}
 
 const SPECIES: { value: PetSpecies; label: string }[] = [
   { value: 'dog', label: 'Chó' },
@@ -21,7 +25,7 @@ const SPECIES: { value: PetSpecies; label: string }[] = [
   { value: 'other', label: 'Khác' },
 ];
 
-const CreatePetScreenComp = () => {
+const EditPetScreenComp = ({ petId }: Props) => {
   const theme = useTheme();
   const styles = useStyles(theme);
 
@@ -34,24 +38,36 @@ const CreatePetScreenComp = () => {
   const [notes, setNotes] = useState('');
 
   const handleUICallbackFn = useCallback(
-    (action: ICreatePetScreenUICallback) => handleUICallback(action),
+    (action: IEditPetScreenUICallback) => handleUICallback(action),
     [],
   );
 
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ petId, handleUICallback: handleUICallbackFn });
 
-  const handleCreate = useCallback(() => {
+  useEffect(() => {
+    if (selectors.pet) {
+      setName(selectors.pet.name);
+      setSpecies(selectors.pet.species);
+      setBreed(selectors.pet.breed);
+      setGender(selectors.pet.gender);
+      setWeight(selectors.pet.weight.toString());
+      setBirthday(selectors.pet.birthday ?? '');
+      setNotes(selectors.pet.notes ?? '');
+    }
+  }, [selectors.pet]);
+
+  const handleSave = useCallback(() => {
     if (!name.trim()) return;
-    handlers.createPet({
+    handlers.savePet({
       name: name.trim(),
       species,
       breed: breed.trim(),
       gender,
       weight: parseFloat(weight) || 0,
       birthday: birthday || undefined,
-      notes: notes.trim() || undefined,
+      notes: notes.trim(),
     });
-  }, [name, species, breed, gender, weight, handlers]);
+  }, [name, species, breed, gender, weight, birthday, notes, handlers]);
 
   const renderSpeciesSelector = useCallback(() => (
     <View style={styles.field}>
@@ -94,22 +110,30 @@ const CreatePetScreenComp = () => {
     <Surface style={[styles.submitArea, { backgroundColor: theme.colors.background }]} elevation={0}>
       <Button
         mode="contained"
-        onPress={handleCreate}
-        disabled={!name.trim() || selectors.isSubmitting}
-        loading={selectors.isSubmitting}
+        onPress={handleSave}
+        disabled={!name.trim() || selectors.isSaving}
+        loading={selectors.isSaving}
         style={styles.submitButton}
         contentStyle={{ paddingVertical: Spacing.xs }}
       >
-        Tạo thú cưng
+        Lưu thay đổi
       </Button>
     </Surface>
-  ), [handleCreate, name, selectors.isSubmitting, styles, theme]);
+  ), [handleSave, name, selectors.isSaving, styles, theme]);
+
+  if (selectors.isLoading) {
+    return (
+      <BaseScreen edges={['bottom']} style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </BaseScreen>
+    );
+  }
 
   return (
     <BaseScreen edges={['bottom']}>
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.BackAction onPress={handlers.navigateBack} />
-        <Appbar.Content title="Thêm thú cưng" />
+        <Appbar.Content title="Chỉnh sửa thú cưng" />
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -124,7 +148,7 @@ const CreatePetScreenComp = () => {
         {renderSpeciesSelector()}
 
         <TextInput
-          label="Giống (VD: Corgi, Maine Coon...)"
+          label="Giống"
           value={breed}
           onChangeText={setBreed}
           mode="outlined"
@@ -166,5 +190,5 @@ const CreatePetScreenComp = () => {
   );
 };
 
-CreatePetScreenComp.displayName = 'CreatePetScreen';
-export const CreatePetScreen = React.memo(CreatePetScreenComp);
+EditPetScreenComp.displayName = 'EditPetScreen';
+export const EditPetScreen = React.memo(EditPetScreenComp);

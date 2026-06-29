@@ -4,7 +4,7 @@ import { WeightEntry } from '@/models/types/HealthRecord';
 import { PetRepository } from '@/models/repositories/PetRepository';
 import { HealthRepository } from '@/models/repositories/HealthRepository';
 import { useActivePetStore } from '@/store/activePetStore';
-import { IPetProfileScreenUICallback, PetProfileScreenActionsEnum } from './PetProfileScreen.types';
+import { IPetProfileScreenUICallback, PetProfileScreenActionsEnum } from './types';
 
 interface UseViewModelProps {
   petId: string;

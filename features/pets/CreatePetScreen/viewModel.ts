@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { CreatePetInput } from '@/models/types/Pet';
 import { PetRepository } from '@/models/repositories/PetRepository';
 import { useActivePetStore } from '@/store/activePetStore';
-import { ICreatePetScreenUICallback, CreatePetScreenActionsEnum } from './CreatePetScreen.types';
+import { ICreatePetScreenUICallback, CreatePetScreenActionsEnum } from './types';
 
 interface UseViewModelProps {
   handleUICallback: (action: ICreatePetScreenUICallback) => void;

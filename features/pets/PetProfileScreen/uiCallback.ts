@@ -1,6 +1,6 @@
 import { Alert } from 'react-native';
 import { router } from 'expo-router';
-import { PetProfileScreenActionsEnum, IPetProfileScreenUICallback } from './PetProfileScreen.types';
+import { PetProfileScreenActionsEnum, IPetProfileScreenUICallback } from './types';
 
 export const handleUICallback = (action: IPetProfileScreenUICallback): void => {
   switch (action.type) {

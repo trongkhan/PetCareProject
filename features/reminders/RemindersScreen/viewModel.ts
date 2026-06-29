@@ -3,7 +3,7 @@ import { Reminder, CreateReminderInput } from '@/models/types/Reminder';
 import { ReminderRepository } from '@/models/repositories/ReminderRepository';
 import { NotificationService } from '@/services/NotificationService';
 import { useActivePetStore } from '@/store/activePetStore';
-import { IRemindersScreenUICallback } from './RemindersScreen.types';
+import { IRemindersScreenUICallback } from './types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IRemindersScreenUICallback) => void;

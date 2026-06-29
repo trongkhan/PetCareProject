@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Meal, CreateMealInput } from '@/models/types/Meal';
 import { MealRepository } from '@/models/repositories/MealRepository';
 import { useActivePetStore } from '@/store/activePetStore';
-import { IFeedingScreenUICallback } from './FeedingScreen.types';
+import { IFeedingScreenUICallback } from './types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IFeedingScreenUICallback) => void;

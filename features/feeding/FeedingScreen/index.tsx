@@ -2,11 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ActivityIndicator, Card, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
-import { AddMealDialog } from './AddMealDialog';
-import { useStyles } from './FeedingScreen.styles';
-import { useViewModel } from './FeedingScreen.viewModel';
-import { handleUICallback } from './FeedingScreen.uiCallback';
-import type { IFeedingScreenUICallback } from './FeedingScreen.types';
+import { AddMealDialog } from '../AddMealDialog';
+import { useStyles } from './styles';
+import { useViewModel } from './viewModel';
+import { handleUICallback } from './uiCallback';
+import type { IFeedingScreenUICallback } from './types';
 
 const MEAL_LABELS: Record<string, string> = {
   breakfast: 'Sáng', lunch: 'Trưa', dinner: 'Tối', snack: 'Ăn vặt', treat: 'Thưởng',

@@ -3,11 +3,11 @@ import { ScrollView, View } from 'react-native';
 import { ActivityIndicator, Card, Chip, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
-import { AddHealthRecordDialog } from './AddHealthRecordDialog';
-import { useStyles } from './HealthScreen.styles';
-import { useViewModel } from './HealthScreen.viewModel';
-import { handleUICallback } from './HealthScreen.uiCallback';
-import type { IHealthScreenUICallback } from './HealthScreen.types';
+import { AddHealthRecordDialog } from '../AddHealthRecordDialog';
+import { useStyles } from './styles';
+import { useViewModel } from './viewModel';
+import { handleUICallback } from './uiCallback';
+import type { IHealthScreenUICallback } from './types';
 
 const TYPE_LABELS: Record<string, string> = {
   vaccination: 'Tiêm phòng',

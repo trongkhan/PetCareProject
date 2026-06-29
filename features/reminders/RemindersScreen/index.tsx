@@ -2,11 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { ActivityIndicator, Card, FAB, IconButton, Switch, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
-import { AddReminderDialog } from './AddReminderDialog';
-import { useStyles } from './RemindersScreen.styles';
-import { useViewModel } from './RemindersScreen.viewModel';
-import { handleUICallback } from './RemindersScreen.uiCallback';
-import type { IRemindersScreenUICallback } from './RemindersScreen.types';
+import { AddReminderDialog } from '../AddReminderDialog';
+import { useStyles } from './styles';
+import { useViewModel } from './viewModel';
+import { handleUICallback } from './uiCallback';
+import type { IRemindersScreenUICallback } from './types';
 
 const FREQ_LABELS: Record<string, string> = {
   once: 'Một lần',

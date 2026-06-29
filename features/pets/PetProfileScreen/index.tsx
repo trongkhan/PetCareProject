@@ -6,10 +6,10 @@ import {
 import { format } from 'date-fns';
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
-import { useStyles } from './PetProfileScreen.styles';
-import { useViewModel } from './PetProfileScreen.viewModel';
-import { handleUICallback } from './PetProfileScreen.uiCallback';
-import type { IPetProfileScreenUICallback } from './PetProfileScreen.types';
+import { useStyles } from './styles';
+import { useViewModel } from './viewModel';
+import { handleUICallback } from './uiCallback';
+import type { IPetProfileScreenUICallback } from './types';
 
 interface Props {
   petId: string;

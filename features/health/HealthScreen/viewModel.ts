@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { HealthRecord, CreateHealthRecordInput, WeightEntry } from '@/models/types/HealthRecord';
 import { HealthRepository } from '@/models/repositories/HealthRepository';
 import { useActivePetStore } from '@/store/activePetStore';
-import { IHealthScreenUICallback } from './HealthScreen.types';
+import { IHealthScreenUICallback } from './types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IHealthScreenUICallback) => void;

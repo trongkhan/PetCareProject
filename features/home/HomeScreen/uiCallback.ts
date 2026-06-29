@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { HomeScreenActionsEnum, IHomeScreenUICallback } from './HomeScreen.types';
+import { HomeScreenActionsEnum, IHomeScreenUICallback } from './types';
 
 export const handleUICallback = (action: IHomeScreenUICallback): void => {
   switch (action.type) {
