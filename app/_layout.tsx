@@ -1,9 +1,8 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { PaperProvider } from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { PetTheme } from '@/constants/theme';
 import '@/models/db/client';
 
 export const unstable_settings = {
@@ -11,16 +10,16 @@ export const unstable_settings = {
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="pet/create" options={{ presentation: 'modal', title: 'Thêm thú cưng' }} />
-        <Stack.Screen name="pet/[id]" options={{ title: 'Hồ sơ thú cưng' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <PaperProvider theme={PetTheme.light}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="pet/create" options={{ presentation: 'modal', headerShown: false }} />
+          <Stack.Screen name="pet/[id]" options={{ headerShown: false }} />
+        </Stack>
+        <StatusBar style="dark" />
+      </PaperProvider>
+    </SafeAreaProvider>
   );
 }

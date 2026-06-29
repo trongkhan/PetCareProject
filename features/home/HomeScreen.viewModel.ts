@@ -6,18 +6,30 @@ import { PetRepository } from '@/models/repositories/PetRepository';
 import { MealRepository } from '@/models/repositories/MealRepository';
 import { ReminderRepository } from '@/models/repositories/ReminderRepository';
 import { useActivePetStore } from '@/store/activePetStore';
+import { IHomeScreenUICallback, HomeScreenActionsEnum } from './HomeScreen.types';
 
-interface HomeViewModel {
+interface UseViewModelProps {
+  handleUICallback: (action: IHomeScreenUICallback) => void;
+}
+
+interface Selectors {
   pet: Pet | null;
   allPets: Pet[];
   todayMeals: Meal[];
   upcomingReminders: Reminder[];
   isLoading: boolean;
-  switchPet: (petId: string) => void;
-  refresh: () => void;
 }
 
-export function useHomeViewModel(): HomeViewModel {
+interface Handlers {
+  switchPet: (petId: string) => void;
+  refresh: () => void;
+  navigateCreatePet: () => void;
+  navigatePetProfile: (petId: string) => void;
+  navigateFeeding: () => void;
+  navigateReminders: () => void;
+}
+
+export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
   const { activePetId, setActivePetId } = useActivePetStore();
   const [pet, setPet] = useState<Pet | null>(null);
   const [allPets, setAllPets] = useState<Pet[]>([]);
@@ -57,5 +69,24 @@ export function useHomeViewModel(): HomeViewModel {
     setActivePetId(petId);
   }, [setActivePetId]);
 
-  return { pet, allPets, todayMeals, upcomingReminders, isLoading, switchPet, refresh: load };
-}
+  const navigateCreatePet = useCallback(() => {
+    handleUICallback({ type: HomeScreenActionsEnum.NavigateCreatePet });
+  }, [handleUICallback]);
+
+  const navigatePetProfile = useCallback((petId: string) => {
+    handleUICallback({ type: HomeScreenActionsEnum.NavigatePetProfile, payload: { petId } });
+  }, [handleUICallback]);
+
+  const navigateFeeding = useCallback(() => {
+    handleUICallback({ type: HomeScreenActionsEnum.NavigateFeeding });
+  }, [handleUICallback]);
+
+  const navigateReminders = useCallback(() => {
+    handleUICallback({ type: HomeScreenActionsEnum.NavigateReminders });
+  }, [handleUICallback]);
+
+  return {
+    selectors: { pet, allPets, todayMeals, upcomingReminders, isLoading },
+    handlers: { switchPet, refresh: load, navigateCreatePet, navigatePetProfile, navigateFeeding, navigateReminders },
+  };
+};

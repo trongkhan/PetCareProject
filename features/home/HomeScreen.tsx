@@ -1,93 +1,190 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { router } from 'expo-router';
-import { useHomeViewModel } from './useHomeViewModel';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { BaseScreen } from '@/components/BaseScreen';
+import { Spacing } from '@/constants/theme';
+import React, { useCallback } from 'react';
+import { ScrollView, View } from 'react-native';
+import { ActivityIndicator, Button, Card, Chip, FAB, Surface, Text, useTheme } from 'react-native-paper';
+import { useStyles } from './HomeScreen.styles';
+import type { IHomeScreenUICallback } from './HomeScreen.types';
+import { handleUICallback } from './HomeScreen.uiCallback';
+import { useViewModel } from './HomeScreen.viewModel';
 
-export function HomeScreen() {
-  const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
-  const vm = useHomeViewModel();
+const HomeScreenComp = () => {
+  const theme = useTheme();
+  const styles = useStyles(theme);
 
-  if (vm.isLoading) {
+  const handleUICallbackFn = useCallback(
+    (action: IHomeScreenUICallback) => handleUICallback(action),
+    [],
+  );
+
+  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+
+  const renderPetSwitcher = useCallback(() => {
+    if (selectors.allPets.length === 0) return null;
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator color={colors.tint} />
-      </View>
+      <Surface style={[styles.switcher, { backgroundColor: theme.colors.surface }]} elevation={1}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.switcherRow}>
+          {selectors.allPets.map(p => (
+            <Chip
+              key={p.id}
+              selected={p.id === selectors.pet?.id}
+              onPress={() => handlers.switchPet(p.id)}
+              showSelectedCheck={false}
+              style={
+                p.id === selectors.pet?.id
+                  ? { backgroundColor: theme.colors.primaryContainer }
+                  : { backgroundColor: theme.colors.surfaceVariant }
+              }
+              textStyle={
+                p.id === selectors.pet?.id
+                  ? { color: theme.colors.onPrimaryContainer }
+                  : { color: theme.colors.onSurfaceVariant }
+              }
+            >
+              {p.name}
+            </Chip>
+          ))}
+        </ScrollView>
+      </Surface>
+    );
+  }, [selectors.allPets, selectors.pet, handlers, styles, theme]);
+
+  const renderPetHeader = useCallback(() => {
+    if (!selectors.pet) return null;
+    return (
+      <Surface style={[styles.headerCard, { backgroundColor: theme.colors.primaryContainer }]} elevation={0}>
+        <Text variant="headlineMedium" style={{ color: theme.colors.onPrimaryContainer, fontWeight: '700' }}>
+          {selectors.pet.name}
+        </Text>
+        <View style={styles.chipRow}>
+          <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
+            {selectors.pet.species}
+          </Chip>
+          {selectors.pet.breed ? (
+            <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
+              {selectors.pet.breed}
+            </Chip>
+          ) : null}
+          <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
+            {selectors.pet.weight} kg
+          </Chip>
+        </View>
+        <Button
+          mode="text"
+          compact
+          onPress={() => handlers.navigatePetProfile(selectors.pet!.id)}
+          textColor={theme.colors.onPrimaryContainer}
+          style={styles.profileLink}
+        >
+          Xem hồ sơ
+        </Button>
+      </Surface>
+    );
+  }, [selectors.pet, handlers, styles, theme]);
+
+  const renderTodayMeals = useCallback(() => (
+    <View style={styles.section}>
+      <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+        Bữa ăn hôm nay
+      </Text>
+      {selectors.todayMeals.length === 0 ? (
+        <Card mode="outlined">
+          <Card.Content>
+            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
+              Chưa ghi nhận bữa ăn nào hôm nay
+            </Text>
+          </Card.Content>
+          <Card.Actions>
+            <Button onPress={handlers.navigateFeeding}>Ghi bữa ăn</Button>
+          </Card.Actions>
+        </Card>
+      ) : (
+        selectors.todayMeals.map(meal => (
+          <Card key={meal.id} mode="outlined" style={styles.card}>
+            <Card.Content>
+              <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>{meal.food}</Text>
+              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                {meal.type} · {meal.amount} {meal.unit}
+              </Text>
+            </Card.Content>
+          </Card>
+        ))
+      )}
+    </View>
+  ), [selectors.todayMeals, handlers, styles, theme]);
+
+  const renderUpcomingReminders = useCallback(() => (
+    <View style={styles.section}>
+      <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+        Nhắc nhở sắp tới
+      </Text>
+      {selectors.upcomingReminders.length === 0 ? (
+        <Card mode="outlined">
+          <Card.Content>
+            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
+              Không có nhắc nhở nào
+            </Text>
+          </Card.Content>
+          <Card.Actions>
+            <Button onPress={handlers.navigateReminders}>Thêm nhắc nhở</Button>
+          </Card.Actions>
+        </Card>
+      ) : (
+        selectors.upcomingReminders.slice(0, 3).map(reminder => (
+          <Card key={reminder.id} mode="outlined" style={styles.card}>
+            <Card.Content>
+              <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>{reminder.title}</Text>
+              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+                {reminder.time} · {reminder.frequency}
+              </Text>
+            </Card.Content>
+          </Card>
+        ))
+      )}
+    </View>
+  ), [selectors.upcomingReminders, handlers, styles, theme]);
+
+  if (selectors.isLoading) {
+    return (
+      <BaseScreen edges={['top']} style={styles.center}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </BaseScreen>
     );
   }
 
-  if (!vm.pet) {
+  if (!selectors.pet) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <Text style={[styles.emptyTitle, { color: colors.text }]}>Chưa có thú cưng nào</Text>
-        <Text style={[styles.emptySubtitle, { color: colors.icon }]}>Thêm thú cưng đầu tiên của bạn</Text>
-        <TouchableOpacity
-          style={[styles.addButton, { backgroundColor: colors.tint }]}
-          onPress={() => router.push('/pet/create')}
-        >
-          <Text style={styles.addButtonText}>+ Thêm thú cưng</Text>
-        </TouchableOpacity>
-      </View>
+      <BaseScreen edges={['top']} style={styles.center}>
+        <Text variant="headlineSmall" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+          Chưa có thú cưng nào
+        </Text>
+        <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.lg }}>
+          Thêm thú cưng đầu tiên của bạn
+        </Text>
+        <Button mode="contained" onPress={handlers.navigateCreatePet} icon="plus">
+          Thêm thú cưng
+        </Button>
+      </BaseScreen>
     );
   }
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Pet header */}
-      <View style={[styles.header, { backgroundColor: colors.tint }]}>
-        <Text style={styles.petName}>{vm.pet.name}</Text>
-        <Text style={styles.petInfo}>{vm.pet.breed} • {vm.pet.weight} kg</Text>
-      </View>
-
-      {/* Today's meals */}
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Bữa ăn hôm nay</Text>
-        {vm.todayMeals.length === 0 ? (
-          <Text style={[styles.emptyText, { color: colors.icon }]}>Chưa ghi nhận bữa ăn nào hôm nay</Text>
-        ) : (
-          vm.todayMeals.map(meal => (
-            <View key={meal.id} style={[styles.card, { borderColor: colors.icon }]}>
-              <Text style={[styles.cardTitle, { color: colors.text }]}>{meal.food}</Text>
-              <Text style={[styles.cardSub, { color: colors.icon }]}>{meal.type} • {meal.amount} {meal.unit}</Text>
-            </View>
-          ))
-        )}
-      </View>
-
-      {/* Upcoming reminders */}
-      <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Nhắc nhở sắp tới</Text>
-        {vm.upcomingReminders.length === 0 ? (
-          <Text style={[styles.emptyText, { color: colors.icon }]}>Không có nhắc nhở nào</Text>
-        ) : (
-          vm.upcomingReminders.slice(0, 3).map(reminder => (
-            <View key={reminder.id} style={[styles.card, { borderColor: colors.icon }]}>
-              <Text style={[styles.cardTitle, { color: colors.text }]}>{reminder.title}</Text>
-              <Text style={[styles.cardSub, { color: colors.icon }]}>{reminder.time} • {reminder.frequency}</Text>
-            </View>
-          ))
-        )}
-      </View>
-    </ScrollView>
+    <BaseScreen edges={['top']}>
+      {renderPetSwitcher()}
+      <ScrollView contentContainerStyle={styles.content}>
+        {renderPetHeader()}
+        {renderTodayMeals()}
+        {renderUpcomingReminders()}
+      </ScrollView>
+      <FAB
+        icon="plus"
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+        color={theme.colors.onPrimary}
+        onPress={handlers.navigateCreatePet}
+      />
+    </BaseScreen>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
-  header: { padding: 24, paddingTop: 48 },
-  petName: { fontSize: 28, fontWeight: '700', color: '#fff' },
-  petInfo: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
-  section: { padding: 16, gap: 8 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', marginBottom: 4 },
-  card: { padding: 12, borderRadius: 8, borderWidth: 1, gap: 4 },
-  cardTitle: { fontSize: 15, fontWeight: '500' },
-  cardSub: { fontSize: 13 },
-  emptyText: { fontSize: 14, fontStyle: 'italic' },
-  emptyTitle: { fontSize: 20, fontWeight: '600' },
-  emptySubtitle: { fontSize: 14 },
-  addButton: { marginTop: 8, paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 },
-  addButtonText: { color: '#fff', fontWeight: '600', fontSize: 15 },
-});
+HomeScreenComp.displayName = 'HomeScreen';
+export const HomeScreen = React.memo(HomeScreenComp);
