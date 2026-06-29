@@ -1,25 +1,18 @@
 import React, { useCallback, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import {
-  Appbar, Button, Chip, SegmentedButtons, Surface, Text, TextInput, useTheme,
+  Appbar, Button, Surface, TextInput, useTheme,
 } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { DatePickerField } from '@/components/DatePickerField';
 import { PetGender, PetSpecies } from '@/models/types/Pet';
 import { Spacing } from '@/constants/theme';
+import { GenderSelector } from '../components/GenderSelector';
+import { SpeciesSelector } from '../components/SpeciesSelector';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
 import type { ICreatePetScreenUICallback } from './types';
-
-const SPECIES: { value: PetSpecies; label: string }[] = [
-  { value: 'dog', label: 'Chó' },
-  { value: 'cat', label: 'Mèo' },
-  { value: 'bird', label: 'Chim' },
-  { value: 'hamster', label: 'Hamster' },
-  { value: 'rabbit', label: 'Thỏ' },
-  { value: 'other', label: 'Khác' },
-];
 
 const CreatePetScreenComp = () => {
   const theme = useTheme();
@@ -53,42 +46,6 @@ const CreatePetScreenComp = () => {
     });
   }, [name, species, breed, gender, weight, birthday, notes, handlers]);
 
-  const renderSpeciesSelector = useCallback(() => (
-    <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.sm }}>
-        Loài
-      </Text>
-      <View style={styles.chipRow}>
-        {SPECIES.map(s => (
-          <Chip
-            key={s.value}
-            selected={species === s.value}
-            onPress={() => setSpecies(s.value)}
-            showSelectedCheck={false}
-            style={species === s.value ? { backgroundColor: theme.colors.primaryContainer } : undefined}
-          >
-            {s.label}
-          </Chip>
-        ))}
-      </View>
-    </View>
-  ), [species, styles, theme]);
-
-  const renderGenderSelector = useCallback(() => (
-    <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.sm }}>
-        Giới tính
-      </Text>
-      <SegmentedButtons
-        value={gender}
-        onValueChange={val => setGender(val as PetGender)}
-        buttons={[
-          { value: 'male', label: 'Đực' },
-          { value: 'female', label: 'Cái' },
-        ]}
-      />
-    </View>
-  ), [gender, styles, theme]);
 
   const renderSubmitButton = useCallback(() => (
     <Surface style={[styles.submitArea, { backgroundColor: theme.colors.background }]} elevation={0}>
@@ -121,7 +78,7 @@ const CreatePetScreenComp = () => {
           style={styles.input}
         />
 
-        {renderSpeciesSelector()}
+        <SpeciesSelector value={species} onChange={setSpecies} />
 
         <TextInput
           label="Giống (VD: Corgi, Maine Coon...)"
@@ -131,7 +88,7 @@ const CreatePetScreenComp = () => {
           style={styles.input}
         />
 
-        {renderGenderSelector()}
+        <GenderSelector value={gender} onChange={setGender} />
 
         <TextInput
           label="Cân nặng (kg)"

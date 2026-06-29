@@ -3,9 +3,9 @@ import { ScrollView, View } from 'react-native';
 import {
   ActivityIndicator, Appbar, Button, Card, Chip, Divider, List, Text, useTheme,
 } from 'react-native-paper';
-import { format } from 'date-fns';
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
+import { WeightChart } from './components/WeightChart';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
@@ -122,55 +122,6 @@ const PetProfileScreenComp = ({ petId }: Props) => {
     );
   }, [selectors.pet]);
 
-  const renderWeightChart = useCallback(() => {
-    const history = selectors.weightHistory.slice(-8);
-    const maxW = history.length > 0 ? Math.max(...history.map(e => e.weight)) : 1;
-    return (
-      <Card mode="outlined">
-        <Card.Content style={styles.chartCard}>
-          <View style={styles.chartHeader}>
-            <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>Lịch sử cân nặng</Text>
-            {selectors.pet && (
-              <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                Hiện tại: {selectors.pet.weight} kg
-              </Text>
-            )}
-          </View>
-          {history.length === 0 ? (
-            <View style={styles.chartEmpty}>
-              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-                Chưa có dữ liệu — thêm từ tab Sức khỏe
-              </Text>
-            </View>
-          ) : (
-            <>
-              <View style={styles.chartArea}>
-                {history.map(entry => (
-                  <View key={entry.id} style={{ flex: 1, alignItems: 'center' }}>
-                    <View
-                      style={[
-                        styles.bar,
-                        {
-                          height: Math.max(8, (entry.weight / maxW) * 80),
-                          backgroundColor: theme.colors.primary,
-                        },
-                      ]}
-                    />
-                    <Text style={[styles.barLabel, { color: theme.colors.onSurfaceVariant }]}>
-                      {entry.weight}
-                    </Text>
-                    <Text style={[styles.barLabel, { color: theme.colors.onSurfaceVariant }]}>
-                      {format(new Date(entry.date), 'dd/MM')}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            </>
-          )}
-        </Card.Content>
-      </Card>
-    );
-  }, [selectors.weightHistory, selectors.pet, styles, theme]);
 
   const renderDeleteButton = useCallback(() => (
     <Button
@@ -212,7 +163,12 @@ const PetProfileScreenComp = ({ petId }: Props) => {
       <ScrollView contentContainerStyle={styles.content}>
         {renderHeroCard()}
         {renderDetails()}
-        {renderWeightChart()}
+        {selectors.pet && (
+          <WeightChart
+            weightHistory={selectors.weightHistory}
+            currentWeight={selectors.pet.weight}
+          />
+        )}
         {renderDeleteButton()}
       </ScrollView>
     </BaseScreen>
