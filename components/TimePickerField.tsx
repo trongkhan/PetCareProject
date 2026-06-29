@@ -94,6 +94,6 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     paddingBottom: Spacing.xxl,
   },
-  picker: { width: '100%' },
+  picker: { width: '100%', height: 216 },
   confirmBtn: { marginTop: Spacing.md },
 });

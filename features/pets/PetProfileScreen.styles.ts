@@ -19,7 +19,7 @@ export const useStyles = createStyles((_theme) => ({
   chartCard: { padding: Spacing.md, gap: Spacing.sm },
   chartHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   chartArea: { height: 100, flexDirection: 'row', alignItems: 'flex-end', gap: 6, paddingTop: Spacing.sm },
-  bar: { flex: 1, borderRadius: 4, minHeight: 4 },
+  bar: { alignSelf: 'stretch', borderRadius: 4, minHeight: 4 },
   barLabel: { fontSize: 10, textAlign: 'center', marginTop: 2 },
   chartEmpty: { height: 80, justifyContent: 'center', alignItems: 'center' },
 }));
