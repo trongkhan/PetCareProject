@@ -34,6 +34,9 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
   const [nextDue, setNextDue] = useState('');
   const [notes, setNotes] = useState('');
   const [cost, setCost] = useState('');
+  const [weightKg, setWeightKg] = useState('');
+
+  const isWeightType = type === 'weight';
 
   const reset = useCallback(() => {
     setType('vaccination');
@@ -42,21 +45,27 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
     setNextDue('');
     setNotes('');
     setCost('');
+    setWeightKg('');
   }, []);
 
   const handleSubmit = useCallback(() => {
-    if (!title.trim() || !date) return;
-    onSubmit({
-      type,
-      title: title.trim(),
-      date,
-      nextDue: nextDue || undefined,
-      notes: notes.trim() || undefined,
-      cost: cost.trim() ? parseFloat(cost) : undefined,
-    });
+    if (isWeightType) {
+      if (!weightKg.trim() || !date) return;
+      onSubmit({ type: 'weight', title: 'Cân nặng', date, notes: weightKg.trim() });
+    } else {
+      if (!title.trim() || !date) return;
+      onSubmit({
+        type,
+        title: title.trim(),
+        date,
+        nextDue: nextDue || undefined,
+        notes: notes.trim() || undefined,
+        cost: cost.trim() ? parseFloat(cost) : undefined,
+      });
+    }
     reset();
     onDismiss();
-  }, [title, date, type, nextDue, notes, cost, onSubmit, reset, onDismiss]);
+  }, [isWeightType, weightKg, title, date, type, nextDue, notes, cost, onSubmit, reset, onDismiss]);
 
   const handleDismiss = useCallback(() => { reset(); onDismiss(); }, [reset, onDismiss]);
 
@@ -76,29 +85,42 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
     </View>
   ), [type]);
 
-  const renderMainFields = useCallback(() => (
-    <>
-      <TextInput
-        label="Tiêu đề *"
-        value={title}
-        onChangeText={setTitle}
-        mode="outlined"
-        placeholder="VD: Vắc-xin dại, Khám định kỳ..."
-      />
-      <DatePickerField
-        label="Ngày thực hiện *"
-        value={date}
-        onChange={setDate}
-      />
-      {NEEDS_NEXT_DUE.includes(type) && (
-        <DatePickerField
-          label="Ngày tái khám / nhắc tiếp theo"
-          value={nextDue}
-          onChange={setNextDue}
+  const renderMainFields = useCallback(() => {
+    if (isWeightType) {
+      return (
+        <>
+          <TextInput
+            label="Cân nặng (kg) *"
+            value={weightKg}
+            onChangeText={setWeightKg}
+            mode="outlined"
+            keyboardType="decimal-pad"
+            right={<TextInput.Affix text="kg" />}
+          />
+          <DatePickerField label="Ngày cân *" value={date} onChange={setDate} />
+        </>
+      );
+    }
+    return (
+      <>
+        <TextInput
+          label="Tiêu đề *"
+          value={title}
+          onChangeText={setTitle}
+          mode="outlined"
+          placeholder="VD: Vắc-xin dại, Khám định kỳ..."
         />
-      )}
-    </>
-  ), [title, date, nextDue, type]);
+        <DatePickerField label="Ngày thực hiện *" value={date} onChange={setDate} />
+        {NEEDS_NEXT_DUE.includes(type) && (
+          <DatePickerField
+            label="Ngày tái khám / nhắc tiếp theo"
+            value={nextDue}
+            onChange={setNextDue}
+          />
+        )}
+      </>
+    );
+  }, [isWeightType, weightKg, title, date, nextDue, type]);
 
   const renderExtraFields = useCallback(() => (
     <>
@@ -139,7 +161,7 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
           <Button
             mode="contained"
             onPress={handleSubmit}
-            disabled={!title.trim() || !date}
+            disabled={isWeightType ? !weightKg.trim() || !date : !title.trim() || !date}
           >
             Lưu
           </Button>
