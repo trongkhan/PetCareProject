@@ -1,53 +1,67 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
+import { MD3LightTheme, MD3DarkTheme } from 'react-native-paper';
 
-import { Platform } from 'react-native';
-
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
-
-export const Colors = {
+export const PetTheme = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    ...MD3LightTheme,
+    colors: {
+      ...MD3LightTheme.colors,
+      primary: '#4CAF50',
+      primaryContainer: '#C8E6C9',
+      secondary: '#FF8A65',
+      secondaryContainer: '#FFD0BC',
+      tertiary: '#42A5F5',
+      tertiaryContainer: '#BBDEFB',
+      surface: '#FFFFFF',
+      surfaceVariant: '#F5F5F5',
+      background: '#FAFAFA',
+      error: '#B00020',
+      onPrimary: '#FFFFFF',
+      onPrimaryContainer: '#1B5E20',
+      onSecondary: '#FFFFFF',
+      onSurface: '#1C1B1F',
+      onSurfaceVariant: '#49454F',
+      outline: '#79747E',
+      outlineVariant: '#CAC4D0',
+    },
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    ...MD3DarkTheme,
+    colors: {
+      ...MD3DarkTheme.colors,
+      primary: '#81C784',
+      primaryContainer: '#2E7D32',
+      secondary: '#FFAB91',
+      secondaryContainer: '#BF360C',
+      tertiary: '#90CAF9',
+      tertiaryContainer: '#1565C0',
+      surface: '#1C1B1F',
+      surfaceVariant: '#2C2C2C',
+      background: '#141218',
+      error: '#CF6679',
+      onPrimary: '#1B5E20',
+      onPrimaryContainer: '#C8E6C9',
+      onSecondary: '#5D1600',
+      onSurface: '#E6E1E5',
+      onSurfaceVariant: '#CAC4D0',
+      outline: '#938F99',
+      outlineVariant: '#49454F',
+    },
   },
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
-  },
-});
+export const Spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+  xxl: 48,
+};
+
+export const Radius = {
+  sm: 8,
+  md: 12,
+  lg: 16,
+  xl: 24,
+  full: 9999,
+};
