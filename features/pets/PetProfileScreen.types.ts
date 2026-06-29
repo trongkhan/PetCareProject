@@ -1,6 +1,7 @@
 export enum PetProfileScreenActionsEnum {
   NavigateBack = 'NavigateBack',
   NavigateHome = 'NavigateHome',
+  NavigateEdit = 'NavigateEdit',
   ConfirmDeletePet = 'ConfirmDeletePet',
 }
 

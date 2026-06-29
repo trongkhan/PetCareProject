@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Pet, CreatePetInput } from '@/models/types/Pet';
+import { WeightEntry } from '@/models/types/HealthRecord';
 import { PetRepository } from '@/models/repositories/PetRepository';
+import { HealthRepository } from '@/models/repositories/HealthRepository';
 import { useActivePetStore } from '@/store/activePetStore';
 import { IPetProfileScreenUICallback, PetProfileScreenActionsEnum } from './PetProfileScreen.types';
 
@@ -11,6 +13,7 @@ interface UseViewModelProps {
 
 interface Selectors {
   pet: Pet | null;
+  weightHistory: WeightEntry[];
   isLoading: boolean;
 }
 
@@ -18,17 +21,20 @@ interface Handlers {
   updatePet: (input: Partial<CreatePetInput>) => void;
   deletePet: () => void;
   navigateBack: () => void;
+  navigateEdit: () => void;
   confirmDeletePet: () => void;
 }
 
 export const useViewModel = ({ petId, handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
   const { setActivePetId } = useActivePetStore();
   const [pet, setPet] = useState<Pet | null>(null);
+  const [weightHistory, setWeightHistory] = useState<WeightEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
     setPet(PetRepository.getById(petId));
+    setWeightHistory(HealthRepository.getWeightHistory(petId));
     setIsLoading(false);
   }, [petId]);
 
@@ -46,6 +52,10 @@ export const useViewModel = ({ petId, handleUICallback }: UseViewModelProps): { 
     handleUICallback({ type: PetProfileScreenActionsEnum.NavigateBack });
   }, [handleUICallback]);
 
+  const navigateEdit = useCallback(() => {
+    handleUICallback({ type: PetProfileScreenActionsEnum.NavigateEdit, payload: { petId } });
+  }, [petId, handleUICallback]);
+
   const confirmDeletePet = useCallback(() => {
     if (!pet) return;
     handleUICallback({
@@ -58,7 +68,7 @@ export const useViewModel = ({ petId, handleUICallback }: UseViewModelProps): { 
   }, [pet, deletePet, handleUICallback]);
 
   return {
-    selectors: { pet, isLoading },
-    handlers: { updatePet, deletePet, navigateBack, confirmDeletePet },
+    selectors: { pet, weightHistory, isLoading },
+    handlers: { updatePet, deletePet, navigateBack, navigateEdit, confirmDeletePet },
   };
 };

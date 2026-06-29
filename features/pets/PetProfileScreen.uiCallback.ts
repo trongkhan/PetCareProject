@@ -10,6 +10,11 @@ export const handleUICallback = (action: IPetProfileScreenUICallback): void => {
     case PetProfileScreenActionsEnum.NavigateHome:
       router.replace('/');
       break;
+    case PetProfileScreenActionsEnum.NavigateEdit: {
+      const { petId } = action.payload as { petId: string };
+      router.push({ pathname: '/pet/edit', params: { id: petId } });
+      break;
+    }
     case PetProfileScreenActionsEnum.ConfirmDeletePet: {
       const { petName, onConfirm } = action.payload as { petName: string; onConfirm: () => void };
       Alert.alert('Xóa thú cưng', `Bạn có chắc muốn xóa ${petName}?`, [
