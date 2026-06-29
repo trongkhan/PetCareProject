@@ -2,17 +2,25 @@ import { useState, useEffect, useCallback } from 'react';
 import { Meal, CreateMealInput } from '@/models/types/Meal';
 import { MealRepository } from '@/models/repositories/MealRepository';
 import { useActivePetStore } from '@/store/activePetStore';
+import { IFeedingScreenUICallback } from './FeedingScreen.types';
 
-interface FeedingViewModel {
+interface UseViewModelProps {
+  handleUICallback: (action: IFeedingScreenUICallback) => void;
+}
+
+interface Selectors {
   meals: Meal[];
   todayMeals: Meal[];
   isLoading: boolean;
+}
+
+interface Handlers {
   logMeal: (input: Omit<CreateMealInput, 'petId'>) => void;
   deleteMeal: (id: string) => void;
   refresh: () => void;
 }
 
-export function useFeedingViewModel(): FeedingViewModel {
+export const useViewModel = ({ handleUICallback: _handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
   const { activePetId } = useActivePetStore();
   const [meals, setMeals] = useState<Meal[]>([]);
   const [todayMeals, setTodayMeals] = useState<Meal[]>([]);
@@ -44,5 +52,8 @@ export function useFeedingViewModel(): FeedingViewModel {
     setTodayMeals(prev => prev.filter(m => m.id !== id));
   }, []);
 
-  return { meals, todayMeals, isLoading, logMeal, deleteMeal, refresh: load };
-}
+  return {
+    selectors: { meals, todayMeals, isLoading },
+    handlers: { logMeal, deleteMeal, refresh: load },
+  };
+};

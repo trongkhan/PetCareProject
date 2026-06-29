@@ -1,2 +1,2 @@
 import { FeedingScreen } from '@/features/feeding/FeedingScreen';
-export default FeedingScreen;
+export default function FeedingRoute() { return <FeedingScreen />; }
