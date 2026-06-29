@@ -1,7 +1,7 @@
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
 import React, { useCallback } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Chip, FAB, Surface, Text, useTheme } from 'react-native-paper';
 import { useStyles } from './HomeScreen.styles';
 import type { IHomeScreenUICallback } from './HomeScreen.types';
@@ -22,30 +22,36 @@ const HomeScreenComp = () => {
   const renderPetSwitcher = useCallback(() => {
     if (selectors.allPets.length === 0) return null;
     return (
-      <Surface style={[styles.switcher, { backgroundColor: theme.colors.surface }]} elevation={1}>
+      <View style={[styles.switcherContainer, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.outlineVariant }]}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.switcherRow}>
-          {selectors.allPets.map(p => (
-            <Chip
-              key={p.id}
-              selected={p.id === selectors.pet?.id}
-              onPress={() => handlers.switchPet(p.id)}
-              showSelectedCheck={false}
-              style={
-                p.id === selectors.pet?.id
-                  ? { backgroundColor: theme.colors.primaryContainer }
-                  : { backgroundColor: theme.colors.surfaceVariant }
-              }
-              textStyle={
-                p.id === selectors.pet?.id
-                  ? { color: theme.colors.onPrimaryContainer }
-                  : { color: theme.colors.onSurfaceVariant }
-              }
-            >
-              {p.name}
-            </Chip>
-          ))}
+          {selectors.allPets.map(p => {
+            const isActive = p.id === selectors.pet?.id;
+            return (
+              <Pressable key={p.id} onPress={() => handlers.switchPet(p.id)} style={styles.switcherItem}>
+                <View style={[
+                  styles.avatarRing,
+                  { borderColor: isActive ? theme.colors.primary : 'transparent' },
+                ]}>
+                  <View style={[
+                    styles.avatarCircle,
+                    { backgroundColor: isActive ? theme.colors.primary : theme.colors.surfaceVariant },
+                  ]}>
+                    <Text style={[styles.avatarInitial, { color: isActive ? theme.colors.onPrimary : theme.colors.onSurfaceVariant }]}>
+                      {p.name.charAt(0).toUpperCase()}
+                    </Text>
+                  </View>
+                </View>
+                <Text
+                  numberOfLines={1}
+                  style={[styles.switcherName, { color: isActive ? theme.colors.primary : theme.colors.onSurfaceVariant, fontWeight: isActive ? '700' : '400' }]}
+                >
+                  {p.name}
+                </Text>
+              </Pressable>
+            );
+          })}
         </ScrollView>
-      </Surface>
+      </View>
     );
   }, [selectors.allPets, selectors.pet, handlers, styles, theme]);
 

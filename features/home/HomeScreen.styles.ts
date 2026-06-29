@@ -9,7 +9,13 @@ export const useStyles = createStyles((_theme) => ({
   profileLink: { alignSelf: 'flex-start', marginTop: Spacing.xs },
   section: { gap: Spacing.sm },
   card: { marginBottom: 0 },
-  switcher: { paddingVertical: Spacing.xs },
-  switcherRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.md, gap: Spacing.xs },
+  // pet switcher
+  switcherContainer: { paddingVertical: Spacing.sm, borderBottomWidth: 1 },
+  switcherRow: { paddingHorizontal: Spacing.md, gap: Spacing.lg, alignItems: 'center' },
+  switcherItem: { alignItems: 'center', gap: 4, minWidth: 56 },
+  avatarRing: { width: 60, height: 60, borderRadius: 30, borderWidth: 2.5, padding: 3, justifyContent: 'center', alignItems: 'center' },
+  avatarCircle: { width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center' },
+  avatarInitial: { fontSize: 22, fontWeight: '700' },
+  switcherName: { fontSize: 12, textAlign: 'center', maxWidth: 64 },
   fab: { position: 'absolute', right: Spacing.lg, bottom: Spacing.lg },
 }));
