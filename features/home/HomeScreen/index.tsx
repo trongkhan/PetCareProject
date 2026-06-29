@@ -1,13 +1,21 @@
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
 import { differenceInMonths, differenceInYears } from 'date-fns';
-import React, { useCallback } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
-import { ActivityIndicator, Button, Card, Chip, FAB, Surface, Text, useTheme } from 'react-native-paper';
+import React, { useCallback, useRef, useState } from 'react';
+import { Animated, LayoutAnimation, Platform, Pressable, ScrollView, UIManager, View } from 'react-native';
+import { ActivityIndicator, Button, Card, Chip, Divider, FAB, Icon, Surface, Text, useTheme } from 'react-native-paper';
 import { useStyles } from './styles';
 import type { IHomeScreenUICallback } from './types';
 import { handleUICallback } from './uiCallback';
 import { useViewModel } from './viewModel';
+
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
+const SPECIES_LABELS: Record<string, string> = {
+  dog: 'Chó', cat: 'Mèo', bird: 'Chim', hamster: 'Hamster', fish: 'Cá', rabbit: 'Thỏ', other: 'Khác',
+};
 
 function calcPetAge(birthday: string): string {
   const birth = new Date(birthday + 'T00:00:00');
@@ -28,6 +36,31 @@ const HomeScreenComp = () => {
   );
 
   const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+
+  const [expanded, setExpanded] = useState(false);
+  const chevronAnim = useRef(new Animated.Value(0)).current;
+  const activePetId = selectors.pet?.id;
+
+  const collapsePanel = useCallback(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded(false);
+    Animated.timing(chevronAnim, { toValue: 0, duration: 220, useNativeDriver: true }).start();
+  }, [chevronAnim]);
+
+  // collapse when switching pets
+  React.useEffect(() => { collapsePanel(); }, [activePetId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const toggleExpanded = useCallback(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setExpanded(prev => {
+      Animated.timing(chevronAnim, {
+        toValue: prev ? 0 : 1,
+        duration: 220,
+        useNativeDriver: true,
+      }).start();
+      return !prev;
+    });
+  }, [chevronAnim]);
 
   const renderPetSwitcher = useCallback(() => {
     if (selectors.allPets.length === 0) return null;
@@ -67,41 +100,100 @@ const HomeScreenComp = () => {
 
   const renderPetHeader = useCallback(() => {
     if (!selectors.pet) return null;
+    const pet = selectors.pet;
+    const chevronRotate = chevronAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '180deg'],
+    });
+
     return (
       <Surface style={[styles.headerCard, { backgroundColor: theme.colors.primaryContainer }]} elevation={0}>
-        <Text variant="headlineMedium" style={{ color: theme.colors.onPrimaryContainer, fontWeight: '700' }}>
-          {selectors.pet.name}
-        </Text>
+        <Pressable onPress={toggleExpanded} style={styles.headerTouchable}>
+          <Text variant="headlineMedium" style={[styles.headerName, { color: theme.colors.onPrimaryContainer }]}>
+            {pet.name}
+          </Text>
+          <Animated.View style={{ transform: [{ rotate: chevronRotate }] }}>
+            <Icon source="chevron-down" size={24} color={theme.colors.onPrimaryContainer} />
+          </Animated.View>
+        </Pressable>
+
         <View style={styles.chipRow}>
           <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
-            {selectors.pet.species}
+            {SPECIES_LABELS[pet.species] ?? pet.species}
           </Chip>
-          {selectors.pet.breed ? (
+          {pet.breed ? (
             <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
-              {selectors.pet.breed}
+              {pet.breed}
             </Chip>
           ) : null}
           <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
-            {selectors.pet.weight} kg
+            {pet.weight} kg
           </Chip>
-          {selectors.pet.birthday ? (
+          {pet.birthday ? (
             <Chip compact style={{ backgroundColor: theme.colors.secondary }} textStyle={{ color: theme.colors.onSecondary }}>
-              {calcPetAge(selectors.pet.birthday)}
+              {calcPetAge(pet.birthday)}
             </Chip>
           ) : null}
         </View>
-        <Button
-          mode="text"
-          compact
-          onPress={() => handlers.navigatePetProfile(selectors.pet!.id)}
-          textColor={theme.colors.onPrimaryContainer}
-          style={styles.profileLink}
-        >
-          Xem hồ sơ
-        </Button>
+
+        {expanded && (
+          <View style={styles.expandedPanel}>
+            <Divider style={{ backgroundColor: theme.colors.primary, opacity: 0.2, marginBottom: Spacing.sm }} />
+
+            <View style={styles.infoRow}>
+              <Icon source={pet.gender === 'male' ? 'gender-male' : 'gender-female'} size={16} color={theme.colors.onPrimaryContainer} />
+              <Text variant="bodySmall" style={{ color: theme.colors.onPrimaryContainer }}>
+                {pet.gender === 'male' ? 'Đực' : 'Cái'}
+              </Text>
+            </View>
+
+            {pet.birthday ? (
+              <View style={styles.infoRow}>
+                <Icon source="cake-variant" size={16} color={theme.colors.onPrimaryContainer} />
+                <Text variant="bodySmall" style={{ color: theme.colors.onPrimaryContainer }}>
+                  {new Date(pet.birthday + 'T00:00:00').toLocaleDateString('vi-VN')}
+                </Text>
+              </View>
+            ) : null}
+
+            {pet.notes ? (
+              <View style={styles.infoRow}>
+                <Icon source="note-text-outline" size={16} color={theme.colors.onPrimaryContainer} />
+                <Text variant="bodySmall" style={{ color: theme.colors.onPrimaryContainer, flex: 1 }}>
+                  {pet.notes}
+                </Text>
+              </View>
+            ) : null}
+
+            {pet.allergies.length > 0 ? (
+              <View style={styles.infoRow}>
+                <Icon source="alert-circle-outline" size={16} color={theme.colors.onPrimaryContainer} />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, flex: 1 }}>
+                  {pet.allergies.map((a, i) => (
+                    <Chip key={i} compact style={{ backgroundColor: 'rgba(0,0,0,0.1)' }} textStyle={{ fontSize: 11, color: theme.colors.onPrimaryContainer }}>
+                      {a}
+                    </Chip>
+                  ))}
+                </View>
+              </View>
+            ) : null}
+
+            <Button
+              mode="text"
+              compact
+              onPress={() => handlers.navigatePetProfile(pet.id)}
+              textColor={theme.colors.onPrimaryContainer}
+              style={styles.profileLink}
+              icon="arrow-right"
+              contentStyle={{ flexDirection: 'row-reverse' }}
+            >
+              Xem hồ sơ đầy đủ
+            </Button>
+          </View>
+        )}
       </Surface>
     );
-  }, [selectors.pet, handlers, styles, theme]);
+  }, [selectors.pet, handlers, styles, theme, expanded, chevronAnim, toggleExpanded]);
 
   const renderVaccinationWarning = useCallback(() => {
     if (selectors.upcomingVaccinations.length === 0) return null;
