@@ -91,9 +91,15 @@ const HealthScreenComp = () => {
           <Card key={record.id} mode="outlined" style={styles.card}>
             <Card.Content style={{ gap: Spacing.xs }}>
               <View style={styles.recordHeader}>
-                <Text variant="titleSmall" style={{ color: theme.colors.onSurface, flex: 1 }}>
-                  {record.title}
-                </Text>
+                {record.type === 'weight' ? (
+                  <Text variant="titleSmall" style={{ color: theme.colors.primary, flex: 1 }}>
+                    {record.notes} kg
+                  </Text>
+                ) : (
+                  <Text variant="titleSmall" style={{ color: theme.colors.onSurface, flex: 1 }}>
+                    {record.title}
+                  </Text>
+                )}
                 <Chip compact textStyle={{ fontSize: 11 }}>
                   {TYPE_LABELS[record.type] ?? record.type}
                 </Chip>
@@ -102,7 +108,7 @@ const HealthScreenComp = () => {
                 {new Date(record.date).toLocaleDateString('vi-VN')}
                 {record.cost ? ` · ${record.cost.toLocaleString('vi-VN')}đ` : ''}
               </Text>
-              {record.notes ? (
+              {record.type !== 'weight' && record.notes ? (
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
                   {record.notes}
                 </Text>
