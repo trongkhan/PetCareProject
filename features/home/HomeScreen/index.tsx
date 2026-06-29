@@ -1,5 +1,6 @@
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
+import { differenceInMonths, differenceInYears } from 'date-fns';
 import React, { useCallback } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Chip, FAB, Surface, Text, useTheme } from 'react-native-paper';
@@ -7,6 +8,15 @@ import { useStyles } from './styles';
 import type { IHomeScreenUICallback } from './types';
 import { handleUICallback } from './uiCallback';
 import { useViewModel } from './viewModel';
+
+function calcPetAge(birthday: string): string {
+  const birth = new Date(birthday + 'T00:00:00');
+  const now = new Date();
+  const years = differenceInYears(now, birth);
+  if (years >= 1) return `${years} tuổi`;
+  const months = differenceInMonths(now, birth);
+  return months <= 0 ? 'Dưới 1 tháng' : `${months} tháng tuổi`;
+}
 
 const HomeScreenComp = () => {
   const theme = useTheme();
@@ -74,6 +84,11 @@ const HomeScreenComp = () => {
           <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
             {selectors.pet.weight} kg
           </Chip>
+          {selectors.pet.birthday ? (
+            <Chip compact style={{ backgroundColor: theme.colors.secondary }} textStyle={{ color: theme.colors.onSecondary }}>
+              {calcPetAge(selectors.pet.birthday)}
+            </Chip>
+          ) : null}
         </View>
         <Button
           mode="text"
@@ -87,6 +102,27 @@ const HomeScreenComp = () => {
       </Surface>
     );
   }, [selectors.pet, handlers, styles, theme]);
+
+  const renderVaccinationWarning = useCallback(() => {
+    if (selectors.upcomingVaccinations.length === 0) return null;
+    return (
+      <Card mode="contained" style={{ backgroundColor: '#FFF8E1', marginBottom: Spacing.sm }}>
+        <Card.Content style={{ flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm }}>
+          <Text style={{ fontSize: 20 }}>💉</Text>
+          <View style={{ flex: 1 }}>
+            <Text variant="titleSmall" style={{ color: '#E65100', fontWeight: '700' }}>
+              Sắp đến lịch tiêm phòng
+            </Text>
+            {selectors.upcomingVaccinations.map(v => (
+              <Text key={v.id} variant="bodySmall" style={{ color: '#BF360C', marginTop: 2 }}>
+                {v.title} — {new Date(v.nextDue!).toLocaleDateString('vi-VN')}
+              </Text>
+            ))}
+          </View>
+        </Card.Content>
+      </Card>
+    );
+  }, [selectors.upcomingVaccinations]);
 
   const renderTodayMeals = useCallback(() => (
     <View style={styles.section}>
@@ -179,6 +215,7 @@ const HomeScreenComp = () => {
       {renderPetSwitcher()}
       <ScrollView contentContainerStyle={styles.content}>
         {renderPetHeader()}
+        {renderVaccinationWarning()}
         {renderTodayMeals()}
         {renderUpcomingReminders()}
       </ScrollView>

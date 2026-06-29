@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import { Pet } from '@/models/types/Pet';
 import { Meal } from '@/models/types/Meal';
+import { HealthRecord } from '@/models/types/HealthRecord';
 import { Reminder } from '@/models/types/Reminder';
 import { PetRepository } from '@/models/repositories/PetRepository';
 import { MealRepository } from '@/models/repositories/MealRepository';
 import { ReminderRepository } from '@/models/repositories/ReminderRepository';
+import { HealthRepository } from '@/models/repositories/HealthRepository';
 import { useActivePetStore } from '@/store/activePetStore';
 import { IHomeScreenUICallback, HomeScreenActionsEnum } from './types';
 
@@ -17,6 +20,7 @@ interface Selectors {
   allPets: Pet[];
   todayMeals: Meal[];
   upcomingReminders: Reminder[];
+  upcomingVaccinations: HealthRecord[];
   isLoading: boolean;
 }
 
@@ -35,6 +39,7 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
   const [allPets, setAllPets] = useState<Pet[]>([]);
   const [todayMeals, setTodayMeals] = useState<Meal[]>([]);
   const [upcomingReminders, setUpcomingReminders] = useState<Reminder[]>([]);
+  const [upcomingVaccinations, setUpcomingVaccinations] = useState<HealthRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const load = useCallback(() => {
@@ -51,19 +56,29 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
         setPet(currentPet);
         setTodayMeals(MealRepository.getTodayByPetId(currentPetId));
         setUpcomingReminders(ReminderRepository.getEnabled(currentPetId));
+        const now = new Date();
+        const in30Days = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const vaccinations = HealthRepository.getByType(currentPetId, 'vaccination');
+        setUpcomingVaccinations(
+          vaccinations.filter(v => {
+            if (!v.nextDue) return false;
+            const due = new Date(v.nextDue);
+            return due >= now && due <= in30Days;
+          })
+        );
       } else {
         setPet(null);
         setTodayMeals([]);
         setUpcomingReminders([]);
+        setUpcomingVaccinations([]);
       }
     } finally {
       setIsLoading(false);
     }
   }, [activePetId, setActivePetId]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const switchPet = useCallback((petId: string) => {
     setActivePetId(petId);
@@ -86,7 +101,7 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
   }, [handleUICallback]);
 
   return {
-    selectors: { pet, allPets, todayMeals, upcomingReminders, isLoading },
+    selectors: { pet, allPets, todayMeals, upcomingReminders, upcomingVaccinations, isLoading },
     handlers: { switchPet, refresh: load, navigateCreatePet, navigatePetProfile, navigateFeeding, navigateReminders },
   };
 };
