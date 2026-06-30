@@ -90,14 +90,14 @@ const RemindersScreenComp = () => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={['top']} style={styles.center}>
+      <BaseScreen edges={['bottom']} style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen edges={['top']}>
+    <BaseScreen edges={['bottom']}>
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.BackAction onPress={() => router.back()} />
         <Appbar.Content title="Nhắc nhở" />
