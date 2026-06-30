@@ -60,9 +60,14 @@ const RemindersScreenComp = () => {
           >
             <Card.Content style={styles.cardContent}>
               <View style={styles.cardText}>
-                <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>
-                  {reminder.title}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>
+                    {reminder.title}
+                  </Text>
+                  {reminder.enabled && reminder.notificationId && (
+                    <Text style={{ fontSize: 12 }}>🔔</Text>
+                  )}
+                </View>
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
                   {reminder.time} · {FREQ_LABELS[reminder.frequency] ?? reminder.frequency}
                 </Text>

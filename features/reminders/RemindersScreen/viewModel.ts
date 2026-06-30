@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { Reminder, CreateReminderInput } from '@/models/types/Reminder';
+import { PetRepository } from '@/models/repositories/PetRepository';
 import { ReminderRepository } from '@/models/repositories/ReminderRepository';
 import { NotificationService } from '@/services/NotificationService';
 import { useActivePetStore } from '@/store/activePetStore';
@@ -40,22 +41,27 @@ export const useViewModel = ({ handleUICallback: _handleUICallback }: UseViewMod
   useEffect(() => { load(); }, [load]);
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
+  const getPetName = useCallback((): string | undefined => {
+    if (!activePetId) return undefined;
+    return PetRepository.getById(activePetId)?.name;
+  }, [activePetId]);
+
   const addReminder = useCallback(async (input: Omit<CreateReminderInput, 'petId'>) => {
     if (!activePetId) return;
     const saved = ReminderRepository.create({ ...input, petId: activePetId });
-    const notificationId = await NotificationService.scheduleReminder(saved);
+    const notificationId = await NotificationService.scheduleReminder(saved, getPetName());
     if (notificationId) {
       ReminderRepository.setEnabled(saved.id, true, notificationId);
     }
     setReminders(prev => [{ ...saved, notificationId: notificationId ?? undefined }, ...prev]);
-  }, [activePetId]);
+  }, [activePetId, getPetName]);
 
   const toggleReminder = useCallback(async (id: string, enabled: boolean) => {
     const reminder = reminders.find(r => r.id === id);
     if (!reminder) return;
 
     if (enabled) {
-      const notificationId = await NotificationService.scheduleReminder(reminder);
+      const notificationId = await NotificationService.scheduleReminder(reminder, getPetName());
       ReminderRepository.setEnabled(id, true, notificationId ?? undefined);
       setReminders(prev => prev.map(r => r.id === id ? { ...r, enabled: true, notificationId: notificationId ?? undefined } : r));
     } else {
@@ -63,7 +69,7 @@ export const useViewModel = ({ handleUICallback: _handleUICallback }: UseViewMod
       ReminderRepository.setEnabled(id, false);
       setReminders(prev => prev.map(r => r.id === id ? { ...r, enabled: false } : r));
     }
-  }, [reminders]);
+  }, [reminders, getPetName]);
 
   const deleteReminder = useCallback(async (id: string) => {
     const reminder = reminders.find(r => r.id === id);
