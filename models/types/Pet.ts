@@ -4,7 +4,7 @@ export type PetGender = 'male' | 'female';
 export interface Pet {
   id: string;
   name: string;
-  photo?: string;
+  photo?: string | null;
   species: PetSpecies;
   breed: string;
   birthday?: string; // ISO date string
@@ -19,7 +19,7 @@ export interface Pet {
 
 export interface CreatePetInput {
   name: string;
-  photo?: string;
+  photo?: string | null;
   species: PetSpecies;
   breed: string;
   birthday?: string;

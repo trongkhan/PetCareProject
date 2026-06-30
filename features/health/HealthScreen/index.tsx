@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { ActivityIndicator, Appbar, Card, Chip, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
-import { AddHealthRecordDialog } from '../AddHealthRecordDialog';
+import { AddHealthRecordDialog } from './components/AddHealthRecordDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';

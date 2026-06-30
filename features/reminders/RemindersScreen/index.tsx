@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 import { ActivityIndicator, Appbar, Card, FAB, IconButton, Switch, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
-import { AddReminderDialog } from '../AddReminderDialog';
+import { AddReminderDialog } from './components/AddReminderDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';

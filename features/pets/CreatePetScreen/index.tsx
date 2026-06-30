@@ -5,6 +5,7 @@ import {
 } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { DatePickerField } from '@/components/DatePickerField';
+import { AvatarPicker } from '@/components/AvatarPicker';
 import { PetGender, PetSpecies } from '@/models/types/Pet';
 import { Spacing } from '@/constants/theme';
 import { GenderSelector } from '../components/GenderSelector';
@@ -18,6 +19,7 @@ const CreatePetScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
 
+  const [photo, setPhoto] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [species, setSpecies] = useState<PetSpecies>('dog');
   const [breed, setBreed] = useState('');
@@ -36,6 +38,7 @@ const CreatePetScreenComp = () => {
   const handleCreate = useCallback(() => {
     if (!name.trim()) return;
     handlers.createPet({
+      photo,
       name: name.trim(),
       species,
       breed: breed.trim(),
@@ -44,7 +47,7 @@ const CreatePetScreenComp = () => {
       birthday: birthday || undefined,
       notes: notes.trim() || undefined,
     });
-  }, [name, species, breed, gender, weight, birthday, notes, handlers]);
+  }, [photo, name, species, breed, gender, weight, birthday, notes, handlers]);
 
 
   const renderSubmitButton = useCallback(() => (
@@ -70,6 +73,8 @@ const CreatePetScreenComp = () => {
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.content}>
+        <AvatarPicker photo={photo} name={name} size={96} onChange={setPhoto} />
+
         <TextInput
           label="Tên thú cưng *"
           value={name}

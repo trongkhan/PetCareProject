@@ -6,7 +6,6 @@ import { TimePickerField } from '@/components/TimePickerField';
 import { DatePickerField } from '@/components/DatePickerField';
 import { CreateReminderInput, ReminderFrequency, ReminderType } from '@/models/types/Reminder';
 import { Spacing } from '@/constants/theme';
-import type { MD3Theme } from 'react-native-paper';
 
 interface Props {
   visible: boolean;
@@ -66,9 +65,9 @@ export function AddReminderDialog({ visible, onDismiss, onSubmit }: Props) {
 
   const handleDismiss = useCallback(() => { reset(); onDismiss(); }, [reset, onDismiss]);
 
-  const renderTypeSection = useCallback((t: MD3Theme) => (
+  const renderTypeSection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: t.colors.onSurfaceVariant }}>Loại nhắc nhở</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Loại nhắc nhở</Text>
       <View style={styles.chipRow}>
         {REMINDER_TYPES.map(r => (
           <SelectableChip
@@ -80,7 +79,7 @@ export function AddReminderDialog({ visible, onDismiss, onSubmit }: Props) {
         ))}
       </View>
     </View>
-  ), [type]);
+  ), [type, theme]);
 
   const renderTitleField = useCallback(() => (
     <TextInput
@@ -92,9 +91,9 @@ export function AddReminderDialog({ visible, onDismiss, onSubmit }: Props) {
     />
   ), [title]);
 
-  const renderFrequencySection = useCallback((t: MD3Theme) => (
+  const renderFrequencySection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: t.colors.onSurfaceVariant }}>Tần suất</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Tần suất</Text>
       <View style={styles.chipRow}>
         {FREQUENCIES.map(f => (
           <SelectableChip
@@ -106,21 +105,13 @@ export function AddReminderDialog({ visible, onDismiss, onSubmit }: Props) {
         ))}
       </View>
     </View>
-  ), [frequency]);
+  ), [frequency, theme]);
 
   const renderTimeAndDate = useCallback(() => (
     <>
-      <TimePickerField
-        label="Giờ nhắc *"
-        value={time}
-        onChange={setTime}
-      />
+      <TimePickerField label="Giờ nhắc *" value={time} onChange={setTime} />
       {frequency === 'once' && (
-        <DatePickerField
-          label="Ngày nhắc"
-          value={date}
-          onChange={setDate}
-        />
+        <DatePickerField label="Ngày nhắc" value={date} onChange={setDate} />
       )}
     </>
   ), [time, frequency, date]);
@@ -131,19 +122,15 @@ export function AddReminderDialog({ visible, onDismiss, onSubmit }: Props) {
         <Dialog.Title>Thêm nhắc nhở</Dialog.Title>
         <Dialog.ScrollArea style={styles.scrollArea}>
           <ScrollView contentContainerStyle={styles.content}>
-            {renderTypeSection(theme)}
+            {renderTypeSection()}
             {renderTitleField()}
-            {renderFrequencySection(theme)}
+            {renderFrequencySection()}
             {renderTimeAndDate()}
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
           <Button onPress={handleDismiss}>Hủy</Button>
-          <Button
-            mode="contained"
-            onPress={handleSubmit}
-            disabled={!title.trim() || !time}
-          >
+          <Button mode="contained" onPress={handleSubmit} disabled={!title.trim() || !time}>
             Lưu
           </Button>
         </Dialog.Actions>

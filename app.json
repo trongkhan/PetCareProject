@@ -42,7 +42,15 @@
           }
         }
       ],
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Ứng dụng cần quyền truy cập thư viện ảnh để chọn ảnh đại diện cho thú cưng",
+          "cameraPermission": "Ứng dụng cần quyền truy cập camera để chụp ảnh đại diện cho thú cưng",
+          "microphonePermission": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

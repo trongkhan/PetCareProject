@@ -3,7 +3,7 @@ import { ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 import { ActivityIndicator, Appbar, Card, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
-import { AddMealDialog } from '../AddMealDialog';
+import { AddMealDialog } from './components/AddMealDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';

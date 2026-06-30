@@ -4,7 +4,6 @@ import { Button, Dialog, Portal, SegmentedButtons, Text, TextInput, useTheme } f
 import { SelectableChip } from '@/components/SelectableChip';
 import { CreateMealInput, MealType, MealUnit } from '@/models/types/Meal';
 import { Spacing } from '@/constants/theme';
-import type { MD3Theme } from 'react-native-paper';
 
 interface Props {
   visible: boolean;
@@ -55,9 +54,9 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
 
   const handleDismiss = useCallback(() => { reset(); onDismiss(); }, [reset, onDismiss]);
 
-  const renderTypeSection = useCallback((t: MD3Theme) => (
+  const renderTypeSection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: t.colors.onSurfaceVariant }}>Loại bữa</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Loại bữa</Text>
       <View style={styles.chipRow}>
         {MEAL_TYPES.map(m => (
           <SelectableChip
@@ -69,7 +68,7 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
         ))}
       </View>
     </View>
-  ), [type]);
+  ), [type, theme]);
 
   const renderFoodFields = useCallback(() => (
     <>
@@ -90,9 +89,9 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
     </>
   ), [food, amount]);
 
-  const renderUnitSection = useCallback((t: MD3Theme) => (
+  const renderUnitSection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: t.colors.onSurfaceVariant }}>Đơn vị</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Đơn vị</Text>
       <SegmentedButtons
         value={unit}
         onValueChange={val => setUnit(val as MealUnit)}
@@ -103,7 +102,7 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
         ]}
       />
     </View>
-  ), [unit]);
+  ), [unit, theme]);
 
   const renderOptionalFields = useCallback(() => (
     <>
@@ -131,19 +130,15 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
         <Dialog.Title>Ghi bữa ăn</Dialog.Title>
         <Dialog.ScrollArea style={styles.scrollArea}>
           <ScrollView contentContainerStyle={styles.content}>
-            {renderTypeSection(theme)}
+            {renderTypeSection()}
             {renderFoodFields()}
-            {renderUnitSection(theme)}
+            {renderUnitSection()}
             {renderOptionalFields()}
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
           <Button onPress={handleDismiss}>Hủy</Button>
-          <Button
-            mode="contained"
-            onPress={handleSubmit}
-            disabled={!food.trim()}
-          >
+          <Button mode="contained" onPress={handleSubmit} disabled={!food.trim()}>
             Lưu
           </Button>
         </Dialog.Actions>

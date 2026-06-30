@@ -1,5 +1,6 @@
 import { Spacing } from '@/constants/theme';
 import { Pet } from '@/models/types/Pet';
+import { Image } from 'expo-image';
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
@@ -21,11 +22,15 @@ export function PetSwitcher({ pets, activePetId, onSwitch }: Props) {
           return (
             <Pressable key={p.id} onPress={() => onSwitch(p.id)} style={styles.item}>
               <View style={[styles.ring, { borderColor: isActive ? theme.colors.primary : 'transparent' }]}>
-                <View style={[styles.circle, { backgroundColor: isActive ? theme.colors.primary : theme.colors.surfaceVariant }]}>
-                  <Text style={[styles.initial, { color: isActive ? theme.colors.onPrimary : theme.colors.onSurfaceVariant }]}>
-                    {p.name.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
+                {p.photo ? (
+                  <Image source={{ uri: p.photo }} style={styles.photo} contentFit="cover" />
+                ) : (
+                  <View style={[styles.circle, { backgroundColor: isActive ? theme.colors.primary : theme.colors.surfaceVariant }]}>
+                    <Text style={[styles.initial, { color: isActive ? theme.colors.onPrimary : theme.colors.onSurfaceVariant }]}>
+                      {p.name.charAt(0).toUpperCase()}
+                    </Text>
+                  </View>
+                )}
               </View>
               <Text
                 numberOfLines={1}
@@ -47,6 +52,7 @@ const styles = StyleSheet.create({
   item: { alignItems: 'center', gap: 4, minWidth: 56 },
   ring: { width: 60, height: 60, borderRadius: 30, borderWidth: 2.5, padding: 3, justifyContent: 'center', alignItems: 'center' },
   circle: { width: 50, height: 50, borderRadius: 25, justifyContent: 'center', alignItems: 'center' },
+  photo: { width: 50, height: 50, borderRadius: 25 },
   initial: { fontSize: 22, fontWeight: '700' },
   name: { fontSize: 12, textAlign: 'center', maxWidth: 64 },
 });

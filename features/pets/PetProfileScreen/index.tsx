@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
+import { Image } from 'expo-image';
 import {
   ActivityIndicator, Appbar, Button, Card, Chip, Divider, List, Text, useTheme,
 } from 'react-native-paper';
@@ -35,11 +36,15 @@ const PetProfileScreenComp = ({ petId }: Props) => {
     return (
       <Card mode="elevated" style={styles.heroCard}>
         <Card.Content style={styles.heroContent}>
-          <View style={[styles.avatar, { backgroundColor: theme.colors.primaryContainer }]}>
-            <Text variant="displaySmall" style={{ color: theme.colors.primary }}>
-              {selectors.pet.name.charAt(0).toUpperCase()}
-            </Text>
-          </View>
+          {selectors.pet.photo ? (
+            <Image source={{ uri: selectors.pet.photo }} style={styles.avatar} contentFit="cover" />
+          ) : (
+            <View style={[styles.avatar, { backgroundColor: theme.colors.primaryContainer }]}>
+              <Text variant="displaySmall" style={{ color: theme.colors.primary }}>
+                {selectors.pet.name.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+          )}
           <Text variant="headlineMedium" style={{ color: theme.colors.onSurface, fontWeight: '700' }}>
             {selectors.pet.name}
           </Text>

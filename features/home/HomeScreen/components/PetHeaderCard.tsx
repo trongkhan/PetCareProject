@@ -1,6 +1,7 @@
 import { Spacing } from '@/constants/theme';
 import { differenceInMonths, differenceInYears } from 'date-fns';
 import { Pet } from '@/models/types/Pet';
+import { Image } from 'expo-image';
 import React, { useCallback, useRef, useState } from 'react';
 import { Animated, LayoutAnimation, Platform, Pressable, StyleSheet, UIManager, View } from 'react-native';
 import { Button, Chip, Divider, Icon, Surface, Text, useTheme } from 'react-native-paper';
@@ -52,9 +53,20 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
   return (
     <Surface style={[styles.card, { backgroundColor: theme.colors.primaryContainer }]} elevation={0}>
       <Pressable onPress={toggleExpanded} style={styles.touchable}>
-        <Text variant="headlineMedium" style={[styles.name, { color: theme.colors.onPrimaryContainer }]}>
-          {pet.name}
-        </Text>
+        <View style={styles.nameRow}>
+          {pet.photo ? (
+            <Image source={{ uri: pet.photo }} style={styles.avatar} contentFit="cover" />
+          ) : (
+            <View style={[styles.avatarFallback, { backgroundColor: theme.colors.primary }]}>
+              <Text style={{ fontSize: 20, fontWeight: '700', color: theme.colors.onPrimary }}>
+                {pet.name.charAt(0).toUpperCase()}
+              </Text>
+            </View>
+          )}
+          <Text variant="headlineMedium" style={[styles.name, { color: theme.colors.onPrimaryContainer }]}>
+            {pet.name}
+          </Text>
+        </View>
         <Animated.View style={{ transform: [{ rotate: chevronRotate }] }}>
           <Icon source="chevron-down" size={24} color={theme.colors.onPrimaryContainer} />
         </Animated.View>
@@ -141,6 +153,9 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
 const styles = StyleSheet.create({
   card: { borderRadius: 16, padding: Spacing.lg, gap: Spacing.sm },
   touchable: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flex: 1 },
+  avatar: { width: 44, height: 44, borderRadius: 22 },
+  avatarFallback: { width: 44, height: 44, borderRadius: 22, justifyContent: 'center', alignItems: 'center' },
   name: { fontWeight: '700', flex: 1 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.xs },
   expandedPanel: { gap: Spacing.xs },

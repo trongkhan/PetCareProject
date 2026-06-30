@@ -5,7 +5,6 @@ import { SelectableChip } from '@/components/SelectableChip';
 import { DatePickerField } from '@/components/DatePickerField';
 import { CreateHealthRecordInput, HealthRecordType } from '@/models/types/HealthRecord';
 import { Spacing } from '@/constants/theme';
-import type { MD3Theme } from 'react-native-paper';
 
 interface Props {
   visible: boolean;
@@ -69,9 +68,9 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
 
   const handleDismiss = useCallback(() => { reset(); onDismiss(); }, [reset, onDismiss]);
 
-  const renderTypeSection = useCallback((t: MD3Theme) => (
+  const renderTypeSection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: t.colors.onSurfaceVariant }}>Loại hồ sơ</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Loại hồ sơ</Text>
       <View style={styles.chipRow}>
         {RECORD_TYPES.map(r => (
           <SelectableChip
@@ -83,7 +82,7 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
         ))}
       </View>
     </View>
-  ), [type]);
+  ), [type, theme]);
 
   const renderMainFields = useCallback(() => {
     if (isWeightType) {
@@ -151,7 +150,7 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
         <Dialog.Title>Thêm hồ sơ sức khỏe</Dialog.Title>
         <Dialog.ScrollArea style={styles.scrollArea}>
           <ScrollView contentContainerStyle={styles.content}>
-            {renderTypeSection(theme)}
+            {renderTypeSection()}
             {renderMainFields()}
             {!isWeightType && renderExtraFields()}
           </ScrollView>

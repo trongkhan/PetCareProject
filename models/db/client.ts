@@ -64,4 +64,10 @@ db.execSync(`
   );
 `);
 
+// Migrations: add new columns that may not exist in older DB instances
+const existingCols = db.getAllSync<{ name: string }>('PRAGMA table_info(pets)').map(c => c.name);
+if (!existingCols.includes('photo')) {
+  db.runSync('ALTER TABLE pets ADD COLUMN photo TEXT');
+}
+
 export default db;
