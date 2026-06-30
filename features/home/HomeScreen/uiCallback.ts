@@ -10,10 +10,13 @@ export const handleUICallback = (action: IHomeScreenUICallback): void => {
       router.push(`/pet/${action.payload?.petId as string}`);
       break;
     case HomeScreenActionsEnum.NavigateFeeding:
-      router.push('/(tabs)/feeding');
+      router.push('/feeding');
+      break;
+    case HomeScreenActionsEnum.NavigateHealth:
+      router.push('/health');
       break;
     case HomeScreenActionsEnum.NavigateReminders:
-      router.push('/(tabs)/reminders');
+      router.push('/reminders');
       break;
     default:
       break;

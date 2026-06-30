@@ -2,6 +2,7 @@ export enum HomeScreenActionsEnum {
   NavigateCreatePet = 'NavigateCreatePet',
   NavigatePetProfile = 'NavigatePetProfile',
   NavigateFeeding = 'NavigateFeeding',
+  NavigateHealth = 'NavigateHealth',
   NavigateReminders = 'NavigateReminders',
 }
 

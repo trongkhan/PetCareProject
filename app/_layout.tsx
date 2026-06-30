@@ -7,10 +7,6 @@ import { PetTheme } from '@/constants/theme';
 import '@/models/db/client';
 import { NotificationService } from '@/services/NotificationService';
 
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
-
 export default function RootLayout() {
   useEffect(() => {
     NotificationService.requestPermissions();
@@ -19,11 +15,14 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <PaperProvider theme={PetTheme.light}>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="pet/create" options={{ presentation: 'modal', headerShown: false }} />
-          <Stack.Screen name="pet/[id]" options={{ headerShown: false }} />
-          <Stack.Screen name="pet/edit" options={{ presentation: 'modal', headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="feeding" />
+          <Stack.Screen name="health" />
+          <Stack.Screen name="reminders" />
+          <Stack.Screen name="pet/create" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="pet/[id]" />
+          <Stack.Screen name="pet/edit" options={{ presentation: 'modal' }} />
         </Stack>
         <StatusBar style="dark" />
       </PaperProvider>

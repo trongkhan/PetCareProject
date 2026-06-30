@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { ActivityIndicator, Card, FAB, IconButton, Switch, Text, useTheme } from 'react-native-paper';
+import { router } from 'expo-router';
+import { ActivityIndicator, Appbar, Card, FAB, IconButton, Switch, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { AddReminderDialog } from '../AddReminderDialog';
 import { useStyles } from './styles';
@@ -89,14 +90,18 @@ const RemindersScreenComp = () => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={[]} style={styles.center}>
+      <BaseScreen edges={['top']} style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen edges={[]}>
+    <BaseScreen edges={['top']}>
+      <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
+        <Appbar.BackAction onPress={() => router.back()} />
+        <Appbar.Content title="Nhắc nhở" />
+      </Appbar.Header>
       <AddReminderDialog
         visible={dialogVisible}
         onDismiss={() => setDialogVisible(false)}

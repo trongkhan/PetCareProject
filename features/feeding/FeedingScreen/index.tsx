@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { ActivityIndicator, Card, FAB, IconButton, Text, useTheme } from 'react-native-paper';
+import { router } from 'expo-router';
+import { ActivityIndicator, Appbar, Card, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { AddMealDialog } from '../AddMealDialog';
 import { useStyles } from './styles';
@@ -98,14 +99,18 @@ const FeedingScreenComp = () => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={[]} style={styles.center}>
+      <BaseScreen edges={['top']} style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen edges={[]}>
+    <BaseScreen edges={['top']}>
+      <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
+        <Appbar.BackAction onPress={() => router.back()} />
+        <Appbar.Content title="Bữa ăn" />
+      </Appbar.Header>
       <AddMealDialog
         visible={dialogVisible}
         onDismiss={() => setDialogVisible(false)}
