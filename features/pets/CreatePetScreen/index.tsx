@@ -1,22 +1,22 @@
+import { AvatarPicker } from '@/components/AvatarPicker';
+import { BaseScreen } from '@/components/BaseScreen';
+import { DatePickerField } from '@/components/DatePickerField';
+import { PetThemePicker } from '@/components/PetThemePicker';
+import { DEFAULT_PET_THEME_ID } from '@/constants/petThemes';
+import { Spacing } from '@/constants/theme';
+import { PetGender, PetSpecies } from '@/models/types/Pet';
+import { useActivePetStore } from '@/store/activePetStore';
 import React, { useCallback, useState } from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import {
   Appbar, Button, Surface, TextInput, useTheme,
 } from 'react-native-paper';
-import { BaseScreen } from '@/components/BaseScreen';
-import { DatePickerField } from '@/components/DatePickerField';
-import { AvatarPicker } from '@/components/AvatarPicker';
-import { PetThemePicker } from '@/components/PetThemePicker';
-import { DEFAULT_PET_THEME_ID } from '@/constants/petThemes';
-import { PetGender, PetSpecies } from '@/models/types/Pet';
-import { Spacing } from '@/constants/theme';
-import { useActivePetStore } from '@/store/activePetStore';
 import { GenderSelector } from '../components/GenderSelector';
 import { SpeciesSelector } from '../components/SpeciesSelector';
 import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
 import type { ICreatePetScreenUICallback } from './types';
+import { handleUICallback } from './uiCallback';
+import { useViewModel } from './viewModel';
 
 const CreatePetScreenComp = () => {
   const theme = useTheme();
@@ -58,7 +58,7 @@ const CreatePetScreenComp = () => {
       birthday: birthday || undefined,
       notes: notes.trim() || undefined,
     });
-  }, [photo, name, species, breed, gender, weight, birthday, notes, handlers]);
+  }, [name, handlers, photo, petTheme, species, breed, gender, weight, birthday, notes]);
 
   const renderSubmitButton = useCallback(() => (
     <Surface style={[styles.submitArea, { backgroundColor: theme.colors.background }]} elevation={0}>

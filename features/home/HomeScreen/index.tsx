@@ -1,8 +1,8 @@
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
 import React, { useCallback } from 'react';
-import { ScrollView, View } from 'react-native';
-import { ActivityIndicator, Button, FAB, Text, useTheme } from 'react-native-paper';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Button, FAB, Icon, Text, useTheme } from 'react-native-paper';
 import { PetHeaderCard } from './components/PetHeaderCard';
 import { PetSwitcher } from './components/PetSwitcher';
 import { SectionCard } from './components/SectionCard';
@@ -101,6 +101,31 @@ const HomeScreenComp = () => {
     );
   }, [selectors.upcomingReminders, handlers.navigateReminders, theme]);
 
+  const renderQuickStart = useCallback(() => {
+    const hasActivity = selectors.todayMeals.length > 0 || selectors.upcomingReminders.filter(r => r.enabled).length > 0;
+    if (hasActivity) return null;
+    const actions = [
+      { icon: 'silverware-fork-knife', label: 'Ghi bữa ăn', onPress: handlers.navigateFeeding },
+      { icon: 'heart-pulse', label: 'Ghi sức khỏe', onPress: handlers.navigateHealth },
+      { icon: 'bell-outline', label: 'Đặt nhắc nhở', onPress: handlers.navigateReminders },
+    ];
+    return (
+      <View style={quickStyles.container}>
+        <Text variant="labelLarge" style={[quickStyles.label, { color: theme.colors.onSurfaceVariant }]}>
+          BẮT ĐẦU NHANH
+        </Text>
+        <View style={quickStyles.row}>
+          {actions.map(a => (
+            <TouchableOpacity key={a.label} onPress={a.onPress} activeOpacity={0.7} style={[quickStyles.chip, { backgroundColor: theme.colors.primaryContainer }]}>
+              <Icon source={a.icon} size={16} color={theme.colors.onPrimaryContainer} />
+              <Text variant="labelMedium" style={{ color: theme.colors.onPrimaryContainer }}>{a.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    );
+  }, [selectors.todayMeals, selectors.upcomingReminders, handlers, theme]);
+
   if (selectors.isLoading) {
     return (
       <BaseScreen edges={['top']} style={styles.center}>
@@ -147,6 +172,7 @@ const HomeScreenComp = () => {
           {renderHealthCard()}
           {renderRemindersCard()}
         </View>
+        {renderQuickStart()}
       </ScrollView>
       <FAB
         icon="plus"
@@ -157,6 +183,13 @@ const HomeScreenComp = () => {
     </BaseScreen>
   );
 };
+
+const quickStyles = StyleSheet.create({
+  container: { gap: Spacing.sm, marginTop: Spacing.xs },
+  label: { letterSpacing: 0.8 },
+  row: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  chip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: 20 },
+});
 
 HomeScreenComp.displayName = 'HomeScreen';
 export const HomeScreen = React.memo(HomeScreenComp);
