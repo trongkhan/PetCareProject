@@ -1,0 +1,218 @@
+{
+  "common": {
+    "appName": "PetCare",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "add": "Add",
+    "edit": "Edit",
+    "settings": "Settings",
+    "language": "Language",
+    "theme": "Appearance",
+    "confirm": "Confirm"
+  },
+  "language": {
+    "vi": "Tiếng Việt",
+    "en": "English"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "appearance": "Appearance",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "notifications": "Notifications",
+    "notificationsDesc": "Receive pet care reminders"
+  },
+  "home": {
+    "activity": "ACTIVITY",
+    "quickStart": "QUICK START",
+    "noPetTitle": "No pets yet",
+    "noPetSubtitle": "Add your first pet",
+    "addPet": "Add pet",
+    "feeding": {
+      "title": "Today's meals",
+      "empty": "No meals logged yet",
+      "count": "{{count}} meals today"
+    },
+    "health": {
+      "title": "Health",
+      "currentWeight": "Current weight: {{weight}} kg",
+      "vaccinationSoon": "💉 Vaccination due soon",
+      "vaccinationWarningTitle": "Vaccination due soon",
+      "noVaccination": "No upcoming vaccinations"
+    },
+    "reminders": {
+      "title": "Reminders",
+      "empty": "No active reminders",
+      "count": "{{count}} active reminders"
+    },
+    "quick": {
+      "logMeal": "Log meal",
+      "logHealth": "Log health",
+      "setReminder": "Set reminder"
+    }
+  },
+  "mealType": {
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner",
+    "snack": "Snack",
+    "treat": "Treat"
+  },
+  "species": {
+    "dog": "Dog",
+    "cat": "Cat",
+    "bird": "Bird",
+    "hamster": "Hamster",
+    "fish": "Fish",
+    "rabbit": "Rabbit",
+    "other": "Other"
+  },
+  "gender": {
+    "label": "Gender",
+    "male": "Male",
+    "female": "Female"
+  },
+  "healthType": {
+    "vaccination": "Vaccination",
+    "vet_visit": "Vet visit",
+    "medication": "Medication",
+    "weight": "Weight",
+    "deworming": "Deworming",
+    "other": "Other"
+  },
+  "frequency": {
+    "once": "Once",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "quarterly": "Quarterly",
+    "yearly": "Yearly"
+  },
+  "feeding": {
+    "title": "Feeding",
+    "todayHeader": "Today ({{count}} meals)",
+    "empty": "No meals logged today",
+    "historyHeader": "History",
+    "dialog": {
+      "title": "Log a meal",
+      "mealType": "Meal type",
+      "foodLabel": "Food name *",
+      "foodPlaceholder": "e.g. Royal Canin kibble, Whiskas pate...",
+      "amountLabel": "Amount (optional)",
+      "unit": "Unit",
+      "brandLabel": "Brand",
+      "brandPlaceholder": "e.g. Royal Canin, Whiskas...",
+      "notesLabel": "Notes"
+    }
+  },
+  "health": {
+    "title": "Health",
+    "vaccinationsHeader": "Vaccinations ({{count}})",
+    "noVaccinations": "No vaccination history yet",
+    "nextDue": " → next: {{date}}",
+    "allRecordsHeader": "All records ({{count}})",
+    "dialog": {
+      "title": "Add health record",
+      "typeLabel": "Record type",
+      "weightLabel": "Weight (kg) *",
+      "weightDateLabel": "Weigh-in date *",
+      "titleLabel": "Title *",
+      "titlePlaceholder": "e.g. Rabies vaccine, Routine checkup...",
+      "dateLabel": "Date *",
+      "nextDueLabel": "Follow-up / next reminder date",
+      "costLabel": "Cost (VND)",
+      "costPlaceholder": "e.g. 150000",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Diagnosis, treatment plan..."
+    }
+  },
+  "reminders": {
+    "title": "Reminders",
+    "header": "Reminders ({{count}})",
+    "empty": "No reminders yet",
+    "dialog": {
+      "title": "Add reminder",
+      "typeLabel": "Reminder type",
+      "titleLabel": "Title *",
+      "titlePlaceholder": "e.g. Morning feeding...",
+      "frequencyLabel": "Frequency",
+      "timeLabel": "Reminder time *",
+      "dateLabel": "Reminder date"
+    },
+    "type": {
+      "feeding": "Feeding",
+      "medication": "Medication",
+      "vaccination": "Vaccination",
+      "grooming": "Grooming",
+      "vet": "Vet",
+      "deworming": "Deworming",
+      "flea_tick": "Flea & tick",
+      "custom": "Custom"
+    }
+  },
+  "pets": {
+    "createTitle": "Add pet",
+    "createSubmit": "Create pet",
+    "editTitle": "Edit pet",
+    "editSubmit": "Save changes",
+    "profileTitle": "Pet profile",
+    "nameRequired": "Pet name *",
+    "breed": "Breed",
+    "breedHint": "Breed (e.g. Corgi, Maine Coon...)",
+    "weight": "Weight",
+    "weightKg": "Weight (kg)",
+    "birthday": "Birthday",
+    "birthdayOptional": "Birthday (optional)",
+    "notes": "Notes",
+    "notesOptional": "Notes (optional)",
+    "notesPlaceholder": "Allergies, conditions, traits...",
+    "allergies": "Allergies / Conditions",
+    "notUpdated": "Not updated",
+    "deleteButton": "Delete pet",
+    "notFound": "Pet not found",
+    "goBack": "Go back",
+    "speciesLabel": "Species",
+    "deleteConfirmTitle": "Delete pet",
+    "deleteConfirmMessage": "Are you sure you want to delete {{name}}?",
+    "chart": {
+      "title": "Weight history",
+      "empty": "No data yet — add from the Health tab",
+      "current": "Current"
+    },
+    "ageYears": "{{count}} yr",
+    "ageMonths": "{{count}} mo",
+    "ageUnderMonth": "Under 1 month",
+    "viewFullProfile": "View full profile"
+  },
+  "datePicker": {
+    "placeholder": "Select date",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year"
+  },
+  "timePicker": {
+    "placeholder": "Select time",
+    "hour": "Hour",
+    "minute": "Minute"
+  },
+  "avatarPicker": {
+    "title": "Avatar",
+    "message": "Choose a photo source",
+    "library": "Choose from library",
+    "camera": "Take photo",
+    "remove": "Remove photo"
+  },
+  "themePicker": {
+    "label": "Color"
+  },
+  "petTheme": {
+    "teal": "Teal",
+    "lavender": "Lavender",
+    "rose": "Pink",
+    "ocean": "Ocean",
+    "sunset": "Sunset"
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "common": {
+    "appName": "PetCare",
+    "cancel": "Huỷ",
+    "save": "Lưu",
+    "delete": "Xoá",
+    "add": "Thêm",
+    "edit": "Sửa",
+    "settings": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "theme": "Giao diện",
+    "confirm": "Xác nhận"
+  },
+  "language": {
+    "vi": "Tiếng Việt",
+    "en": "English"
+  },
+  "settings": {
+    "title": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "appearance": "Giao diện",
+    "themeLight": "Sáng",
+    "themeDark": "Tối",
+    "themeSystem": "Hệ thống",
+    "notifications": "Thông báo",
+    "notificationsDesc": "Nhận nhắc nhở chăm sóc thú cưng"
+  },
+  "home": {
+    "activity": "HOẠT ĐỘNG",
+    "quickStart": "BẮT ĐẦU NHANH",
+    "noPetTitle": "Chưa có thú cưng nào",
+    "noPetSubtitle": "Thêm thú cưng đầu tiên của bạn",
+    "addPet": "Thêm thú cưng",
+    "feeding": {
+      "title": "Bữa ăn hôm nay",
+      "empty": "Chưa ghi nhận bữa ăn nào",
+      "count": "{{count}} bữa hôm nay"
+    },
+    "health": {
+      "title": "Sức khỏe",
+      "currentWeight": "Cân nặng hiện tại: {{weight}} kg",
+      "vaccinationSoon": "💉 Sắp đến lịch tiêm phòng",
+      "vaccinationWarningTitle": "Sắp đến lịch tiêm phòng",
+      "noVaccination": "Không có lịch tiêm phòng sắp tới"
+    },
+    "reminders": {
+      "title": "Nhắc nhở",
+      "empty": "Không có nhắc nhở nào đang bật",
+      "count": "{{count}} nhắc nhở đang bật"
+    },
+    "quick": {
+      "logMeal": "Ghi bữa ăn",
+      "logHealth": "Ghi sức khỏe",
+      "setReminder": "Đặt nhắc nhở"
+    }
+  },
+  "mealType": {
+    "breakfast": "Sáng",
+    "lunch": "Trưa",
+    "dinner": "Tối",
+    "snack": "Ăn vặt",
+    "treat": "Thưởng"
+  },
+  "species": {
+    "dog": "Chó",
+    "cat": "Mèo",
+    "bird": "Chim",
+    "hamster": "Hamster",
+    "fish": "Cá",
+    "rabbit": "Thỏ",
+    "other": "Khác"
+  },
+  "gender": {
+    "label": "Giới tính",
+    "male": "Đực",
+    "female": "Cái"
+  },
+  "healthType": {
+    "vaccination": "Tiêm phòng",
+    "vet_visit": "Khám thú y",
+    "medication": "Thuốc",
+    "weight": "Cân nặng",
+    "deworming": "Tẩy giun",
+    "other": "Khác"
+  },
+  "frequency": {
+    "once": "Một lần",
+    "daily": "Hàng ngày",
+    "weekly": "Hàng tuần",
+    "monthly": "Hàng tháng",
+    "quarterly": "Mỗi quý",
+    "yearly": "Hàng năm"
+  },
+  "feeding": {
+    "title": "Bữa ăn",
+    "todayHeader": "Hôm nay ({{count}} bữa)",
+    "empty": "Chưa có bữa ăn nào hôm nay",
+    "historyHeader": "Lịch sử",
+    "dialog": {
+      "title": "Ghi bữa ăn",
+      "mealType": "Loại bữa",
+      "foodLabel": "Tên thức ăn *",
+      "foodPlaceholder": "VD: Hạt Royal Canin, Pate Whiskas...",
+      "amountLabel": "Lượng (tùy chọn)",
+      "unit": "Đơn vị",
+      "brandLabel": "Thương hiệu",
+      "brandPlaceholder": "VD: Royal Canin, Whiskas...",
+      "notesLabel": "Ghi chú"
+    }
+  },
+  "health": {
+    "title": "Sức khỏe",
+    "vaccinationsHeader": "Tiêm phòng ({{count}})",
+    "noVaccinations": "Chưa có lịch sử tiêm phòng",
+    "nextDue": " → tiếp theo: {{date}}",
+    "allRecordsHeader": "Tất cả hồ sơ ({{count}})",
+    "dialog": {
+      "title": "Thêm hồ sơ sức khỏe",
+      "typeLabel": "Loại hồ sơ",
+      "weightLabel": "Cân nặng (kg) *",
+      "weightDateLabel": "Ngày cân *",
+      "titleLabel": "Tiêu đề *",
+      "titlePlaceholder": "VD: Vắc-xin dại, Khám định kỳ...",
+      "dateLabel": "Ngày thực hiện *",
+      "nextDueLabel": "Ngày tái khám / nhắc tiếp theo",
+      "costLabel": "Chi phí (VND)",
+      "costPlaceholder": "VD: 150000",
+      "notesLabel": "Ghi chú",
+      "notesPlaceholder": "Chẩn đoán, phác đồ điều trị..."
+    }
+  },
+  "reminders": {
+    "title": "Nhắc nhở",
+    "header": "Nhắc nhở ({{count}})",
+    "empty": "Chưa có nhắc nhở nào",
+    "dialog": {
+      "title": "Thêm nhắc nhở",
+      "typeLabel": "Loại nhắc nhở",
+      "titleLabel": "Tiêu đề *",
+      "titlePlaceholder": "VD: Cho ăn buổi sáng...",
+      "frequencyLabel": "Tần suất",
+      "timeLabel": "Giờ nhắc *",
+      "dateLabel": "Ngày nhắc"
+    },
+    "type": {
+      "feeding": "Ăn uống",
+      "medication": "Thuốc",
+      "vaccination": "Tiêm phòng",
+      "grooming": "Vệ sinh",
+      "vet": "Thú y",
+      "deworming": "Tẩy giun",
+      "flea_tick": "Bọ chét",
+      "custom": "Tùy chỉnh"
+    }
+  },
+  "pets": {
+    "createTitle": "Thêm thú cưng",
+    "createSubmit": "Tạo thú cưng",
+    "editTitle": "Chỉnh sửa thú cưng",
+    "editSubmit": "Lưu thay đổi",
+    "profileTitle": "Hồ sơ thú cưng",
+    "nameRequired": "Tên thú cưng *",
+    "breed": "Giống",
+    "breedHint": "Giống (VD: Corgi, Maine Coon...)",
+    "weight": "Cân nặng",
+    "weightKg": "Cân nặng (kg)",
+    "birthday": "Ngày sinh",
+    "birthdayOptional": "Ngày sinh (tùy chọn)",
+    "notes": "Ghi chú",
+    "notesOptional": "Ghi chú (tùy chọn)",
+    "notesPlaceholder": "Dị ứng, bệnh nền, đặc điểm...",
+    "allergies": "Dị ứng / Bệnh nền",
+    "notUpdated": "Chưa cập nhật",
+    "deleteButton": "Xóa thú cưng",
+    "notFound": "Không tìm thấy thú cưng",
+    "goBack": "Quay lại",
+    "speciesLabel": "Loài",
+    "deleteConfirmTitle": "Xóa thú cưng",
+    "deleteConfirmMessage": "Bạn có chắc muốn xóa {{name}}?",
+    "chart": {
+      "title": "Lịch sử cân nặng",
+      "empty": "Chưa có dữ liệu — thêm từ tab Sức khỏe",
+      "current": "Hiện tại"
+    },
+    "ageYears": "{{count}} tuổi",
+    "ageMonths": "{{count}} tháng tuổi",
+    "ageUnderMonth": "Dưới 1 tháng",
+    "viewFullProfile": "Xem hồ sơ đầy đủ"
+  },
+  "datePicker": {
+    "placeholder": "Chọn ngày",
+    "day": "Ngày",
+    "month": "Tháng",
+    "year": "Năm"
+  },
+  "timePicker": {
+    "placeholder": "Chọn giờ",
+    "hour": "Giờ",
+    "minute": "Phút"
+  },
+  "avatarPicker": {
+    "title": "Ảnh đại diện",
+    "message": "Chọn nguồn ảnh",
+    "library": "Chọn từ thư viện",
+    "camera": "Chụp ảnh",
+    "remove": "Xóa ảnh"
+  },
+  "themePicker": {
+    "label": "Màu sắc"
+  },
+  "petTheme": {
+    "teal": "Teal",
+    "lavender": "Lavender",
+    "rose": "Hồng",
+    "ocean": "Ocean",
+    "sunset": "Hoàng hôn"
+  }
+}
