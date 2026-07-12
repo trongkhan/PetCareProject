@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Dialog, Portal, SegmentedButtons, Text, TextInput, useTheme } from 'react-native-paper';
 import { SelectableChip } from '@/components/SelectableChip';
+import { useTranslation } from '@/hooks/useTranslation';
 import { CreateMealInput, MealType, MealUnit } from '@/models/types/Meal';
 import { Spacing } from '@/constants/theme';
 
@@ -11,16 +12,11 @@ interface Props {
   onSubmit: (input: Omit<CreateMealInput, 'petId'>) => void;
 }
 
-const MEAL_TYPES: { value: MealType; label: string }[] = [
-  { value: 'breakfast', label: 'Sáng' },
-  { value: 'lunch', label: 'Trưa' },
-  { value: 'dinner', label: 'Tối' },
-  { value: 'snack', label: 'Ăn vặt' },
-  { value: 'treat', label: 'Thưởng' },
-];
+const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner', 'snack', 'treat'];
 
 export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const [type, setType] = useState<MealType>('breakfast');
   const [food, setFood] = useState('');
@@ -56,42 +52,42 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
 
   const renderTypeSection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Loại bữa</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>{t('feeding.dialog.mealType')}</Text>
       <View style={styles.chipRow}>
         {MEAL_TYPES.map(m => (
           <SelectableChip
-            key={m.value}
-            label={m.label}
-            selected={type === m.value}
-            onPress={() => setType(m.value)}
+            key={m}
+            label={t(`mealType.${m}`)}
+            selected={type === m}
+            onPress={() => setType(m)}
           />
         ))}
       </View>
     </View>
-  ), [type, theme]);
+  ), [type, theme, t]);
 
   const renderFoodFields = useCallback(() => (
     <>
       <TextInput
-        label="Tên thức ăn *"
+        label={t('feeding.dialog.foodLabel')}
         value={food}
         onChangeText={setFood}
         mode="outlined"
-        placeholder="VD: Hạt Royal Canin, Pate Whiskas..."
+        placeholder={t('feeding.dialog.foodPlaceholder')}
       />
       <TextInput
-        label="Lượng (tùy chọn)"
+        label={t('feeding.dialog.amountLabel')}
         value={amount}
         onChangeText={setAmount}
         mode="outlined"
         keyboardType="decimal-pad"
       />
     </>
-  ), [food, amount]);
+  ), [food, amount, t]);
 
   const renderUnitSection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Đơn vị</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>{t('feeding.dialog.unit')}</Text>
       <SegmentedButtons
         value={unit}
         onValueChange={val => setUnit(val as MealUnit)}
@@ -102,19 +98,19 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
         ]}
       />
     </View>
-  ), [unit, theme]);
+  ), [unit, theme, t]);
 
   const renderOptionalFields = useCallback(() => (
     <>
       <TextInput
-        label="Thương hiệu"
+        label={t('feeding.dialog.brandLabel')}
         value={brand}
         onChangeText={setBrand}
         mode="outlined"
-        placeholder="VD: Royal Canin, Whiskas..."
+        placeholder={t('feeding.dialog.brandPlaceholder')}
       />
       <TextInput
-        label="Ghi chú"
+        label={t('feeding.dialog.notesLabel')}
         value={notes}
         onChangeText={setNotes}
         mode="outlined"
@@ -122,12 +118,12 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
         numberOfLines={2}
       />
     </>
-  ), [brand, notes]);
+  ), [brand, notes, t]);
 
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss} style={styles.dialog}>
-        <Dialog.Title>Ghi bữa ăn</Dialog.Title>
+        <Dialog.Title>{t('feeding.dialog.title')}</Dialog.Title>
         <Dialog.ScrollArea style={styles.scrollArea}>
           <ScrollView contentContainerStyle={styles.content}>
             {renderTypeSection()}
@@ -137,9 +133,9 @@ export function AddMealDialog({ visible, onDismiss, onSubmit }: Props) {
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
-          <Button onPress={handleDismiss}>Hủy</Button>
+          <Button onPress={handleDismiss}>{t('common.cancel')}</Button>
           <Button mode="contained" onPress={handleSubmit} disabled={!food.trim()}>
-            Lưu
+            {t('common.save')}
           </Button>
         </Dialog.Actions>
       </Dialog>

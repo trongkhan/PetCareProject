@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Button, Portal, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
+import { formatDate } from '@/utils/format';
 import { WheelPicker } from './WheelPicker';
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -24,6 +26,7 @@ function parseDate(value: string) {
 
 export function DatePickerField({ label, value, onChange }: Props) {
   const theme = useTheme();
+  const { t, language } = useTranslation();
   const [show, setShow] = useState(false);
   const init = parseDate(value);
   const [day, setDay] = useState(init.d);
@@ -45,9 +48,7 @@ export function DatePickerField({ label, value, onChange }: Props) {
     setShow(false);
   }, [day, month, year, onChange]);
 
-  const display = value
-    ? new Date(value + 'T00:00:00').toLocaleDateString('vi-VN')
-    : 'Chọn ngày';
+  const display = value ? formatDate(value, language) : t('datePicker.placeholder');
 
   return (
     <>
@@ -73,7 +74,7 @@ export function DatePickerField({ label, value, onChange }: Props) {
                 {label}
               </Text>
               <View style={styles.colLabels}>
-                {[{ label: 'Ngày', flex: 1 }, { label: 'Tháng', flex: 1 }, { label: 'Năm', flex: 2 }].map(c => (
+                {[{ label: t('datePicker.day'), flex: 1 }, { label: t('datePicker.month'), flex: 1 }, { label: t('datePicker.year'), flex: 2 }].map(c => (
                   <Text key={c.label} style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: c.flex }]}>{c.label}</Text>
                 ))}
               </View>
@@ -83,7 +84,7 @@ export function DatePickerField({ label, value, onChange }: Props) {
                 <WheelPicker flex={2} items={YEARS} selectedIndex={yearIdx} onChange={i => setYear(parseInt(YEARS[i]))} />
               </View>
               <Button mode="contained" onPress={handleConfirm} style={{ marginTop: Spacing.md }}>
-                Xác nhận
+                {t('common.confirm')}
               </Button>
             </Surface>
           </View>

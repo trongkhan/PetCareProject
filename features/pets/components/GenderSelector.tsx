@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { PetGender } from '@/models/types/Pet';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -11,17 +12,18 @@ interface Props {
 
 export function GenderSelector({ value, onChange }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.sm }}>
-        Giới tính
+        {t('gender.label')}
       </Text>
       <SegmentedButtons
         value={value}
         onValueChange={val => onChange(val as PetGender)}
         buttons={[
-          { value: 'male', label: 'Đực' },
-          { value: 'female', label: 'Cái' },
+          { value: 'male', label: t('gender.male') },
+          { value: 'female', label: t('gender.female') },
         ]}
       />
     </View>

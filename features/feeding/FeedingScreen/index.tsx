@@ -3,19 +3,18 @@ import { ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 import { ActivityIndicator, Appbar, Card, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { useTranslation } from '@/hooks/useTranslation';
+import { formatDate } from '@/utils/format';
 import { AddMealDialog } from './components/AddMealDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
 import type { IFeedingScreenUICallback } from './types';
 
-const MEAL_LABELS: Record<string, string> = {
-  breakfast: 'Sáng', lunch: 'Trưa', dinner: 'Tối', snack: 'Ăn vặt', treat: 'Thưởng',
-};
-
 const FeedingScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
+  const { t, language } = useTranslation();
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleUICallbackFn = useCallback(
@@ -28,10 +27,10 @@ const FeedingScreenComp = () => {
   const renderSectionHeader = useCallback(() => (
     <View style={styles.sectionHeader}>
       <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-        Hôm nay ({selectors.todayMeals.length} bữa)
+        {t('feeding.todayHeader', { count: selectors.todayMeals.length })}
       </Text>
     </View>
-  ), [selectors.todayMeals.length, styles, theme]);
+  ), [selectors.todayMeals.length, styles, theme, t]);
 
   const renderTodayMeals = useCallback(() => {
     if (selectors.todayMeals.length === 0) {
@@ -39,7 +38,7 @@ const FeedingScreenComp = () => {
         <Card mode="outlined">
           <Card.Content>
             <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-              Chưa có bữa ăn nào hôm nay
+              {t('feeding.empty')}
             </Text>
           </Card.Content>
         </Card>
@@ -53,7 +52,7 @@ const FeedingScreenComp = () => {
               <View style={styles.cardText}>
                 <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>{meal.food}</Text>
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                  {MEAL_LABELS[meal.type] ?? meal.type} · {meal.amount} {meal.unit}
+                  {t(`mealType.${meal.type}`)} · {meal.amount} {meal.unit}
                   {meal.brand ? ` · ${meal.brand}` : ''}
                 </Text>
                 {meal.notes ? (
@@ -73,7 +72,7 @@ const FeedingScreenComp = () => {
         ))}
       </>
     );
-  }, [selectors.todayMeals, handlers, styles, theme]);
+  }, [selectors.todayMeals, handlers, styles, theme, t]);
 
   const renderMealHistory = useCallback(() => {
     const historyMeals = selectors.meals.filter(m => !selectors.todayMeals.find(t => t.id === m.id));
@@ -81,35 +80,35 @@ const FeedingScreenComp = () => {
     return (
       <>
         <Text variant="titleMedium" style={[styles.historyTitle, { color: theme.colors.onSurface }]}>
-          Lịch sử
+          {t('feeding.historyHeader')}
         </Text>
         {historyMeals.slice(0, 20).map(meal => (
           <Card key={meal.id} mode="outlined" style={styles.card}>
             <Card.Content>
               <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>{meal.food}</Text>
               <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                {new Date(meal.timestamp).toLocaleDateString('vi-VN')} · {MEAL_LABELS[meal.type] ?? meal.type}
+                {formatDate(meal.timestamp, language)} · {t(`mealType.${meal.type}`)}
               </Text>
             </Card.Content>
           </Card>
         ))}
       </>
     );
-  }, [selectors.meals, selectors.todayMeals, styles, theme]);
+  }, [selectors.meals, selectors.todayMeals, styles, theme, t, language]);
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={['bottom']} style={styles.center}>
+      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']}>
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title="Bữa ăn" />
+        <Appbar.Content title={t('feeding.title')} />
       </Appbar.Header>
       <AddMealDialog
         visible={dialogVisible}

@@ -11,6 +11,7 @@ import { DEFAULT_PET_THEME_ID } from '@/constants/petThemes';
 import { PetGender, PetSpecies } from '@/models/types/Pet';
 import { Spacing } from '@/constants/theme';
 import { useActivePetStore } from '@/store/activePetStore';
+import { useTranslation } from '@/hooks/useTranslation';
 import { GenderSelector } from '../components/GenderSelector';
 import { SpeciesSelector } from '../components/SpeciesSelector';
 import { useStyles } from './styles';
@@ -25,6 +26,7 @@ interface Props {
 const EditPetScreenComp = ({ petId }: Props) => {
   const theme = useTheme();
   const styles = useStyles(theme);
+  const { t } = useTranslation();
   const { setActivePetTheme } = useActivePetStore();
 
   const [photo, setPhoto] = useState<string | null>(null);
@@ -88,24 +90,24 @@ const EditPetScreenComp = ({ petId }: Props) => {
         style={styles.submitButton}
         contentStyle={{ paddingVertical: Spacing.xs }}
       >
-        Lưu thay đổi
+        {t('pets.editSubmit')}
       </Button>
     </Surface>
-  ), [handleSave, name, selectors.isSaving, styles, theme]);
+  ), [handleSave, name, selectors.isSaving, styles, theme, t]);
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={['bottom']} style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <BaseScreen header={false} edges={['bottom']} style={{ justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']}>
       <Appbar.Header statusBarHeight={0} style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.BackAction onPress={handlers.navigateBack} />
-        <Appbar.Content title="Chỉnh sửa thú cưng" />
+        <Appbar.Content title={t('pets.editTitle')} />
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>
@@ -113,7 +115,7 @@ const EditPetScreenComp = ({ petId }: Props) => {
         <PetThemePicker value={petTheme} onChange={handleThemeChange} />
 
         <TextInput
-          label="Tên thú cưng *"
+          label={t('pets.nameRequired')}
           value={name}
           onChangeText={setName}
           mode="outlined"
@@ -123,7 +125,7 @@ const EditPetScreenComp = ({ petId }: Props) => {
         <SpeciesSelector value={species} onChange={setSpecies} />
 
         <TextInput
-          label="Giống"
+          label={t('pets.breed')}
           value={breed}
           onChangeText={setBreed}
           mode="outlined"
@@ -133,7 +135,7 @@ const EditPetScreenComp = ({ petId }: Props) => {
         <GenderSelector value={gender} onChange={setGender} />
 
         <TextInput
-          label="Cân nặng (kg)"
+          label={t('pets.weightKg')}
           value={weight}
           onChangeText={setWeight}
           mode="outlined"
@@ -143,20 +145,20 @@ const EditPetScreenComp = ({ petId }: Props) => {
         />
 
         <DatePickerField
-          label="Ngày sinh (tùy chọn)"
+          label={t('pets.birthdayOptional')}
           value={birthday}
           onChange={setBirthday}
         />
 
         <TextInput
-          label="Ghi chú (tùy chọn)"
+          label={t('pets.notesOptional')}
           value={notes}
           onChangeText={setNotes}
           mode="outlined"
           multiline
           numberOfLines={3}
           style={styles.input}
-          placeholder="Dị ứng, bệnh nền, đặc điểm..."
+          placeholder={t('pets.notesPlaceholder')}
         />
       </ScrollView>
 

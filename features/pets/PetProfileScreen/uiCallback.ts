@@ -1,5 +1,6 @@
 import { Alert } from 'react-native';
 import { router } from 'expo-router';
+import { translate } from '@/hooks/useTranslation';
 import { PetProfileScreenActionsEnum, IPetProfileScreenUICallback } from './types';
 
 export const handleUICallback = (action: IPetProfileScreenUICallback): void => {
@@ -17,10 +18,10 @@ export const handleUICallback = (action: IPetProfileScreenUICallback): void => {
     }
     case PetProfileScreenActionsEnum.ConfirmDeletePet: {
       const { petName, onConfirm } = action.payload as { petName: string; onConfirm: () => void };
-      Alert.alert('Xóa thú cưng', `Bạn có chắc muốn xóa ${petName}?`, [
-        { text: 'Hủy', style: 'cancel' },
+      Alert.alert(translate('pets.deleteConfirmTitle'), translate('pets.deleteConfirmMessage', { name: petName }), [
+        { text: translate('common.cancel'), style: 'cancel' },
         {
-          text: 'Xóa',
+          text: translate('common.delete'),
           style: 'destructive',
           onPress: () => {
             onConfirm();

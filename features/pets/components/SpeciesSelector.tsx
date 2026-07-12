@@ -1,17 +1,11 @@
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { PetSpecies } from '@/models/types/Pet';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Chip, Text, useTheme } from 'react-native-paper';
 
-const SPECIES: { value: PetSpecies; label: string }[] = [
-  { value: 'dog', label: 'Chó' },
-  { value: 'cat', label: 'Mèo' },
-  { value: 'bird', label: 'Chim' },
-  { value: 'hamster', label: 'Hamster' },
-  { value: 'rabbit', label: 'Thỏ' },
-  { value: 'other', label: 'Khác' },
-];
+const SPECIES: PetSpecies[] = ['dog', 'cat', 'bird', 'hamster', 'rabbit', 'other'];
 
 interface Props {
   value: PetSpecies;
@@ -20,21 +14,22 @@ interface Props {
 
 export function SpeciesSelector({ value, onChange }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
       <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.sm }}>
-        Loài
+        {t('pets.speciesLabel')}
       </Text>
       <View style={styles.chipRow}>
         {SPECIES.map(s => (
           <Chip
-            key={s.value}
-            selected={value === s.value}
-            onPress={() => onChange(s.value)}
+            key={s}
+            selected={value === s}
+            onPress={() => onChange(s)}
             showSelectedCheck={false}
-            style={value === s.value ? { backgroundColor: theme.colors.primaryContainer } : undefined}
+            style={value === s ? { backgroundColor: theme.colors.primaryContainer } : undefined}
           >
-            {s.label}
+            {t(`species.${s}`)}
           </Chip>
         ))}
       </View>

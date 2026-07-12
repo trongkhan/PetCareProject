@@ -4,24 +4,18 @@ import { router } from 'expo-router';
 import { ActivityIndicator, Appbar, Card, Chip, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
+import { formatCurrency, formatDate } from '@/utils/format';
 import { AddHealthRecordDialog } from './components/AddHealthRecordDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
 import type { IHealthScreenUICallback } from './types';
 
-const TYPE_LABELS: Record<string, string> = {
-  vaccination: 'Tiêm phòng',
-  vet_visit: 'Khám thú y',
-  medication: 'Thuốc',
-  weight: 'Cân nặng',
-  deworming: 'Tẩy giun',
-  other: 'Khác',
-};
-
 const HealthScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
+  const { t, language } = useTranslation();
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleUICallbackFn = useCallback(
@@ -34,10 +28,10 @@ const HealthScreenComp = () => {
   const renderVaccinationsHeader = useCallback(() => (
     <View style={styles.sectionHeader}>
       <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-        Tiêm phòng ({selectors.vaccinations.length})
+        {t('health.vaccinationsHeader', { count: selectors.vaccinations.length })}
       </Text>
     </View>
-  ), [selectors.vaccinations.length, styles, theme]);
+  ), [selectors.vaccinations.length, styles, theme, t]);
 
   const renderVaccinations = useCallback(() => {
     if (selectors.vaccinations.length === 0) {
@@ -45,7 +39,7 @@ const HealthScreenComp = () => {
         <Card mode="outlined">
           <Card.Content>
             <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-              Chưa có lịch sử tiêm phòng
+              {t('health.noVaccinations')}
             </Text>
           </Card.Content>
         </Card>
@@ -59,12 +53,12 @@ const HealthScreenComp = () => {
               <View style={styles.cardText}>
                 <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>{record.title}</Text>
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                  {new Date(record.date + 'T00:00:00').toLocaleDateString('vi-VN')}
-                  {record.nextDue ? ` → tiếp theo: ${new Date(record.nextDue + 'T00:00:00').toLocaleDateString('vi-VN')}` : ''}
+                  {formatDate(record.date, language)}
+                  {record.nextDue ? t('health.nextDue', { date: formatDate(record.nextDue, language) }) : ''}
                 </Text>
                 {record.cost ? (
                   <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                    {record.cost.toLocaleString('vi-VN')}đ
+                    {formatCurrency(record.cost, language)}
                   </Text>
                 ) : null}
               </View>
@@ -79,14 +73,14 @@ const HealthScreenComp = () => {
         ))}
       </>
     );
-  }, [selectors.vaccinations, handlers, styles, theme]);
+  }, [selectors.vaccinations, handlers, styles, theme, t, language]);
 
   const renderAllRecords = useCallback(() => {
     if (selectors.records.length === 0) return null;
     return (
       <>
         <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
-          Tất cả hồ sơ ({selectors.records.length})
+          {t('health.allRecordsHeader', { count: selectors.records.length })}
         </Text>
         {selectors.records.map(record => (
           <Card key={record.id} mode="outlined" style={styles.card}>
@@ -102,12 +96,12 @@ const HealthScreenComp = () => {
                   </Text>
                 )}
                 <Chip compact textStyle={{ fontSize: 11 }}>
-                  {TYPE_LABELS[record.type] ?? record.type}
+                  {t(`healthType.${record.type}`)}
                 </Chip>
               </View>
               <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                {new Date(record.date + 'T00:00:00').toLocaleDateString('vi-VN')}
-                {record.cost ? ` · ${record.cost.toLocaleString('vi-VN')}đ` : ''}
+                {formatDate(record.date, language)}
+                {record.cost ? ` · ${formatCurrency(record.cost, language)}` : ''}
               </Text>
               {record.type !== 'weight' && record.notes ? (
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
@@ -119,21 +113,21 @@ const HealthScreenComp = () => {
         ))}
       </>
     );
-  }, [selectors.records, styles, theme]);
+  }, [selectors.records, styles, theme, t, language]);
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={['bottom']} style={styles.center}>
+      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']}>
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title="Sức khỏe" />
+        <Appbar.Content title={t('health.title')} />
       </Appbar.Header>
       <AddHealthRecordDialog
         visible={dialogVisible}

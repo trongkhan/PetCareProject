@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { WeightEntry } from '@/models/types/HealthRecord';
 import { format } from 'date-fns';
 import React from 'react';
@@ -12,6 +13,7 @@ interface Props {
 
 export function WeightChart({ weightHistory, currentWeight }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const history = weightHistory.slice(-8);
   const maxW = history.length > 0 ? Math.max(...history.map(e => e.weight)) : 1;
 
@@ -19,16 +21,16 @@ export function WeightChart({ weightHistory, currentWeight }: Props) {
     <Card mode="outlined">
       <Card.Content style={styles.cardContent}>
         <View style={styles.header}>
-          <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>Lịch sử cân nặng</Text>
+          <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>{t('pets.chart.title')}</Text>
           <Text variant="labelSmall" style={{ color: theme.colors.onSurfaceVariant }}>
-            Hiện tại: {currentWeight} kg
+            {t('pets.chart.current')}: {currentWeight} kg
           </Text>
         </View>
 
         {history.length === 0 ? (
           <View style={styles.empty}>
             <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-              Chưa có dữ liệu — thêm từ tab Sức khỏe
+              {t('pets.chart.empty')}
             </Text>
           </View>
         ) : (

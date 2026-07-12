@@ -3,24 +3,17 @@ import { ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 import { ActivityIndicator, Appbar, Card, FAB, IconButton, Switch, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { useTranslation } from '@/hooks/useTranslation';
 import { AddReminderDialog } from './components/AddReminderDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
 import type { IRemindersScreenUICallback } from './types';
 
-const FREQ_LABELS: Record<string, string> = {
-  once: 'Một lần',
-  daily: 'Hàng ngày',
-  weekly: 'Hàng tuần',
-  monthly: 'Hàng tháng',
-  quarterly: 'Mỗi quý',
-  yearly: 'Hàng năm',
-};
-
 const RemindersScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
+  const { t } = useTranslation();
   const [dialogVisible, setDialogVisible] = useState(false);
 
   const handleUICallbackFn = useCallback(
@@ -33,10 +26,10 @@ const RemindersScreenComp = () => {
   const renderSectionHeader = useCallback(() => (
     <View style={styles.sectionHeader}>
       <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-        Nhắc nhở ({selectors.reminders.length})
+        {t('reminders.header', { count: selectors.reminders.length })}
       </Text>
     </View>
-  ), [selectors.reminders.length, styles, theme]);
+  ), [selectors.reminders.length, styles, theme, t]);
 
   const renderReminderList = useCallback(() => {
     if (selectors.reminders.length === 0) {
@@ -44,7 +37,7 @@ const RemindersScreenComp = () => {
         <Card mode="outlined">
           <Card.Content>
             <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-              Chưa có nhắc nhở nào
+              {t('reminders.empty')}
             </Text>
           </Card.Content>
         </Card>
@@ -69,7 +62,7 @@ const RemindersScreenComp = () => {
                   )}
                 </View>
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                  {reminder.time} · {FREQ_LABELS[reminder.frequency] ?? reminder.frequency}
+                  {reminder.time} · {t(`frequency.${reminder.frequency}`)}
                 </Text>
               </View>
               <View style={styles.actions}>
@@ -91,21 +84,21 @@ const RemindersScreenComp = () => {
         ))}
       </>
     );
-  }, [selectors.reminders, handlers, styles, theme]);
+  }, [selectors.reminders, handlers, styles, theme, t]);
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={['bottom']} style={styles.center}>
+      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']}>
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title="Nhắc nhở" />
+        <Appbar.Content title={t('reminders.title')} />
       </Appbar.Header>
       <AddReminderDialog
         visible={dialogVisible}

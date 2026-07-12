@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Button, Portal, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { WheelPicker } from './WheelPicker';
 
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
@@ -20,14 +21,15 @@ function parseTime(value: string) {
 
 export function TimePickerField({ label, value, onChange }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
   const [show, setShow] = useState(false);
   const init = parseTime(value);
   const [hour, setHour] = useState(init.hour);
   const [minute, setMinute] = useState(init.minute);
 
   useEffect(() => {
-    const t = parseTime(value);
-    setHour(t.hour); setMinute(t.minute);
+    const pt = parseTime(value);
+    setHour(pt.hour); setMinute(pt.minute);
   }, [value]);
 
   const handleConfirm = useCallback(() => {
@@ -45,7 +47,7 @@ export function TimePickerField({ label, value, onChange }: Props) {
         <View style={styles.fieldContent}>
           <Text variant="labelSmall" style={[styles.label, { color: theme.colors.primary }]}>{label}</Text>
           <Text variant="bodyLarge" style={{ color: value ? theme.colors.onSurface : theme.colors.onSurfaceVariant }}>
-            {value || 'Chọn giờ'}
+            {value || t('timePicker.placeholder')}
           </Text>
         </View>
       </TouchableRipple>
@@ -59,9 +61,9 @@ export function TimePickerField({ label, value, onChange }: Props) {
                 {label}
               </Text>
               <View style={styles.colLabels}>
-                <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>Giờ</Text>
+                <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.hour')}</Text>
                 <View style={styles.colonSpace} />
-                <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>Phút</Text>
+                <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.minute')}</Text>
               </View>
               <View style={styles.pickers}>
                 <WheelPicker flex={1} items={HOURS} selectedIndex={hour} onChange={setHour} />
@@ -71,7 +73,7 @@ export function TimePickerField({ label, value, onChange }: Props) {
                 <WheelPicker flex={1} items={MINUTES} selectedIndex={minute} onChange={setMinute} />
               </View>
               <Button mode="contained" onPress={handleConfirm} style={{ marginTop: Spacing.md }}>
-                Xác nhận
+                {t('common.confirm')}
               </Button>
             </Surface>
           </View>

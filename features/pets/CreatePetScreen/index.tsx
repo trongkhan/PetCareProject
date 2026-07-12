@@ -6,6 +6,7 @@ import { DEFAULT_PET_THEME_ID } from '@/constants/petThemes';
 import { Spacing } from '@/constants/theme';
 import { PetGender, PetSpecies } from '@/models/types/Pet';
 import { useActivePetStore } from '@/store/activePetStore';
+import { useTranslation } from '@/hooks/useTranslation';
 import React, { useCallback, useState } from 'react';
 import { ScrollView } from 'react-native';
 import {
@@ -21,6 +22,7 @@ import { useViewModel } from './viewModel';
 const CreatePetScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
+  const { t } = useTranslation();
   const { setActivePetTheme } = useActivePetStore();
 
   const [photo, setPhoto] = useState<string | null>(null);
@@ -70,16 +72,16 @@ const CreatePetScreenComp = () => {
         style={styles.submitButton}
         contentStyle={{ paddingVertical: Spacing.xs }}
       >
-        Tạo thú cưng
+        {t('pets.createSubmit')}
       </Button>
     </Surface>
-  ), [handleCreate, name, selectors.isSubmitting, styles, theme]);
+  ), [handleCreate, name, selectors.isSubmitting, styles, theme, t]);
 
   return (
-    <BaseScreen edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']}>
       <Appbar.Header statusBarHeight={0} style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.BackAction onPress={handlers.navigateBack} />
-        <Appbar.Content title="Thêm thú cưng" />
+        <Appbar.Content title={t('pets.createTitle')} />
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>
@@ -87,7 +89,7 @@ const CreatePetScreenComp = () => {
         <PetThemePicker value={petTheme} onChange={handleThemeChange} />
 
         <TextInput
-          label="Tên thú cưng *"
+          label={t('pets.nameRequired')}
           value={name}
           onChangeText={setName}
           mode="outlined"
@@ -97,7 +99,7 @@ const CreatePetScreenComp = () => {
         <SpeciesSelector value={species} onChange={setSpecies} />
 
         <TextInput
-          label="Giống (VD: Corgi, Maine Coon...)"
+          label={t('pets.breedHint')}
           value={breed}
           onChangeText={setBreed}
           mode="outlined"
@@ -107,7 +109,7 @@ const CreatePetScreenComp = () => {
         <GenderSelector value={gender} onChange={setGender} />
 
         <TextInput
-          label="Cân nặng (kg)"
+          label={t('pets.weightKg')}
           value={weight}
           onChangeText={setWeight}
           mode="outlined"
@@ -117,20 +119,20 @@ const CreatePetScreenComp = () => {
         />
 
         <DatePickerField
-          label="Ngày sinh (tùy chọn)"
+          label={t('pets.birthdayOptional')}
           value={birthday}
           onChange={setBirthday}
         />
 
         <TextInput
-          label="Ghi chú (tùy chọn)"
+          label={t('pets.notesOptional')}
           value={notes}
           onChangeText={setNotes}
           mode="outlined"
           multiline
           numberOfLines={3}
           style={styles.input}
-          placeholder="Dị ứng, bệnh nền, đặc điểm..."
+          placeholder={t('pets.notesPlaceholder')}
         />
       </ScrollView>
 

@@ -1,4 +1,6 @@
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
+import { formatDate } from '@/utils/format';
 import { differenceInMonths, differenceInYears } from 'date-fns';
 import { Pet } from '@/models/types/Pet';
 import { Image } from 'expo-image';
@@ -10,17 +12,13 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const SPECIES_LABELS: Record<string, string> = {
-  dog: 'Chó', cat: 'Mèo', bird: 'Chim', hamster: 'Hamster', fish: 'Cá', rabbit: 'Thỏ', other: 'Khác',
-};
-
-function calcPetAge(birthday: string): string {
+function calcPetAge(birthday: string, t: (key: string, params?: Record<string, string | number>) => string): string {
   const birth = new Date(birthday + 'T00:00:00');
   const now = new Date();
   const years = differenceInYears(now, birth);
-  if (years >= 1) return `${years} tuổi`;
+  if (years >= 1) return t('pets.ageYears', { count: years });
   const months = differenceInMonths(now, birth);
-  return months <= 0 ? 'Dưới 1 tháng' : `${months} tháng tuổi`;
+  return months <= 0 ? t('pets.ageUnderMonth') : t('pets.ageMonths', { count: months });
 }
 
 interface Props {
@@ -30,6 +28,7 @@ interface Props {
 
 export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
   const theme = useTheme();
+  const { t, language } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const chevronAnim = useRef(new Animated.Value(0)).current;
 
@@ -74,7 +73,7 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
 
       <View style={styles.chipRow}>
         <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
-          {SPECIES_LABELS[pet.species] ?? pet.species}
+          {t(`species.${pet.species}`)}
         </Chip>
         {pet.breed ? (
           <Chip compact style={{ backgroundColor: theme.colors.primary }} textStyle={{ color: theme.colors.onPrimary }}>
@@ -86,7 +85,7 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
         </Chip>
         {pet.birthday ? (
           <Chip compact style={{ backgroundColor: theme.colors.secondary }} textStyle={{ color: theme.colors.onSecondary }}>
-            {calcPetAge(pet.birthday)}
+            {calcPetAge(pet.birthday, t)}
           </Chip>
         ) : null}
       </View>
@@ -98,7 +97,7 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
           <View style={styles.infoRow}>
             <Icon source={pet.gender === 'male' ? 'gender-male' : 'gender-female'} size={16} color={theme.colors.onPrimaryContainer} />
             <Text variant="bodySmall" style={{ color: theme.colors.onPrimaryContainer }}>
-              {pet.gender === 'male' ? 'Đực' : 'Cái'}
+              {pet.gender === 'male' ? t('gender.male') : t('gender.female')}
             </Text>
           </View>
 
@@ -106,7 +105,7 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
             <View style={styles.infoRow}>
               <Icon source="cake-variant" size={16} color={theme.colors.onPrimaryContainer} />
               <Text variant="bodySmall" style={{ color: theme.colors.onPrimaryContainer }}>
-                {new Date(pet.birthday + 'T00:00:00').toLocaleDateString('vi-VN')}
+                {formatDate(pet.birthday, language)}
               </Text>
             </View>
           ) : null}
@@ -142,7 +141,7 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
             icon="arrow-right"
             contentStyle={{ flexDirection: 'row-reverse' }}
           >
-            Xem hồ sơ đầy đủ
+            {t('pets.viewFullProfile')}
           </Button>
         </View>
       )}

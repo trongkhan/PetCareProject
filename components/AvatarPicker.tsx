@@ -4,6 +4,7 @@ import { Image } from 'expo-image';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import { Icon, Text, useTheme } from 'react-native-paper';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface Props {
   photo?: string | null;
@@ -14,6 +15,7 @@ interface Props {
 
 export function AvatarPicker({ photo, name, size = 96, onChange }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const pick = useCallback(async (from: 'library' | 'camera') => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -47,15 +49,15 @@ export function AvatarPicker({ photo, name, size = 96, onChange }: Props) {
 
   const onPress = useCallback(() => {
     const buttons: { text: string; onPress?: () => void; style?: 'default' | 'cancel' | 'destructive' }[] = [
-      { text: 'Chọn từ thư viện', onPress: () => pick('library') },
-      { text: 'Chụp ảnh', onPress: () => pick('camera') },
+      { text: t('avatarPicker.library'), onPress: () => pick('library') },
+      { text: t('avatarPicker.camera'), onPress: () => pick('camera') },
     ];
     if (photo) {
-      buttons.push({ text: 'Xóa ảnh', style: 'destructive', onPress: () => onChange(null) });
+      buttons.push({ text: t('avatarPicker.remove'), style: 'destructive', onPress: () => onChange(null) });
     }
-    buttons.push({ text: 'Hủy', style: 'cancel' });
-    Alert.alert('Ảnh đại diện', 'Chọn nguồn ảnh', buttons);
-  }, [photo, pick, onChange]);
+    buttons.push({ text: t('common.cancel'), style: 'cancel' });
+    Alert.alert(t('avatarPicker.title'), t('avatarPicker.message'), buttons);
+  }, [photo, pick, onChange, t]);
 
   const badgeSize = size * 0.3;
 

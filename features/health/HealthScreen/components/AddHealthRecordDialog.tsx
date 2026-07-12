@@ -5,6 +5,7 @@ import { SelectableChip } from '@/components/SelectableChip';
 import { DatePickerField } from '@/components/DatePickerField';
 import { CreateHealthRecordInput, HealthRecordType } from '@/models/types/HealthRecord';
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface Props {
   visible: boolean;
@@ -12,13 +13,13 @@ interface Props {
   onSubmit: (input: Omit<CreateHealthRecordInput, 'petId'>) => void;
 }
 
-const RECORD_TYPES: { value: HealthRecordType; label: string }[] = [
-  { value: 'vaccination', label: 'Tiêm phòng' },
-  { value: 'vet_visit', label: 'Khám thú y' },
-  { value: 'medication', label: 'Thuốc' },
-  { value: 'weight', label: 'Cân nặng' },
-  { value: 'deworming', label: 'Tẩy giun' },
-  { value: 'other', label: 'Khác' },
+const RECORD_TYPES: HealthRecordType[] = [
+  'vaccination',
+  'vet_visit',
+  'medication',
+  'weight',
+  'deworming',
+  'other',
 ];
 
 const today = () => new Date().toISOString().split('T')[0];
@@ -26,6 +27,7 @@ const NEEDS_NEXT_DUE: HealthRecordType[] = ['vaccination', 'deworming', 'medicat
 
 export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const [type, setType] = useState<HealthRecordType>('vaccination');
   const [title, setTitle] = useState('');
@@ -50,7 +52,7 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
   const handleSubmit = useCallback(() => {
     if (isWeightType) {
       if (!weightKg.trim() || !date) return;
-      onSubmit({ type: 'weight', title: 'Cân nặng', date, notes: weightKg.trim() });
+      onSubmit({ type: 'weight', title: t('healthType.weight'), date, notes: weightKg.trim() });
     } else {
       if (!title.trim() || !date) return;
       onSubmit({
@@ -64,90 +66,90 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
     }
     reset();
     onDismiss();
-  }, [isWeightType, weightKg, title, date, type, nextDue, notes, cost, onSubmit, reset, onDismiss]);
+  }, [isWeightType, weightKg, title, date, type, nextDue, notes, cost, onSubmit, reset, onDismiss, t]);
 
   const handleDismiss = useCallback(() => { reset(); onDismiss(); }, [reset, onDismiss]);
 
   const renderTypeSection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Loại hồ sơ</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>{t('health.dialog.typeLabel')}</Text>
       <View style={styles.chipRow}>
         {RECORD_TYPES.map(r => (
           <SelectableChip
-            key={r.value}
-            label={r.label}
-            selected={type === r.value}
-            onPress={() => setType(r.value)}
+            key={r}
+            label={t(`healthType.${r}`)}
+            selected={type === r}
+            onPress={() => setType(r)}
           />
         ))}
       </View>
     </View>
-  ), [type, theme]);
+  ), [type, theme, t]);
 
   const renderMainFields = useCallback(() => {
     if (isWeightType) {
       return (
         <>
           <TextInput
-            label="Cân nặng (kg) *"
+            label={t('health.dialog.weightLabel')}
             value={weightKg}
             onChangeText={setWeightKg}
             mode="outlined"
             keyboardType="decimal-pad"
             right={<TextInput.Affix text="kg" />}
           />
-          <DatePickerField label="Ngày cân *" value={date} onChange={setDate} />
+          <DatePickerField label={t('health.dialog.weightDateLabel')} value={date} onChange={setDate} />
         </>
       );
     }
     return (
       <>
         <TextInput
-          label="Tiêu đề *"
+          label={t('health.dialog.titleLabel')}
           value={title}
           onChangeText={setTitle}
           mode="outlined"
-          placeholder="VD: Vắc-xin dại, Khám định kỳ..."
+          placeholder={t('health.dialog.titlePlaceholder')}
         />
-        <DatePickerField label="Ngày thực hiện *" value={date} onChange={setDate} />
+        <DatePickerField label={t('health.dialog.dateLabel')} value={date} onChange={setDate} />
         {NEEDS_NEXT_DUE.includes(type) && (
           <DatePickerField
-            label="Ngày tái khám / nhắc tiếp theo"
+            label={t('health.dialog.nextDueLabel')}
             value={nextDue}
             onChange={setNextDue}
           />
         )}
       </>
     );
-  }, [isWeightType, weightKg, title, date, nextDue, type]);
+  }, [isWeightType, weightKg, title, date, nextDue, type, t]);
 
   const renderExtraFields = useCallback(() => (
     <>
       <TextInput
-        label="Chi phí (VND)"
+        label={t('health.dialog.costLabel')}
         value={cost}
         onChangeText={setCost}
         mode="outlined"
         keyboardType="numeric"
-        placeholder="VD: 150000"
-        right={<TextInput.Affix text="đ" />}
+        placeholder={t('health.dialog.costPlaceholder')}
+        right={<TextInput.Affix text="₫" />}
       />
       <TextInput
-        label="Ghi chú"
+        label={t('health.dialog.notesLabel')}
         value={notes}
         onChangeText={setNotes}
         mode="outlined"
         multiline
         numberOfLines={3}
-        placeholder="Chẩn đoán, phác đồ điều trị..."
+        placeholder={t('health.dialog.notesPlaceholder')}
       />
     </>
-  ), [cost, notes]);
+  ), [cost, notes, t]);
 
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss} style={styles.dialog}>
-        <Dialog.Title>Thêm hồ sơ sức khỏe</Dialog.Title>
+        <Dialog.Title>{t('health.dialog.title')}</Dialog.Title>
         <Dialog.ScrollArea style={styles.scrollArea}>
           <ScrollView contentContainerStyle={styles.content}>
             {renderTypeSection()}
@@ -156,13 +158,13 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
-          <Button onPress={handleDismiss}>Hủy</Button>
+          <Button onPress={handleDismiss}>{t('common.cancel')}</Button>
           <Button
             mode="contained"
             onPress={handleSubmit}
             disabled={isWeightType ? !weightKg.trim() || !date : !title.trim() || !date}
           >
-            Lưu
+            {t('common.save')}
           </Button>
         </Dialog.Actions>
       </Dialog>

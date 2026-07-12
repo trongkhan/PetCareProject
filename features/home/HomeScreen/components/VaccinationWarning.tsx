@@ -1,26 +1,31 @@
-import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import { HealthRecord } from '@/models/types/HealthRecord';
+import { formatDate } from '@/utils/format';
 import React from 'react';
 import { View } from 'react-native';
-import { Card, Text } from 'react-native-paper';
+import { Card, Text, useTheme } from 'react-native-paper';
+import { useStyles } from './vaccinationWarningStyles';
 
 interface Props {
   vaccinations: HealthRecord[];
 }
 
 export function VaccinationWarning({ vaccinations }: Props) {
+  const theme = useTheme();
+  const styles = useStyles(theme);
+  const { t, language } = useTranslation();
   if (vaccinations.length === 0) return null;
   return (
-    <Card mode="contained" style={{ backgroundColor: '#FFF8E1' }}>
-      <Card.Content style={{ flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm }}>
-        <Text style={{ fontSize: 20 }}>💉</Text>
-        <View style={{ flex: 1 }}>
-          <Text variant="titleSmall" style={{ color: '#E65100', fontWeight: '700' }}>
-            Sắp đến lịch tiêm phòng
+    <Card mode="contained" style={styles.card}>
+      <Card.Content style={styles.content}>
+        <Text style={styles.emoji}>💉</Text>
+        <View style={styles.body}>
+          <Text variant="titleSmall" style={styles.title}>
+            {t('home.health.vaccinationWarningTitle')}
           </Text>
           {vaccinations.map(v => (
-            <Text key={v.id} variant="bodySmall" style={{ color: '#BF360C', marginTop: 2 }}>
-              {v.title} — {new Date(v.nextDue! + 'T00:00:00').toLocaleDateString('vi-VN')}
+            <Text key={v.id} variant="bodySmall" style={styles.item}>
+              {v.title} — {formatDate(v.nextDue!, language)}
             </Text>
           ))}
         </View>

@@ -1,5 +1,6 @@
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
 import React, { useCallback } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ActivityIndicator, Button, FAB, Icon, Text, useTheme } from 'react-native-paper';
@@ -12,13 +13,10 @@ import type { IHomeScreenUICallback } from './types';
 import { handleUICallback } from './uiCallback';
 import { useViewModel } from './viewModel';
 
-const MEAL_TYPE_LABELS: Record<string, string> = {
-  breakfast: 'Sáng', lunch: 'Trưa', dinner: 'Tối', snack: 'Ăn vặt', treat: 'Thưởng',
-};
-
 const HomeScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
+  const { t } = useTranslation();
 
   const handleUICallbackFn = useCallback(
     (action: IHomeScreenUICallback) => handleUICallback(action),
@@ -31,64 +29,64 @@ const HomeScreenComp = () => {
     const count = selectors.todayMeals.length;
     const latest = selectors.todayMeals[0];
     return (
-      <SectionCard icon="silverware-fork-knife" title="Bữa ăn hôm nay" onPress={handlers.navigateFeeding}>
+      <SectionCard icon="silverware-fork-knife" title={t('home.feeding.title')} onPress={handlers.navigateFeeding}>
         {count === 0 ? (
           <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-            Chưa ghi nhận bữa ăn nào
+            {t('home.feeding.empty')}
           </Text>
         ) : (
           <View style={{ gap: 2 }}>
             <Text variant="bodySmall" style={{ color: theme.colors.primary, fontWeight: '600' }}>
-              {count} bữa hôm nay
+              {t('home.feeding.count', { count })}
             </Text>
             {latest && (
               <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-                {MEAL_TYPE_LABELS[latest.type] ?? latest.type} · {latest.food}
+                {t(`mealType.${latest.type}`)} · {latest.food}
               </Text>
             )}
           </View>
         )}
       </SectionCard>
     );
-  }, [selectors.todayMeals, handlers.navigateFeeding, theme]);
+  }, [selectors.todayMeals, handlers.navigateFeeding, theme, t]);
 
   const renderHealthCard = useCallback(() => {
     const hasVaccination = selectors.upcomingVaccinations.length > 0;
     return (
-      <SectionCard icon="heart-pulse" title="Sức khỏe" onPress={handlers.navigateHealth}>
+      <SectionCard icon="heart-pulse" title={t('home.health.title')} onPress={handlers.navigateHealth}>
         <View style={{ gap: 2 }}>
           {selectors.pet && (
             <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-              Cân nặng hiện tại: {selectors.pet.weight} kg
+              {t('home.health.currentWeight', { weight: selectors.pet.weight })}
             </Text>
           )}
           {hasVaccination ? (
-            <Text variant="bodySmall" style={{ color: '#E65100', fontWeight: '600' }}>
-              💉 Sắp đến lịch tiêm phòng
+            <Text variant="bodySmall" style={styles.warningText}>
+              {t('home.health.vaccinationSoon')}
             </Text>
           ) : (
             <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
-              Không có lịch tiêm phòng sắp tới
+              {t('home.health.noVaccination')}
             </Text>
           )}
         </View>
       </SectionCard>
     );
-  }, [selectors.pet, selectors.upcomingVaccinations, handlers.navigateHealth, theme]);
+  }, [selectors.pet, selectors.upcomingVaccinations, handlers.navigateHealth, theme, t, styles]);
 
   const renderRemindersCard = useCallback(() => {
     const enabled = selectors.upcomingReminders.filter(r => r.enabled);
     const next = enabled[0];
     return (
-      <SectionCard icon="bell-outline" title="Nhắc nhở" onPress={handlers.navigateReminders}>
+      <SectionCard icon="bell-outline" title={t('home.reminders.title')} onPress={handlers.navigateReminders}>
         {enabled.length === 0 ? (
           <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-            Không có nhắc nhở nào đang bật
+            {t('home.reminders.empty')}
           </Text>
         ) : (
           <View style={{ gap: 2 }}>
             <Text variant="bodySmall" style={{ color: theme.colors.primary, fontWeight: '600' }}>
-              {enabled.length} nhắc nhở đang bật
+              {t('home.reminders.count', { count: enabled.length })}
             </Text>
             {next && (
               <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
@@ -99,20 +97,20 @@ const HomeScreenComp = () => {
         )}
       </SectionCard>
     );
-  }, [selectors.upcomingReminders, handlers.navigateReminders, theme]);
+  }, [selectors.upcomingReminders, handlers.navigateReminders, theme, t]);
 
   const renderQuickStart = useCallback(() => {
     const hasActivity = selectors.todayMeals.length > 0 || selectors.upcomingReminders.filter(r => r.enabled).length > 0;
     if (hasActivity) return null;
     const actions = [
-      { icon: 'silverware-fork-knife', label: 'Ghi bữa ăn', onPress: handlers.navigateFeeding },
-      { icon: 'heart-pulse', label: 'Ghi sức khỏe', onPress: handlers.navigateHealth },
-      { icon: 'bell-outline', label: 'Đặt nhắc nhở', onPress: handlers.navigateReminders },
+      { icon: 'silverware-fork-knife', label: t('home.quick.logMeal'), onPress: handlers.navigateFeeding },
+      { icon: 'heart-pulse', label: t('home.quick.logHealth'), onPress: handlers.navigateHealth },
+      { icon: 'bell-outline', label: t('home.quick.setReminder'), onPress: handlers.navigateReminders },
     ];
     return (
       <View style={quickStyles.container}>
         <Text variant="labelLarge" style={[quickStyles.label, { color: theme.colors.onSurfaceVariant }]}>
-          BẮT ĐẦU NHANH
+          {t('home.quickStart')}
         </Text>
         <View style={quickStyles.row}>
           {actions.map(a => (
@@ -124,11 +122,11 @@ const HomeScreenComp = () => {
         </View>
       </View>
     );
-  }, [selectors.todayMeals, selectors.upcomingReminders, handlers, theme]);
+  }, [selectors.todayMeals, selectors.upcomingReminders, handlers, theme, t]);
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={['top']} style={styles.center}>
+      <BaseScreen edges={['top']} header={false} style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
@@ -136,16 +134,18 @@ const HomeScreenComp = () => {
 
   if (!selectors.pet) {
     return (
-      <BaseScreen edges={['top']} style={styles.center}>
-        <Text variant="headlineSmall" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
-          Chưa có thú cưng nào
-        </Text>
-        <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.lg }}>
-          Thêm thú cưng đầu tiên của bạn
-        </Text>
-        <Button mode="contained" onPress={handlers.navigateCreatePet} icon="plus">
-          Thêm thú cưng
-        </Button>
+      <BaseScreen edges={['top']}>
+        <View style={styles.center}>
+          <Text variant="headlineSmall" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+            {t('home.noPetTitle')}
+          </Text>
+          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.lg }}>
+            {t('home.noPetSubtitle')}
+          </Text>
+          <Button mode="contained" onPress={handlers.navigateCreatePet} icon="plus">
+            {t('home.addPet')}
+          </Button>
+        </View>
       </BaseScreen>
     );
   }
@@ -166,7 +166,7 @@ const HomeScreenComp = () => {
         <VaccinationWarning vaccinations={selectors.upcomingVaccinations} />
         <View style={styles.sections}>
           <Text variant="labelLarge" style={[styles.sectionsLabel, { color: theme.colors.onSurfaceVariant }]}>
-            HOẠT ĐỘNG
+            {t('home.activity')}
           </Text>
           {renderFeedingCard()}
           {renderHealthCard()}

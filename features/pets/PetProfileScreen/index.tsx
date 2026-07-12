@@ -6,6 +6,8 @@ import {
 } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
+import { useTranslation } from '@/hooks/useTranslation';
+import { formatDate } from '@/utils/format';
 import { WeightChart } from './components/WeightChart';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
@@ -16,13 +18,10 @@ interface Props {
   petId: string;
 }
 
-const SPECIES_LABELS: Record<string, string> = {
-  dog: 'Chó', cat: 'Mèo', bird: 'Chim', hamster: 'Hamster', fish: 'Cá', rabbit: 'Thỏ', other: 'Khác',
-};
-
 const PetProfileScreenComp = ({ petId }: Props) => {
   const theme = useTheme();
   const styles = useStyles(theme);
+  const { t, language } = useTranslation();
 
   const handleUICallbackFn = useCallback(
     (action: IPetProfileScreenUICallback) => handleUICallback(action),
@@ -49,28 +48,28 @@ const PetProfileScreenComp = ({ petId }: Props) => {
             {selectors.pet.name}
           </Text>
           <View style={styles.chipRow}>
-            <Chip compact icon="paw">{SPECIES_LABELS[selectors.pet.species] ?? selectors.pet.species}</Chip>
+            <Chip compact icon="paw">{t(`species.${selectors.pet.species}`)}</Chip>
             <Chip compact icon={selectors.pet.gender === 'male' ? 'gender-male' : 'gender-female'}>
-              {selectors.pet.gender === 'male' ? 'Đực' : 'Cái'}
+              {selectors.pet.gender === 'male' ? t('gender.male') : t('gender.female')}
             </Chip>
           </View>
         </Card.Content>
       </Card>
     );
-  }, [selectors.pet, styles, theme]);
+  }, [selectors.pet, styles, theme, t]);
 
   const renderDetails = useCallback(() => {
     if (!selectors.pet) return null;
     return (
       <Card mode="outlined">
         <List.Item
-          title="Giống"
-          description={selectors.pet.breed || 'Chưa cập nhật'}
+          title={t('pets.breed')}
+          description={selectors.pet.breed || t('pets.notUpdated')}
           left={props => <List.Icon {...props} icon="dog" />}
         />
         <Divider />
         <List.Item
-          title="Cân nặng"
+          title={t('pets.weight')}
           description={`${selectors.pet.weight} kg`}
           left={props => <List.Icon {...props} icon="scale-bathroom" />}
         />
@@ -78,8 +77,8 @@ const PetProfileScreenComp = ({ petId }: Props) => {
           <>
             <Divider />
             <List.Item
-              title="Ngày sinh"
-              description={new Date(selectors.pet.birthday + 'T00:00:00').toLocaleDateString('vi-VN')}
+              title={t('pets.birthday')}
+              description={formatDate(selectors.pet.birthday, language)}
               left={props => <List.Icon {...props} icon="cake-variant" />}
             />
           </>
@@ -98,12 +97,13 @@ const PetProfileScreenComp = ({ petId }: Props) => {
           <>
             <Divider />
             <List.Item
-              title="Dị ứng / Bệnh nền"
+              title={t('pets.allergies')}
               description={() => (
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
                   {selectors.pet!.allergies.map((item, idx) => (
-                    <Chip key={idx} compact icon="alert-circle" style={{ backgroundColor: '#FFF3E0' }}
-                      textStyle={{ color: '#E65100', fontSize: 11 }}>
+                    <Chip key={idx} compact icon="alert-circle"
+                      style={styles.allergyChip}
+                      textStyle={styles.allergyChipText}>
                       {item}
                     </Chip>
                   ))}
@@ -117,7 +117,7 @@ const PetProfileScreenComp = ({ petId }: Props) => {
           <>
             <Divider />
             <List.Item
-              title="Ghi chú"
+              title={t('pets.notes')}
               description={selectors.pet.notes}
               left={props => <List.Icon {...props} icon="note-text" />}
             />
@@ -125,7 +125,7 @@ const PetProfileScreenComp = ({ petId }: Props) => {
         )}
       </Card>
     );
-  }, [selectors.pet]);
+  }, [selectors.pet, theme, styles, t, language]);
 
 
   const renderDeleteButton = useCallback(() => (
@@ -136,13 +136,13 @@ const PetProfileScreenComp = ({ petId }: Props) => {
       icon="delete"
       onPress={handlers.confirmDeletePet}
     >
-      Xóa thú cưng
+      {t('pets.deleteButton')}
     </Button>
-  ), [handlers.confirmDeletePet, styles, theme]);
+  ), [handlers.confirmDeletePet, styles, theme, t]);
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen edges={['bottom']} style={styles.center}>
+      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
       </BaseScreen>
     );
@@ -150,18 +150,18 @@ const PetProfileScreenComp = ({ petId }: Props) => {
 
   if (!selectors.pet) {
     return (
-      <BaseScreen edges={['bottom']} style={styles.center}>
-        <Text variant="bodyLarge" style={{ color: theme.colors.onSurface }}>Không tìm thấy thú cưng</Text>
-        <Button onPress={handlers.navigateBack} style={{ marginTop: Spacing.md }}>Quay lại</Button>
+      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
+        <Text variant="bodyLarge" style={{ color: theme.colors.onSurface }}>{t('pets.notFound')}</Text>
+        <Button onPress={handlers.navigateBack} style={{ marginTop: Spacing.md }}>{t('pets.goBack')}</Button>
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']}>
       <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
         <Appbar.BackAction onPress={handlers.navigateBack} />
-        <Appbar.Content title="Hồ sơ thú cưng" />
+        <Appbar.Content title={t('pets.profileTitle')} />
         <Appbar.Action icon="pencil" onPress={handlers.navigateEdit} />
       </Appbar.Header>
 

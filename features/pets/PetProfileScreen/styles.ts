@@ -1,11 +1,13 @@
 import { createStyles } from '@/utils/createStyles';
 import { Spacing } from '@/constants/theme';
 
-export const useStyles = createStyles((_theme) => ({
+export const useStyles = createStyles((theme) => ({
   center: { justifyContent: 'center', alignItems: 'center', gap: Spacing.sm },
   content: { padding: Spacing.md, gap: Spacing.md, paddingBottom: Spacing.xxl },
   heroCard: {},
   heroContent: { alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.lg },
+  allergyChip: { backgroundColor: theme.colors.warningSurface },
+  allergyChipText: { color: theme.colors.warning, fontSize: 11 },
   avatar: {
     width: 80,
     height: 80,

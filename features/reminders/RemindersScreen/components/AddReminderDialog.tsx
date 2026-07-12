@@ -4,6 +4,7 @@ import { Button, Dialog, Portal, Text, TextInput, useTheme } from 'react-native-
 import { SelectableChip } from '@/components/SelectableChip';
 import { TimePickerField } from '@/components/TimePickerField';
 import { DatePickerField } from '@/components/DatePickerField';
+import { useTranslation } from '@/hooks/useTranslation';
 import { CreateReminderInput, ReminderFrequency, ReminderType } from '@/models/types/Reminder';
 import { Spacing } from '@/constants/theme';
 
@@ -13,28 +14,29 @@ interface Props {
   onSubmit: (input: Omit<CreateReminderInput, 'petId'>) => void;
 }
 
-const REMINDER_TYPES: { value: ReminderType; label: string }[] = [
-  { value: 'feeding', label: 'Ăn uống' },
-  { value: 'medication', label: 'Thuốc' },
-  { value: 'vaccination', label: 'Tiêm phòng' },
-  { value: 'grooming', label: 'Vệ sinh' },
-  { value: 'vet', label: 'Thú y' },
-  { value: 'deworming', label: 'Tẩy giun' },
-  { value: 'flea_tick', label: 'Bọ chét' },
-  { value: 'custom', label: 'Tùy chỉnh' },
+const REMINDER_TYPES: ReminderType[] = [
+  'feeding',
+  'medication',
+  'vaccination',
+  'grooming',
+  'vet',
+  'deworming',
+  'flea_tick',
+  'custom',
 ];
 
-const FREQUENCIES: { value: ReminderFrequency; label: string }[] = [
-  { value: 'daily', label: 'Hàng ngày' },
-  { value: 'weekly', label: 'Hàng tuần' },
-  { value: 'monthly', label: 'Hàng tháng' },
-  { value: 'quarterly', label: 'Mỗi quý' },
-  { value: 'yearly', label: 'Hàng năm' },
-  { value: 'once', label: 'Một lần' },
+const FREQUENCIES: ReminderFrequency[] = [
+  'daily',
+  'weekly',
+  'monthly',
+  'quarterly',
+  'yearly',
+  'once',
 ];
 
 export function AddReminderDialog({ visible, onDismiss, onSubmit }: Props) {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const [type, setType] = useState<ReminderType>('feeding');
   const [title, setTitle] = useState('');
@@ -67,59 +69,59 @@ export function AddReminderDialog({ visible, onDismiss, onSubmit }: Props) {
 
   const renderTypeSection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Loại nhắc nhở</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>{t('reminders.dialog.typeLabel')}</Text>
       <View style={styles.chipRow}>
         {REMINDER_TYPES.map(r => (
           <SelectableChip
-            key={r.value}
-            label={r.label}
-            selected={type === r.value}
-            onPress={() => setType(r.value)}
+            key={r}
+            label={t(`reminders.type.${r}`)}
+            selected={type === r}
+            onPress={() => setType(r)}
           />
         ))}
       </View>
     </View>
-  ), [type, theme]);
+  ), [type, theme, t]);
 
   const renderTitleField = useCallback(() => (
     <TextInput
-      label="Tiêu đề *"
+      label={t('reminders.dialog.titleLabel')}
       value={title}
       onChangeText={setTitle}
       mode="outlined"
-      placeholder="VD: Cho ăn buổi sáng..."
+      placeholder={t('reminders.dialog.titlePlaceholder')}
     />
-  ), [title]);
+  ), [title, t]);
 
   const renderFrequencySection = useCallback(() => (
     <View style={styles.field}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>Tần suất</Text>
+      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>{t('reminders.dialog.frequencyLabel')}</Text>
       <View style={styles.chipRow}>
         {FREQUENCIES.map(f => (
           <SelectableChip
-            key={f.value}
-            label={f.label}
-            selected={frequency === f.value}
-            onPress={() => setFrequency(f.value)}
+            key={f}
+            label={t(`frequency.${f}`)}
+            selected={frequency === f}
+            onPress={() => setFrequency(f)}
           />
         ))}
       </View>
     </View>
-  ), [frequency, theme]);
+  ), [frequency, theme, t]);
 
   const renderTimeAndDate = useCallback(() => (
     <>
-      <TimePickerField label="Giờ nhắc *" value={time} onChange={setTime} />
+      <TimePickerField label={t('reminders.dialog.timeLabel')} value={time} onChange={setTime} />
       {frequency === 'once' && (
-        <DatePickerField label="Ngày nhắc" value={date} onChange={setDate} />
+        <DatePickerField label={t('reminders.dialog.dateLabel')} value={date} onChange={setDate} />
       )}
     </>
-  ), [time, frequency, date]);
+  ), [time, frequency, date, t]);
 
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss} style={styles.dialog}>
-        <Dialog.Title>Thêm nhắc nhở</Dialog.Title>
+        <Dialog.Title>{t('reminders.dialog.title')}</Dialog.Title>
         <Dialog.ScrollArea style={styles.scrollArea}>
           <ScrollView contentContainerStyle={styles.content}>
             {renderTypeSection()}
@@ -129,9 +131,9 @@ export function AddReminderDialog({ visible, onDismiss, onSubmit }: Props) {
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
-          <Button onPress={handleDismiss}>Hủy</Button>
+          <Button onPress={handleDismiss}>{t('common.cancel')}</Button>
           <Button mode="contained" onPress={handleSubmit} disabled={!title.trim() || !time}>
-            Lưu
+            {t('common.save')}
           </Button>
         </Dialog.Actions>
       </Dialog>
