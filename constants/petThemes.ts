@@ -1,8 +1,9 @@
-import { MD3LightTheme } from 'react-native-paper';
+import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
+import { mix } from '@/utils/color';
+import { SEMANTIC_DARK, SEMANTIC_LIGHT, type AppTheme } from './colors';
 
 export interface PetThemeConfig {
   id: string;
-  label: string;
   primary: string;
   primaryContainer: string;
   onPrimary: string;
@@ -16,7 +17,6 @@ export interface PetThemeConfig {
 export const PET_THEMES: PetThemeConfig[] = [
   {
     id: 'teal',
-    label: 'Teal',
     primary: '#0D9488',
     primaryContainer: '#CCFBF1',
     onPrimary: '#FFFFFF',
@@ -28,7 +28,6 @@ export const PET_THEMES: PetThemeConfig[] = [
   },
   {
     id: 'lavender',
-    label: 'Lavender',
     primary: '#7C3AED',
     primaryContainer: '#EDE9FE',
     onPrimary: '#FFFFFF',
@@ -40,7 +39,6 @@ export const PET_THEMES: PetThemeConfig[] = [
   },
   {
     id: 'rose',
-    label: 'Hồng',
     primary: '#E11D48',
     primaryContainer: '#FFE4E6',
     onPrimary: '#FFFFFF',
@@ -52,7 +50,6 @@ export const PET_THEMES: PetThemeConfig[] = [
   },
   {
     id: 'ocean',
-    label: 'Ocean',
     primary: '#0369A1',
     primaryContainer: '#E0F2FE',
     onPrimary: '#FFFFFF',
@@ -64,7 +61,6 @@ export const PET_THEMES: PetThemeConfig[] = [
   },
   {
     id: 'sunset',
-    label: 'Hoàng hôn',
     primary: '#EA580C',
     primaryContainer: '#FFEDD5',
     onPrimary: '#FFFFFF',
@@ -82,12 +78,15 @@ export function getPetTheme(id: string): PetThemeConfig {
   return PET_THEMES.find(t => t.id === id) ?? PET_THEMES[0];
 }
 
-export function buildPaperTheme(themeId: string) {
-  const t = getPetTheme(themeId);
+const DARK_BG = '#141216';
+const DARK_SURFACE = '#1E1B22';
+
+function buildLightTheme(t: PetThemeConfig): AppTheme {
   return {
     ...MD3LightTheme,
     colors: {
       ...MD3LightTheme.colors,
+      ...SEMANTIC_LIGHT,
       primary: t.primary,
       primaryContainer: t.primaryContainer,
       onPrimary: t.onPrimary,
@@ -110,4 +109,43 @@ export function buildPaperTheme(themeId: string) {
       outlineVariant: '#CAC4D0',
     },
   };
+}
+
+function buildDarkTheme(t: PetThemeConfig): AppTheme {
+  // Lighten the pet accent a touch so it reads on a dark surface, and derive
+  // dark-tinted containers by mixing the accent with the dark background.
+  const accent = mix(t.primary, '#FFFFFF', 0.18);
+  const secondaryAccent = mix(t.secondary, '#FFFFFF', 0.18);
+  return {
+    ...MD3DarkTheme,
+    colors: {
+      ...MD3DarkTheme.colors,
+      ...SEMANTIC_DARK,
+      primary: accent,
+      primaryContainer: mix(t.primary, DARK_BG, 0.74),
+      onPrimary: '#10121A',
+      onPrimaryContainer: mix(t.primary, '#FFFFFF', 0.62),
+      secondary: secondaryAccent,
+      secondaryContainer: mix(t.secondary, DARK_BG, 0.74),
+      onSecondary: '#10121A',
+      onSecondaryContainer: mix(t.secondary, '#FFFFFF', 0.62),
+      tertiary: '#C4B5FD',
+      tertiaryContainer: '#3B2E63',
+      onTertiary: '#1E1233',
+      onTertiaryContainer: '#EDE9FE',
+      surface: DARK_SURFACE,
+      surfaceVariant: '#2A2731',
+      background: DARK_BG,
+      error: '#F2B8B5',
+      onSurface: '#ECE9EF',
+      onSurfaceVariant: '#C9C4D0',
+      outline: '#948F9C',
+      outlineVariant: '#403C47',
+    },
+  };
+}
+
+export function buildPaperTheme(themeId: string, isDark = false): AppTheme {
+  const t = getPetTheme(themeId);
+  return isDark ? buildDarkTheme(t) : buildLightTheme(t);
 }
