@@ -1,21 +1,27 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { PetTheme } from '@/constants/theme';
+import { buildPaperTheme } from '@/constants/petThemes';
+import { useActivePetStore } from '@/store/activePetStore';
 import '@/models/db/client';
 import { NotificationService } from '@/services/NotificationService';
 
+const BG = '#FFFBF5';
+
 export default function RootLayout() {
+  const { activePetTheme } = useActivePetStore();
+  const appTheme = useMemo(() => buildPaperTheme(activePetTheme), [activePetTheme]);
+
   useEffect(() => {
     NotificationService.requestPermissions();
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <PaperProvider theme={PetTheme.light}>
-        <Stack screenOptions={{ headerShown: false }}>
+    <SafeAreaProvider style={{ backgroundColor: BG }}>
+      <PaperProvider theme={appTheme}>
+        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: BG } }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="feeding" />
           <Stack.Screen name="health" />

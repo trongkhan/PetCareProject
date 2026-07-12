@@ -69,5 +69,8 @@ const existingCols = db.getAllSync<{ name: string }>('PRAGMA table_info(pets)').
 if (!existingCols.includes('photo')) {
   db.runSync('ALTER TABLE pets ADD COLUMN photo TEXT');
 }
+if (!existingCols.includes('pet_theme')) {
+  db.runSync("ALTER TABLE pets ADD COLUMN pet_theme TEXT NOT NULL DEFAULT 'teal'");
+}
 
 export default db;

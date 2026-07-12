@@ -5,6 +5,7 @@ export interface Pet {
   id: string;
   name: string;
   photo?: string | null;
+  petTheme: string;
   species: PetSpecies;
   breed: string;
   birthday?: string; // ISO date string
@@ -20,6 +21,7 @@ export interface Pet {
 export interface CreatePetInput {
   name: string;
   photo?: string | null;
+  petTheme?: string;
   species: PetSpecies;
   breed: string;
   birthday?: string;

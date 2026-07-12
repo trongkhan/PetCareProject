@@ -15,7 +15,7 @@ export function PetSwitcher({ pets, activePetId, onSwitch }: Props) {
   const theme = useTheme();
   if (pets.length === 0) return null;
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.outlineVariant }]}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
         {pets.map(p => {
           const isActive = p.id === activePetId;
@@ -47,7 +47,7 @@ export function PetSwitcher({ pets, activePetId, onSwitch }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { paddingVertical: Spacing.sm, borderBottomWidth: 1 },
+  container: { paddingVertical: Spacing.sm },
   row: { paddingHorizontal: Spacing.md, gap: Spacing.lg, alignItems: 'center' },
   item: { alignItems: 'center', gap: 4, minWidth: 56 },
   ring: { width: 60, height: 60, borderRadius: 30, borderWidth: 2.5, padding: 3, justifyContent: 'center', alignItems: 'center' },

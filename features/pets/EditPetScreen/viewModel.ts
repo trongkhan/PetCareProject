@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Pet, CreatePetInput } from '@/models/types/Pet';
 import { PetRepository } from '@/models/repositories/PetRepository';
+import { useActivePetStore } from '@/store/activePetStore';
 import { IEditPetScreenUICallback, EditPetScreenActionsEnum } from './types';
 
 interface UseViewModelProps {
@@ -20,6 +21,7 @@ interface Handlers {
 }
 
 export const useViewModel = ({ petId, handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
+  const { setActivePetTheme } = useActivePetStore();
   const [pet, setPet] = useState<Pet | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -32,10 +34,11 @@ export const useViewModel = ({ petId, handleUICallback }: UseViewModelProps): { 
 
   const savePet = useCallback((input: Partial<CreatePetInput>) => {
     setIsSaving(true);
-    PetRepository.update(petId, input);
+    const updated = PetRepository.update(petId, input);
+    if (updated?.petTheme) setActivePetTheme(updated.petTheme);
     setIsSaving(false);
     handleUICallback({ type: EditPetScreenActionsEnum.SaveSuccess });
-  }, [petId, handleUICallback]);
+  }, [petId, setActivePetTheme, handleUICallback]);
 
   const navigateBack = useCallback(() => {
     handleUICallback({ type: EditPetScreenActionsEnum.NavigateBack });
