@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "PetCare",
+    "appName": "Senly",
     "cancel": "Cancel",
     "save": "Save",
     "delete": "Delete",
@@ -14,6 +14,20 @@
   "language": {
     "vi": "Tiếng Việt",
     "en": "English"
+  },
+  "auth": {
+    "signInTitle": "Sign in",
+    "signUpTitle": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "toSignUp": "No account? Sign up",
+    "toSignIn": "Have an account? Sign in",
+    "signUpCheckEmail": "Account created! Check your email to confirm.",
+    "signOut": "Sign out",
+    "tagline": "A Digital Home for Every Pet",
+    "missingFields": "Please enter email and password"
   },
   "settings": {
     "title": "Settings",
@@ -214,5 +228,23 @@
     "rose": "Pink",
     "ocean": "Ocean",
     "sunset": "Sunset"
+  },
+  "nav": {
+    "home": "Home",
+    "assistant": "Assistant",
+    "account": "Account"
+  },
+  "account": {
+    "title": "Account",
+    "signedInAs": "Signed in as",
+    "settings": "Settings"
+  },
+  "assistant": {
+    "title": "Assistant",
+    "placeholder": "Ask about pet care...",
+    "send": "Send",
+    "disclaimer": "AI assistant — not a substitute for a vet.",
+    "empty": "Ask me anything about caring for your pet 🐾",
+    "error": "Something went wrong, please try again."
   }
 }

@@ -1,6 +1,6 @@
 {
   "common": {
-    "appName": "PetCare",
+    "appName": "Senly",
     "cancel": "Huỷ",
     "save": "Lưu",
     "delete": "Xoá",
@@ -14,6 +14,20 @@
   "language": {
     "vi": "Tiếng Việt",
     "en": "English"
+  },
+  "auth": {
+    "signInTitle": "Đăng nhập",
+    "signUpTitle": "Tạo tài khoản",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "signIn": "Đăng nhập",
+    "signUp": "Đăng ký",
+    "toSignUp": "Chưa có tài khoản? Đăng ký",
+    "toSignIn": "Đã có tài khoản? Đăng nhập",
+    "signUpCheckEmail": "Tạo tài khoản thành công! Kiểm tra email để xác nhận.",
+    "signOut": "Đăng xuất",
+    "tagline": "Ngôi nhà số của mọi Boss",
+    "missingFields": "Vui lòng nhập email và mật khẩu"
   },
   "settings": {
     "title": "Cài đặt",
@@ -214,5 +228,23 @@
     "rose": "Hồng",
     "ocean": "Ocean",
     "sunset": "Hoàng hôn"
+  },
+  "nav": {
+    "home": "Trang chủ",
+    "assistant": "Trợ lý",
+    "account": "Tài khoản"
+  },
+  "account": {
+    "title": "Tài khoản",
+    "signedInAs": "Đăng nhập bằng",
+    "settings": "Cài đặt"
+  },
+  "assistant": {
+    "title": "Trợ lý",
+    "placeholder": "Hỏi về chăm sóc thú cưng...",
+    "send": "Gửi",
+    "disclaimer": "Trợ lý AI — không thay thế bác sĩ thú y.",
+    "empty": "Hỏi tôi bất cứ điều gì về chăm sóc Boss của bạn 🐾",
+    "error": "Có lỗi xảy ra, thử lại nhé."
   }
 }

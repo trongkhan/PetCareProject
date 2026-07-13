@@ -1,0 +1,43 @@
+import { supabase } from '@/services/supabase';
+import type { Session, User } from '@supabase/supabase-js';
+import { create } from 'zustand';
+
+interface AuthState {
+  session: Session | null;
+  user: User | null;
+  /** True until the initial session has been loaded from storage. */
+  initializing: boolean;
+  init: () => void;
+  signInWithPassword: (email: string, password: string) => Promise<{ error?: string }>;
+  signUp: (email: string, password: string) => Promise<{ error?: string }>;
+  signOut: () => Promise<void>;
+}
+
+export const useAuthStore = create<AuthState>((set) => ({
+  session: null,
+  user: null,
+  initializing: true,
+
+  init: () => {
+    supabase.auth.getSession().then(({ data }) => {
+      set({ session: data.session, user: data.session?.user ?? null, initializing: false });
+    });
+    supabase.auth.onAuthStateChange((_event, session) => {
+      set({ session, user: session?.user ?? null, initializing: false });
+    });
+  },
+
+  signInWithPassword: async (email, password) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    return error ? { error: error.message } : {};
+  },
+
+  signUp: async (email, password) => {
+    const { error } = await supabase.auth.signUp({ email, password });
+    return error ? { error: error.message } : {};
+  },
+
+  signOut: async () => {
+    await supabase.auth.signOut();
+  },
+}));
