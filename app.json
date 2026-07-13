@@ -4,7 +4,7 @@
     "slug": "TestProject",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/senly-logo.png",
     "scheme": "testproject",
     "userInterfaceStyle": "automatic",
     "ios": {
@@ -33,12 +33,11 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "image": "./assets/images/SENLY.png",
+          "resizeMode": "cover",
+          "backgroundColor": "#F7F4EA",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#141216"
           }
         }
       ],

@@ -1,6 +1,11 @@
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
 import { mix } from '@/utils/color';
 import { SEMANTIC_DARK, SEMANTIC_LIGHT, type AppTheme } from './colors';
+import { Radius } from './theme';
+
+// One shared corner radius for a softer, consistent look across the app
+// (drives Paper's `roundness`: inputs, cards, buttons, chips, dialogs, menus).
+const APP_ROUNDNESS = Radius.lg;
 
 export interface PetThemeConfig {
   id: string;
@@ -84,6 +89,7 @@ const DARK_SURFACE = '#1E1B22';
 function buildLightTheme(t: PetThemeConfig): AppTheme {
   return {
     ...MD3LightTheme,
+    roundness: APP_ROUNDNESS,
     colors: {
       ...MD3LightTheme.colors,
       ...SEMANTIC_LIGHT,
@@ -118,6 +124,7 @@ function buildDarkTheme(t: PetThemeConfig): AppTheme {
   const secondaryAccent = mix(t.secondary, '#FFFFFF', 0.18);
   return {
     ...MD3DarkTheme,
+    roundness: APP_ROUNDNESS,
     colors: {
       ...MD3DarkTheme.colors,
       ...SEMANTIC_DARK,
