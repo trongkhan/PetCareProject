@@ -246,5 +246,11 @@
     "disclaimer": "AI assistant — not a substitute for a vet.",
     "empty": "Ask me anything about caring for your pet 🐾",
     "error": "Something went wrong, please try again."
+  },
+  "quicklog": {
+    "title": "Quick log",
+    "placeholder": "e.g. Bim had 1 cup of kibble this morning...",
+    "unknown": "Couldn't parse — try describing it more clearly",
+    "error": "Something went wrong, please try again"
   }
 }

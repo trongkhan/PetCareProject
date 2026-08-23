@@ -6,6 +6,7 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { ActivityIndicator, Button, FAB, Icon, Text, useTheme } from 'react-native-paper';
 import { PetHeaderCard } from './components/PetHeaderCard';
 import { PetSwitcher } from './components/PetSwitcher';
+import { QuickLogCard } from './components/QuickLogCard';
 import { SectionCard } from './components/SectionCard';
 import { VaccinationWarning } from './components/VaccinationWarning';
 import { useStyles } from './styles';
@@ -164,6 +165,7 @@ const HomeScreenComp = () => {
           onNavigateProfile={handlers.navigatePetProfile}
         />
         <VaccinationWarning vaccinations={selectors.upcomingVaccinations} />
+        <QuickLogCard />
         <View style={styles.sections}>
           <Text variant="labelLarge" style={[styles.sectionsLabel, { color: theme.colors.onSurfaceVariant }]}>
             {t('home.activity')}

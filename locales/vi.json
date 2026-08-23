@@ -246,5 +246,11 @@
     "disclaimer": "Trợ lý AI — không thay thế bác sĩ thú y.",
     "empty": "Hỏi tôi bất cứ điều gì về chăm sóc Boss của bạn 🐾",
     "error": "Có lỗi xảy ra, thử lại nhé."
+  },
+  "quicklog": {
+    "title": "Ghi nhanh bằng lời",
+    "placeholder": "VD: sáng nay Bim ăn 1 chén hạt...",
+    "unknown": "Chưa nhận ra — thử mô tả rõ hơn nhé",
+    "error": "Lỗi xử lý, thử lại nhé"
   }
 }

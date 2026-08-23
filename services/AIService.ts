@@ -1,4 +1,7 @@
+import { parseExtractResult, type ExtractResult } from '@/services/aiSchemas';
 import { supabase } from '@/services/supabase';
+
+export type { ExtractResult } from '@/services/aiSchemas';
 
 /**
  * Client for the Senly AI backend (Supabase Edge Functions).
@@ -12,35 +15,14 @@ async function invoke<T>(fn: string, body: Record<string, unknown>): Promise<T> 
   return data as T;
 }
 
-// --- structured output shapes (validated with zod in task #5 before use) ---
-export interface ExtractedMeal {
-  type?: 'breakfast' | 'lunch' | 'dinner' | 'snack' | 'treat';
-  food?: string;
-  amount?: number;
-  unit?: 'grams' | 'cups' | 'ml';
-  brand?: string;
-  notes?: string;
-}
-export interface ExtractedHealth {
-  type?: 'vaccination' | 'vet_visit' | 'medication' | 'weight' | 'deworming' | 'other';
-  title?: string;
-  date?: string;
-  nextDue?: string;
-  cost?: number;
-  notes?: string;
-}
-export interface ExtractResult {
-  kind: 'meal' | 'health' | 'unknown';
-  meal?: ExtractedMeal;
-  health?: ExtractedHealth;
-}
-
 type Language = 'vi' | 'en';
 
 export const AIService = {
-  /** Parse free text into a structured meal/health log. */
-  extract: (text: string, language: Language, today: string) =>
-    invoke<{ data: ExtractResult }>('ai-extract', { text, language, today }).then((r) => r.data),
+  /** Parse free text into a structured, zod-validated meal/health log. */
+  extract: (text: string, language: Language, today: string): Promise<ExtractResult> =>
+    invoke<{ data: unknown }>('ai-extract', { text, language, today }).then((r) =>
+      parseExtractResult(r.data),
+    ),
 
   /** Ask the pet-care assistant a question. */
   chat: (message: string, language: Language, petContext?: unknown) =>

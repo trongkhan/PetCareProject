@@ -1,12 +1,13 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { router } from 'expo-router';
 import { ActivityIndicator, Appbar, Card, Chip, FAB, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useQuickLogStore } from '@/store/quickLogStore';
 import { formatCurrency, formatDate } from '@/utils/format';
-import { AddHealthRecordDialog } from './components/AddHealthRecordDialog';
+import { AddHealthRecordDialog, type HealthPrefill } from './components/AddHealthRecordDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
@@ -17,6 +18,18 @@ const HealthScreenComp = () => {
   const styles = useStyles(theme);
   const { t, language } = useTranslation();
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [prefill, setPrefill] = useState<HealthPrefill | undefined>(undefined);
+
+  // Open the dialog pre-filled when the Home quick-log routed a health record here.
+  const pending = useQuickLogStore((s) => s.pending);
+  const clearQuickLog = useQuickLogStore((s) => s.clear);
+  useEffect(() => {
+    if (pending?.kind === 'health') {
+      setPrefill(pending.health);
+      setDialogVisible(true);
+      clearQuickLog();
+    }
+  }, [pending, clearQuickLog]);
 
   const handleUICallbackFn = useCallback(
     (action: IHealthScreenUICallback) => handleUICallback(action),
@@ -131,8 +144,9 @@ const HealthScreenComp = () => {
       </Appbar.Header>
       <AddHealthRecordDialog
         visible={dialogVisible}
-        onDismiss={() => setDialogVisible(false)}
+        onDismiss={() => { setDialogVisible(false); setPrefill(undefined); }}
         onSubmit={handlers.addRecord}
+        initial={prefill}
       />
 
       <ScrollView contentContainerStyle={styles.content}>

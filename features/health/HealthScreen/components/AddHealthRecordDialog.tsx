@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Dialog, Portal, Text, TextInput, useTheme } from 'react-native-paper';
 import { SelectableChip } from '@/components/SelectableChip';
@@ -7,10 +7,21 @@ import { CreateHealthRecordInput, HealthRecordType } from '@/models/types/Health
 import { Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
+export interface HealthPrefill {
+  type?: HealthRecordType;
+  title?: string;
+  date?: string;
+  nextDue?: string;
+  cost?: number;
+  notes?: string;
+}
+
 interface Props {
   visible: boolean;
   onDismiss: () => void;
   onSubmit: (input: Omit<CreateHealthRecordInput, 'petId'>) => void;
+  /** Seed values (e.g. from AI quick-log) applied when the dialog opens. */
+  initial?: HealthPrefill;
 }
 
 const RECORD_TYPES: HealthRecordType[] = [
@@ -25,7 +36,7 @@ const RECORD_TYPES: HealthRecordType[] = [
 const today = () => new Date().toISOString().split('T')[0];
 const NEEDS_NEXT_DUE: HealthRecordType[] = ['vaccination', 'deworming', 'medication'];
 
-export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
+export function AddHealthRecordDialog({ visible, onDismiss, onSubmit, initial }: Props) {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -38,6 +49,21 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit }: Props) {
   const [weightKg, setWeightKg] = useState('');
 
   const isWeightType = type === 'weight';
+
+  // Seed the form from `initial` each time the dialog opens.
+  const initialRef = useRef(initial);
+  initialRef.current = initial;
+  useEffect(() => {
+    if (!visible) return;
+    const p = initialRef.current;
+    if (!p) return;
+    if (p.type) setType(p.type);
+    if (p.title) setTitle(p.title);
+    if (p.date) setDate(p.date);
+    if (p.nextDue) setNextDue(p.nextDue);
+    if (p.cost != null) setCost(String(p.cost));
+    if (p.notes) setNotes(p.notes);
+  }, [visible]);
 
   const reset = useCallback(() => {
     setType('vaccination');
