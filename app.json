@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "TestProject",
+    "name": "Senly",
     "slug": "TestProject",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -33,8 +33,6 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/SENLY.png",
-          "resizeMode": "cover",
           "backgroundColor": "#F7F4EA",
           "dark": {
             "backgroundColor": "#141216"

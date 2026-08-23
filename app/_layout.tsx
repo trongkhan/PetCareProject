@@ -1,9 +1,11 @@
 import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
 import { ActivityIndicator, PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppSplash } from '@/components/AppSplash';
 import { buildPaperTheme } from '@/constants/petThemes';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useActivePetStore } from '@/store/activePetStore';
@@ -12,6 +14,12 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { resolveIsDark } from '@/utils/theme';
 import '@/models/db/client';
 import { NotificationService } from '@/services/NotificationService';
+
+// Keep the (plain cream) native splash until our JS renders, so it hands off to
+// the in-app full-screen splash with no white flash.
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
+const SPLASH_MS = 1600;
 
 export default function RootLayout() {
   const { activePetTheme } = useActivePetStore();
@@ -33,10 +41,31 @@ export default function RootLayout() {
   const segments = useSegments();
   const navState = useRootNavigationState();
 
+  const [splashVisible, setSplashVisible] = useState(true);
+  const splashFade = useRef(new Animated.Value(0)).current; // start transparent → fade in
+
   useEffect(() => {
     NotificationService.requestPermissions();
     initAuth();
   }, [initAuth]);
+
+  // Native (cream) splash → fade the in-app splash IN → hold → fade it OUT.
+  useEffect(() => {
+    SplashScreen.hideAsync().catch(() => {});
+    Animated.timing(splashFade, {
+      toValue: 1,
+      duration: 450,
+      useNativeDriver: true,
+    }).start();
+    const timer = setTimeout(() => {
+      Animated.timing(splashFade, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => setSplashVisible(false));
+    }, SPLASH_MS);
+    return () => clearTimeout(timer);
+  }, [splashFade]);
 
   // Auth gate: send signed-out users to /auth, signed-in users into the app.
   // Guard on navState?.key so we never navigate before the navigator mounts.
@@ -65,6 +94,14 @@ export default function RootLayout() {
           <View style={[StyleSheet.absoluteFill, styles.overlay, { backgroundColor: bg }]}>
             <ActivityIndicator size="large" color={appTheme.colors.primary} />
           </View>
+        ) : null}
+        {splashVisible ? (
+          <Animated.View
+            style={[StyleSheet.absoluteFill, { opacity: splashFade }]}
+            pointerEvents="none"
+          >
+            <AppSplash />
+          </Animated.View>
         ) : null}
         <StatusBar style={isDark ? 'light' : 'dark'} />
       </PaperProvider>
