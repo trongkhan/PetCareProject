@@ -4,9 +4,10 @@ import { formatDate } from '@/utils/format';
 import { differenceInMonths, differenceInYears } from 'date-fns';
 import { Pet } from '@/models/types/Pet';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import React, { useCallback, useRef, useState } from 'react';
 import { Animated, LayoutAnimation, Platform, Pressable, StyleSheet, UIManager, View } from 'react-native';
-import { Button, Chip, Divider, Icon, Surface, Text, useTheme } from 'react-native-paper';
+import { Button, Chip, Divider, Icon, Text, useTheme } from 'react-native-paper';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -50,7 +51,12 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
   });
 
   return (
-    <Surface style={[styles.card, { backgroundColor: theme.colors.primaryContainer }]} elevation={0}>
+    <LinearGradient
+      colors={[theme.colors.primaryContainer, theme.colors.secondaryContainer]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.card}
+    >
       <Pressable onPress={toggleExpanded} style={styles.touchable}>
         <View style={styles.nameRow}>
           {pet.photo ? (
@@ -145,7 +151,7 @@ export function PetHeaderCard({ pet, onNavigateProfile }: Props) {
           </Button>
         </View>
       )}
-    </Surface>
+    </LinearGradient>
   );
 }
 

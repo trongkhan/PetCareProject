@@ -1,4 +1,5 @@
 import { Spacing } from '@/constants/theme';
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Card, Icon, Text, useTheme } from 'react-native-paper';
@@ -18,7 +19,14 @@ export function SectionCard({ icon, title, onPress, children }: Props) {
         <Card.Content style={styles.cardContent}>
           <View style={styles.left}>
             <View style={styles.header}>
-              <Icon source={icon} size={18} color={theme.colors.primary} />
+              <LinearGradient
+                colors={[theme.colors.primary, theme.colors.secondary]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.iconBadge}
+              >
+                <Icon source={icon} size={18} color={theme.colors.onPrimary} />
+              </LinearGradient>
               <Text variant="titleSmall" style={{ color: theme.colors.onSurface, fontWeight: '600' }}>
                 {title}
               </Text>
@@ -43,6 +51,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   left: { flex: 1, gap: Spacing.xs },
-  header: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  body: { paddingLeft: 26 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  iconBadge: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
+  body: { paddingLeft: 38 },
 });

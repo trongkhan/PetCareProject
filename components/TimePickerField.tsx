@@ -37,48 +37,58 @@ export function TimePickerField({ label, value, onChange }: Props) {
     setShow(false);
   }, [hour, minute, onChange]);
 
+  const openPicker = useCallback(() => setShow(true), []);
+  const closePicker = useCallback(() => setShow(false), []);
+
+  // The closed field — a single-line "label + current value" row that opens the sheet.
+  const renderTrigger = useCallback(() => (
+    <TouchableRipple
+      onPress={openPicker}
+      style={[styles.field, { borderColor: theme.colors.outline }]}
+      rippleColor={theme.colors.primaryContainer}
+    >
+      <View style={styles.fieldContent}>
+        <Text variant="labelSmall" style={[styles.label, { color: theme.colors.primary }]}>{label}</Text>
+        <Text variant="bodyLarge" style={{ color: value ? theme.colors.onSurface : theme.colors.onSurfaceVariant }}>
+          {value || t('timePicker.placeholder')}
+        </Text>
+      </View>
+    </TouchableRipple>
+  ), [openPicker, theme, label, value, t]);
+
+  // The bottom sheet — hour/minute wheels + confirm, only mounted while `show`.
+  const renderSheet = useCallback(() => (
+    <Portal>
+      <View style={styles.overlay}>
+        <Pressable style={StyleSheet.absoluteFill} onPress={closePicker} />
+        <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={4}>
+          <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+            {label}
+          </Text>
+          <View style={styles.colLabels}>
+            <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.hour')}</Text>
+            <View style={styles.colonSpace} />
+            <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.minute')}</Text>
+          </View>
+          <View style={styles.pickers}>
+            <WheelPicker flex={1} items={HOURS} selectedIndex={hour} onChange={setHour} />
+            <View style={styles.colon}>
+              <Text style={[styles.colonText, { color: theme.colors.onSurface }]}>:</Text>
+            </View>
+            <WheelPicker flex={1} items={MINUTES} selectedIndex={minute} onChange={setMinute} />
+          </View>
+          <Button mode="contained" onPress={handleConfirm} style={{ marginTop: Spacing.md }}>
+            {t('common.confirm')}
+          </Button>
+        </Surface>
+      </View>
+    </Portal>
+  ), [closePicker, theme, label, t, hour, minute, handleConfirm]);
+
   return (
     <>
-      <TouchableRipple
-        onPress={() => setShow(true)}
-        style={[styles.field, { borderColor: theme.colors.outline }]}
-        rippleColor={theme.colors.primaryContainer}
-      >
-        <View style={styles.fieldContent}>
-          <Text variant="labelSmall" style={[styles.label, { color: theme.colors.primary }]}>{label}</Text>
-          <Text variant="bodyLarge" style={{ color: value ? theme.colors.onSurface : theme.colors.onSurfaceVariant }}>
-            {value || t('timePicker.placeholder')}
-          </Text>
-        </View>
-      </TouchableRipple>
-
-      {show && (
-        <Portal>
-          <View style={styles.overlay}>
-            <Pressable style={StyleSheet.absoluteFill} onPress={() => setShow(false)} />
-            <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={4}>
-              <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
-                {label}
-              </Text>
-              <View style={styles.colLabels}>
-                <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.hour')}</Text>
-                <View style={styles.colonSpace} />
-                <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.minute')}</Text>
-              </View>
-              <View style={styles.pickers}>
-                <WheelPicker flex={1} items={HOURS} selectedIndex={hour} onChange={setHour} />
-                <View style={styles.colon}>
-                  <Text style={[styles.colonText, { color: theme.colors.onSurface }]}>:</Text>
-                </View>
-                <WheelPicker flex={1} items={MINUTES} selectedIndex={minute} onChange={setMinute} />
-              </View>
-              <Button mode="contained" onPress={handleConfirm} style={{ marginTop: Spacing.md }}>
-                {t('common.confirm')}
-              </Button>
-            </Surface>
-          </View>
-        </Portal>
-      )}
+      {renderTrigger()}
+      {show && renderSheet()}
     </>
   );
 }

@@ -1,24 +1,16 @@
-import { useAppTheme } from '@/hooks/useAppTheme';
+import { FloatingTabBar } from '@/components/FloatingTabBar';
 import { useTranslation } from '@/hooks/useTranslation';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
 
 export default function TabsLayout() {
-  const theme = useAppTheme();
   const { t } = useTranslation();
 
   return (
     <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
-        tabBarStyle: {
-          backgroundColor: theme.colors.surface,
-          borderTopColor: theme.colors.outlineVariant,
-        },
-      }}
+      tabBar={(props) => <FloatingTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
     >
       <Tabs.Screen
         name="index"

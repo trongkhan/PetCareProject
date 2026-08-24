@@ -1,11 +1,5 @@
-import { AuthScreenActionsEnum, IAuthScreenUICallback } from './types';
+import { IAuthScreenUICallback } from './types';
 
-export const handleUICallback = (action: IAuthScreenUICallback): void => {
-  switch (action.type) {
-    case AuthScreenActionsEnum.TogglePasswordVisibility:
-      // Password visibility is managed in the screen component via state
-      break;
-    default:
-      break;
-  }
+export const handleUICallback = (_action: IAuthScreenUICallback): void => {
+  // No screen-local actions to route yet — see types.ts.
 };

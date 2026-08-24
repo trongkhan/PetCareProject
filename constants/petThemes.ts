@@ -1,11 +1,43 @@
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
 import { mix } from '@/utils/color';
 import { SEMANTIC_DARK, SEMANTIC_LIGHT, type AppTheme } from './colors';
-import { Radius } from './theme';
+import { Fonts, Radius } from './theme';
+
+type AppFonts = AppTheme['fonts'];
+type AppFont = AppFonts['displayLarge'];
 
 // One shared corner radius for a softer, consistent look across the app
 // (drives Paper's `roundness`: inputs, cards, buttons, chips, dialogs, menus).
-const APP_ROUNDNESS = Radius.lg;
+// Generous on purpose — closer to a pill than MD3's default 4, for the
+// friendlier "pet app" look.
+const APP_ROUNDNESS = Radius.xl;
+
+// Baloo 2 (loaded in app/_layout.tsx) applied to every heading/title/button
+// tier — display/headline/title all the way down to titleSmall, plus
+// labelLarge (what Paper's <Button> label renders as). Only body copy
+// (bodyLarge/Medium/Small) and the small labelMedium/labelSmall captions
+// stay on the system font, for readability in dense text.
+// MD3LightTheme.fonts is typed loosely (`Fonts`, shared with the legacy MD2
+// theme) even though at runtime it's always the v3 typescale here — narrow it
+// back to AppFonts so the overrides below type-check against real MD3Type
+// shapes (fontSize/lineHeight/letterSpacing) instead of `any`.
+const MD3_FONTS = MD3LightTheme.fonts as unknown as AppFonts;
+function heading(base: AppFont, fontFamily: string): AppFont {
+  return { ...base, fontFamily, fontWeight: 'normal' as const };
+}
+const APP_FONTS: AppFonts = {
+  ...MD3_FONTS,
+  displayLarge: heading(MD3_FONTS.displayLarge, Fonts.headingExtraBold),
+  displayMedium: heading(MD3_FONTS.displayMedium, Fonts.headingExtraBold),
+  displaySmall: heading(MD3_FONTS.displaySmall, Fonts.headingExtraBold),
+  headlineLarge: heading(MD3_FONTS.headlineLarge, Fonts.headingBold),
+  headlineMedium: heading(MD3_FONTS.headlineMedium, Fonts.headingBold),
+  headlineSmall: heading(MD3_FONTS.headlineSmall, Fonts.headingBold),
+  titleLarge: heading(MD3_FONTS.titleLarge, Fonts.headingSemiBold),
+  titleMedium: heading(MD3_FONTS.titleMedium, Fonts.headingSemiBold),
+  titleSmall: heading(MD3_FONTS.titleSmall, Fonts.headingSemiBold),
+  labelLarge: heading(MD3_FONTS.labelLarge, Fonts.headingSemiBold),
+};
 
 export interface PetThemeConfig {
   id: string;
@@ -90,6 +122,7 @@ function buildLightTheme(t: PetThemeConfig): AppTheme {
   return {
     ...MD3LightTheme,
     roundness: APP_ROUNDNESS,
+    fonts: APP_FONTS,
     colors: {
       ...MD3LightTheme.colors,
       ...SEMANTIC_LIGHT,
@@ -125,6 +158,7 @@ function buildDarkTheme(t: PetThemeConfig): AppTheme {
   return {
     ...MD3DarkTheme,
     roundness: APP_ROUNDNESS,
+    fonts: APP_FONTS,
     colors: {
       ...MD3DarkTheme.colors,
       ...SEMANTIC_DARK,

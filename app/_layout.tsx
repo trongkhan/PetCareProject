@@ -1,3 +1,4 @@
+import { Baloo2_600SemiBold, Baloo2_700Bold, Baloo2_800ExtraBold, useFonts } from '@expo-google-fonts/baloo-2';
 import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -22,6 +23,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 const SPLASH_MS = 1600;
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({ Baloo2_600SemiBold, Baloo2_700Bold, Baloo2_800ExtraBold });
   const { activePetTheme } = useActivePetStore();
   const colorScheme = useSettingsStore((s) => s.colorScheme);
   const systemScheme = useColorScheme();
@@ -50,7 +52,9 @@ export default function RootLayout() {
   }, [initAuth]);
 
   // Native (cream) splash → fade the in-app splash IN → hold → fade it OUT.
+  // Held until Baloo 2 is loaded so headings never flash in the system font.
   useEffect(() => {
+    if (!fontsLoaded) return;
     SplashScreen.hideAsync().catch(() => {});
     Animated.timing(splashFade, {
       toValue: 1,
@@ -65,7 +69,7 @@ export default function RootLayout() {
       }).start(() => setSplashVisible(false));
     }, SPLASH_MS);
     return () => clearTimeout(timer);
-  }, [splashFade]);
+  }, [splashFade, fontsLoaded]);
 
   // Auth gate: send signed-out users to /auth, signed-in users into the app.
   // Guard on navState?.key so we never navigate before the navigator mounts.

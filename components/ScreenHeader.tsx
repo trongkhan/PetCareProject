@@ -1,5 +1,5 @@
-import React from 'react';
 import { router } from 'expo-router';
+import React from 'react';
 import { Appbar, useTheme } from 'react-native-paper';
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
 export function ScreenHeader({ title, onBack, children, statusBarHeight }: Props) {
   const theme = useTheme();
   return (
-    <Appbar.Header statusBarHeight={statusBarHeight} style={{ backgroundColor: theme.colors.surface }}>
+    <Appbar.Header statusBarHeight={statusBarHeight} style={{ backgroundColor: theme.colors.background }}>
       <Appbar.BackAction onPress={onBack ?? (() => router.back())} />
       <Appbar.Content title={title} />
       {children}

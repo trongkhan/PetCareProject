@@ -55,6 +55,15 @@ export const PetTheme = {
   },
 };
 
+// Baloo 2, loaded in app/_layout.tsx — a rounded, friendly display face for
+// headings/CTAs, distinct from the system font used everywhere else so body
+// text stays quick to read.
+export const Fonts = {
+  headingSemiBold: 'Baloo2_600SemiBold',
+  headingBold: 'Baloo2_700Bold',
+  headingExtraBold: 'Baloo2_800ExtraBold',
+};
+
 export const Spacing = {
   xs: 4,
   sm: 8,
@@ -73,8 +82,33 @@ export const Radius = {
 };
 
 /**
- * Vertical space a scrolling screen must reserve at the bottom so a floating
- * action button (56dp tall, offset Spacing.lg from the edge) can never cover
- * the last row of content.
+ * The bottom tab bar (app/(tabs)/_layout.tsx) floats as a pill above the
+ * screen edge — like a card, not glued to the bottom — instead of the usual
+ * edge-to-edge Material bar. Height + the gap it floats above the safe-area
+ * edge, shared with BaseScreen so the Home FAB clears it.
  */
-export const FabClearance = 96;
+export const TabBar = {
+  height: 64,
+  floatGap: Spacing.sm,
+};
+
+/**
+ * How far the FAB sits above the screen's bottom safe-area edge. Cleared to
+ * float above the tab bar pill (only Home renders both at once, but the FAB
+ * is centralized in BaseScreen for every screen that uses it — see there).
+ */
+export const FabBottomOffset = TabBar.floatGap + TabBar.height + Spacing.xl;
+
+/**
+ * Vertical space a scrolling screen must reserve at the bottom so the
+ * floating action button (56dp tall, offset FabBottomOffset from the edge)
+ * can never cover the last row of content.
+ */
+export const FabClearance = FabBottomOffset + 56 + Spacing.md;
+
+/**
+ * Bottom clearance for tab screens with no FAB (Assistant, Account). Needed
+ * because the floating tab bar is `position: 'absolute'` — React Navigation
+ * only auto-reserves this space for an edge-to-edge bar, not a floating one.
+ */
+export const TabBarClearance = TabBar.floatGap + TabBar.height + Spacing.md;

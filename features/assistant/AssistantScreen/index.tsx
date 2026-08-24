@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
 import { ActivityIndicator, IconButton, Text, TextInput, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { EmptyState } from '@/components/EmptyState';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
@@ -36,14 +37,12 @@ const AssistantScreenComp = () => {
     <BaseScreen headerTitle={t('assistant.title')} edges={['top']}>
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={90}
       >
         {selectors.messages.length === 0 ? (
           <View style={styles.empty}>
-            <Text variant="bodyLarge" style={styles.emptyText}>
-              {t('assistant.empty')}
-            </Text>
+            <EmptyState icon="robot-happy-outline" title={t('assistant.empty')} />
           </View>
         ) : (
           <FlatList

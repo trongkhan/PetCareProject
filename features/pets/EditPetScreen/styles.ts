@@ -1,11 +1,19 @@
 import { createStyles } from '@/utils/createStyles';
-import { Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
 
-export const useStyles = createStyles((_theme) => ({
+export const useStyles = createStyles((theme) => ({
   content: { padding: Spacing.md, gap: Spacing.md, paddingBottom: Spacing.md },
   input: {},
   field: {},
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   submitArea: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.md },
-  submitButton: { borderRadius: 8 },
+  // Pill shape + colour-matched shadow, same treatment as the Auth CTAs.
+  submitButton: {
+    borderRadius: Radius.full,
+    shadowColor: theme.colors.primary,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    elevation: 4,
+  },
 }));

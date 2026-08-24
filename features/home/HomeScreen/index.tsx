@@ -5,6 +5,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import React, { useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { PetHeaderCard } from './components/PetHeaderCard';
 import { PetSwitcher } from './components/PetSwitcher';
 import { QuickLogCard } from './components/QuickLogCard';
@@ -135,21 +136,27 @@ const HomeScreenComp = () => {
         onSwitch={handlers.switchPet}
       />
       <ScrollView contentContainerStyle={styles.content}>
-        <PetHeaderCard
-          key={selectors.pet.id}
-          pet={selectors.pet}
-          onNavigateProfile={handlers.navigatePetProfile}
-        />
-        <VaccinationWarning vaccinations={selectors.upcomingVaccinations} />
-        <QuickLogCard />
-        <View style={styles.sections}>
+        <Animated.View entering={FadeInDown.duration(400)}>
+          <PetHeaderCard
+            key={selectors.pet.id}
+            pet={selectors.pet}
+            onNavigateProfile={handlers.navigatePetProfile}
+          />
+        </Animated.View>
+        <Animated.View entering={FadeInDown.delay(70).duration(400)}>
+          <VaccinationWarning vaccinations={selectors.upcomingVaccinations} />
+        </Animated.View>
+        <Animated.View entering={FadeInDown.delay(140).duration(400)}>
+          <QuickLogCard />
+        </Animated.View>
+        <Animated.View entering={FadeInDown.delay(210).duration(400)} style={styles.sections}>
           <Text variant="labelLarge" style={[styles.sectionsLabel, { color: theme.colors.onSurfaceVariant }]}>
             {t('home.activity')}
           </Text>
           {renderFeedingCard()}
           {renderHealthCard()}
           {renderRemindersCard()}
-        </View>
+        </Animated.View>
       </ScrollView>
     </BaseScreen>
   );

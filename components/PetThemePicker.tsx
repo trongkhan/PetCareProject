@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon, Text, useTheme } from 'react-native-paper';
-import { PET_THEMES } from '@/constants/petThemes';
+import { PET_THEMES, type PetThemeConfig } from '@/constants/petThemes';
 import { Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -9,6 +9,25 @@ interface Props {
   value: string;
   onChange: (themeId: string) => void;
 }
+
+interface SwatchProps {
+  petTheme: PetThemeConfig;
+  isSelected: boolean;
+  onSelect: (themeId: string) => void;
+}
+
+/** One colour swatch — memoized so picking a theme only re-renders the two swatches whose selected state changed. */
+const Swatch = React.memo(function Swatch({ petTheme, isSelected, onSelect }: SwatchProps) {
+  const handlePress = useCallback(() => onSelect(petTheme.id), [onSelect, petTheme.id]);
+  return (
+    <Pressable
+      onPress={handlePress}
+      style={[styles.swatch, { backgroundColor: petTheme.primary }, isSelected && styles.swatchSelected]}
+    >
+      {isSelected && <Icon source="check" size={18} color={petTheme.onPrimary} />}
+    </Pressable>
+  );
+});
 
 export function PetThemePicker({ value, onChange }: Props) {
   const theme = useTheme();
@@ -24,24 +43,9 @@ export function PetThemePicker({ value, onChange }: Props) {
         </Text>
       </View>
       <View style={styles.row}>
-        {PET_THEMES.map(pt => {
-          const isSelected = pt.id === value;
-          return (
-            <Pressable
-              key={pt.id}
-              onPress={() => onChange(pt.id)}
-              style={[
-                styles.swatch,
-                { backgroundColor: pt.primary },
-                isSelected && styles.swatchSelected,
-              ]}
-            >
-              {isSelected && (
-                <Icon source="check" size={18} color={pt.onPrimary} />
-              )}
-            </Pressable>
-          );
-        })}
+        {PET_THEMES.map(pt => (
+          <Swatch key={pt.id} petTheme={pt} isSelected={pt.id === value} onSelect={onChange} />
+        ))}
       </View>
     </View>
   );

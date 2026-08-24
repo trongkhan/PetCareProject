@@ -26,12 +26,15 @@
     "toSignIn": "Đã có tài khoản? Đăng nhập",
     "signUpCheckEmail": "Tạo tài khoản thành công! Kiểm tra email để xác nhận.",
     "signOut": "Đăng xuất",
-    "tagline": "Ngôi nhà số của mọi Boss",
     "missingFields": "Vui lòng nhập email và mật khẩu",
     "showPassword": "Hiện mật khẩu",
     "hidePassword": "Ẩn mật khẩu",
     "emailPlaceholder": "ban@email.com",
-    "passwordHintSignUp": "Tối thiểu 6 ký tự"
+    "passwordHintSignUp": "Tối thiểu 6 ký tự",
+    "orDivider": "HOẶC",
+    "continueAsGuest": "Tiếp tục với tư cách khách",
+    "continueWithGoogle": "Tiếp tục với Google",
+    "continueWithApple": "Tiếp tục với Apple"
   },
   "settings": {
     "title": "Cài đặt",

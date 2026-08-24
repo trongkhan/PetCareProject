@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button, Icon, Text, useTheme } from 'react-native-paper';
 import { Spacing } from '@/constants/theme';
@@ -28,46 +28,53 @@ export function EmptyState({
   compact = false,
 }: Props) {
   const theme = useTheme();
+
+  const renderIcon = useCallback(() => (
+    <View
+      style={[
+        styles.iconCircle,
+        compact && styles.iconCircleCompact,
+        { backgroundColor: theme.colors.primaryContainer },
+      ]}
+    >
+      <Icon source={icon} size={compact ? 22 : 34} color={theme.colors.onPrimaryContainer} />
+    </View>
+  ), [compact, theme, icon]);
+
+  const renderDescription = useCallback(() => (
+    description ? (
+      <Text variant="bodySmall" style={[styles.description, { color: theme.colors.onSurfaceVariant }]}>
+        {description}
+      </Text>
+    ) : null
+  ), [description, theme]);
+
+  const renderAction = useCallback(() => (
+    actionLabel && onAction ? (
+      <Button
+        mode="contained-tonal"
+        icon="plus"
+        onPress={onAction}
+        style={styles.action}
+        buttonColor={theme.colors.primaryContainer}
+        textColor={theme.colors.onPrimaryContainer}
+      >
+        {actionLabel}
+      </Button>
+    ) : null
+  ), [actionLabel, onAction, theme]);
+
   return (
     <View style={compact ? styles.compact : styles.root}>
-      <View
-        style={[
-          styles.iconCircle,
-          compact && styles.iconCircleCompact,
-          { backgroundColor: theme.colors.primaryContainer },
-        ]}
-      >
-        <Icon source={icon} size={compact ? 22 : 34} color={theme.colors.onPrimaryContainer} />
-      </View>
-
+      {renderIcon()}
       <Text
         variant={compact ? 'bodyMedium' : 'titleMedium'}
         style={[styles.title, { color: theme.colors.onSurface }]}
       >
         {title}
       </Text>
-
-      {description ? (
-        <Text
-          variant="bodySmall"
-          style={[styles.description, { color: theme.colors.onSurfaceVariant }]}
-        >
-          {description}
-        </Text>
-      ) : null}
-
-      {actionLabel && onAction ? (
-        <Button
-          mode="contained-tonal"
-          icon="plus"
-          onPress={onAction}
-          style={styles.action}
-          buttonColor={theme.colors.primaryContainer}
-          textColor={theme.colors.onPrimaryContainer}
-        >
-          {actionLabel}
-        </Button>
-      ) : null}
+      {renderDescription()}
+      {renderAction()}
     </View>
   );
 }

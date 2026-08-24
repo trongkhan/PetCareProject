@@ -61,32 +61,37 @@ export function AvatarPicker({ photo, name, size = 96, onChange }: Props) {
 
   const badgeSize = size * 0.3;
 
+  // The photo itself, or a coloured circle with the pet's initial as a fallback.
+  const renderAvatar = useCallback(() => (
+    photo ? (
+      <Image
+        source={{ uri: photo }}
+        style={{ width: size, height: size, borderRadius: size / 2 }}
+        contentFit="cover"
+      />
+    ) : (
+      <View style={[styles.initial, { width: size, height: size, borderRadius: size / 2, backgroundColor: theme.colors.primaryContainer }]}>
+        <Text style={{ fontSize: size * 0.38, fontWeight: '700', color: theme.colors.primary }}>
+          {(name.charAt(0) || '?').toUpperCase()}
+        </Text>
+      </View>
+    )
+  ), [photo, size, theme, name]);
+
+  // The small camera badge overlaid on the bottom-right corner.
+  const renderBadge = useCallback(() => (
+    <View style={[
+      styles.badge,
+      { backgroundColor: theme.colors.primary, width: badgeSize, height: badgeSize, borderRadius: badgeSize / 2 },
+    ]}>
+      <Icon source="camera" size={Math.floor(size * 0.17)} color={theme.colors.onPrimary} />
+    </View>
+  ), [theme, badgeSize, size]);
+
   return (
     <Pressable onPress={onPress} style={[styles.wrapper, { width: size, height: size }]}>
-      {photo ? (
-        <Image
-          source={{ uri: photo }}
-          style={{ width: size, height: size, borderRadius: size / 2 }}
-          contentFit="cover"
-        />
-      ) : (
-        <View style={[styles.initial, { width: size, height: size, borderRadius: size / 2, backgroundColor: theme.colors.primaryContainer }]}>
-          <Text style={{ fontSize: size * 0.38, fontWeight: '700', color: theme.colors.primary }}>
-            {(name.charAt(0) || '?').toUpperCase()}
-          </Text>
-        </View>
-      )}
-      <View style={[
-        styles.badge,
-        {
-          backgroundColor: theme.colors.primary,
-          width: badgeSize,
-          height: badgeSize,
-          borderRadius: badgeSize / 2,
-        },
-      ]}>
-        <Icon source="camera" size={Math.floor(size * 0.17)} color={theme.colors.onPrimary} />
-      </View>
+      {renderAvatar()}
+      {renderBadge()}
     </Pressable>
   );
 }

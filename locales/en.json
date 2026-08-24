@@ -26,12 +26,15 @@
     "toSignIn": "Have an account? Sign in",
     "signUpCheckEmail": "Account created! Check your email to confirm.",
     "signOut": "Sign out",
-    "tagline": "A Digital Home for Every Pet",
     "missingFields": "Please enter email and password",
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "emailPlaceholder": "you@email.com",
-    "passwordHintSignUp": "At least 6 characters"
+    "passwordHintSignUp": "At least 6 characters",
+    "orDivider": "OR",
+    "continueAsGuest": "Continue as Guest",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple"
   },
   "settings": {
     "title": "Settings",

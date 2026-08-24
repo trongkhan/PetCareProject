@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { useTheme } from 'react-native-paper';
 
 const ITEM_H = 44;
@@ -11,7 +11,7 @@ interface Props {
   flex?: number;
 }
 
-export function WheelPicker({ items, selectedIndex, onChange, flex = 1 }: Props) {
+export const WheelPicker = React.memo(function WheelPicker({ items, selectedIndex, onChange, flex = 1 }: Props) {
   const theme = useTheme();
   const ref = useRef<ScrollView>(null);
   // -1 so the mount effect always fires the initial scroll
@@ -34,38 +34,54 @@ export function WheelPicker({ items, selectedIndex, onChange, flex = 1 }: Props)
     // No scrollTo here — snapToInterval handles snapping, calling scrollTo causes the loop
   }, [items.length, onChange]);
 
+  const handleMomentumScrollEnd = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => settle(e.nativeEvent.contentOffset.y),
+    [settle],
+  );
+  const handleScrollEndDrag = useCallback(
+    (e: NativeSyntheticEvent<NativeScrollEvent>) => settle(e.nativeEvent.contentOffset.y),
+    [settle],
+  );
+
+  // The fixed centre-row selector bar overlaid on top of the scrolling items.
+  const renderSelector = useCallback(() => (
+    <View style={[styles.selector, { borderColor: theme.colors.outlineVariant }]} pointerEvents="none" />
+  ), [theme]);
+
+  // The scrolling list of values, current selection highlighted.
+  const renderItems = useCallback(() => (
+    items.map((item, i) => (
+      <View key={i} style={styles.item}>
+        <Text
+          style={[
+            styles.text,
+            { color: theme.colors.onSurfaceVariant },
+            i === selectedIndex && { color: theme.colors.onSurface, fontWeight: '700', fontSize: 19 },
+          ]}
+        >
+          {item}
+        </Text>
+      </View>
+    ))
+  ), [items, theme, selectedIndex]);
+
   return (
     <View style={[styles.container, { flex }]}>
-      <View
-        style={[styles.selector, { borderColor: theme.colors.outlineVariant }]}
-        pointerEvents="none"
-      />
+      {renderSelector()}
       <ScrollView
         ref={ref}
         showsVerticalScrollIndicator={false}
         snapToInterval={ITEM_H}
         decelerationRate="fast"
-        onMomentumScrollEnd={e => settle(e.nativeEvent.contentOffset.y)}
-        onScrollEndDrag={e => settle(e.nativeEvent.contentOffset.y)}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        onScrollEndDrag={handleScrollEndDrag}
         contentContainerStyle={styles.content}
       >
-        {items.map((item, i) => (
-          <View key={i} style={styles.item}>
-            <Text
-              style={[
-                styles.text,
-                { color: theme.colors.onSurfaceVariant },
-                i === selectedIndex && { color: theme.colors.onSurface, fontWeight: '700', fontSize: 19 },
-              ]}
-            >
-              {item}
-            </Text>
-          </View>
-        ))}
+        {renderItems()}
       </ScrollView>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: { height: ITEM_H * 5, overflow: 'hidden' },
