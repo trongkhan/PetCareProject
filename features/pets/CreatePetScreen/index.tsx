@@ -1,5 +1,6 @@
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { BaseScreen } from '@/components/BaseScreen';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { DatePickerField } from '@/components/DatePickerField';
 import { PetThemePicker } from '@/components/PetThemePicker';
 import { DEFAULT_PET_THEME_ID } from '@/constants/petThemes';
@@ -9,9 +10,7 @@ import { useActivePetStore } from '@/store/activePetStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import React, { useCallback, useState } from 'react';
 import { ScrollView } from 'react-native';
-import {
-  Appbar, Button, Surface, TextInput, useTheme,
-} from 'react-native-paper';
+import { Button, Surface, TextInput, useTheme } from 'react-native-paper';
 import { GenderSelector } from '../components/GenderSelector';
 import { SpeciesSelector } from '../components/SpeciesSelector';
 import { useStyles } from './styles';
@@ -79,10 +78,7 @@ const CreatePetScreenComp = () => {
 
   return (
     <BaseScreen header={false} edges={['bottom']}>
-      <Appbar.Header statusBarHeight={0} style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.BackAction onPress={handlers.navigateBack} />
-        <Appbar.Content title={t('pets.createTitle')} />
-      </Appbar.Header>
+      <ScreenHeader statusBarHeight={0} title={t('pets.createTitle')} onBack={handlers.navigateBack} />
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>
         <AvatarPicker photo={photo} name={name} size={96} onChange={setPhoto} />

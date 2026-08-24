@@ -1,27 +1,35 @@
-import { BaseScreen } from '@/components/BaseScreen';
-import { Spacing } from '@/constants/theme';
-import { useTranslation } from '@/hooks/useTranslation';
-import { useAuthStore } from '@/store/authStore';
+import React, { useCallback } from 'react';
+import { View } from 'react-native';
 import { router } from 'expo-router';
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
 import { Avatar, Button, Divider, List, Text, useTheme } from 'react-native-paper';
+import { BaseScreen } from '@/components/BaseScreen';
+import { useTranslation } from '@/hooks/useTranslation';
+import { useStyles } from './styles';
+import { useViewModel } from './viewModel';
+import { handleUICallback } from './uiCallback';
+import type { IAccountScreenUICallback } from './types';
 
 const AccountScreenComp = () => {
   const theme = useTheme();
+  const styles = useStyles(theme);
   const { t } = useTranslation();
-  const user = useAuthStore((s) => s.user);
-  const signOut = useAuthStore((s) => s.signOut);
+
+  const handleUICallbackFn = useCallback(
+    (action: IAccountScreenUICallback) => handleUICallback(action),
+    [],
+  );
+
+  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
 
   return (
     <BaseScreen headerTitle={t('account.title')} edges={['top']}>
       <View style={styles.header}>
         <Avatar.Icon size={72} icon="account" />
-        <Text variant="labelMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+        <Text variant="labelMedium" style={styles.signedInAs}>
           {t('account.signedInAs')}
         </Text>
-        <Text variant="titleMedium" style={{ color: theme.colors.onSurface }}>
-          {user?.email ?? '—'}
+        <Text variant="titleMedium" style={styles.email}>
+          {selectors.email}
         </Text>
       </View>
 
@@ -38,9 +46,9 @@ const AccountScreenComp = () => {
         <Button
           mode="outlined"
           icon="logout"
-          onPress={signOut}
+          onPress={handlers.signOut}
           textColor={theme.colors.error}
-          style={{ borderColor: theme.colors.error }}
+          style={styles.signOut}
         >
           {t('auth.signOut')}
         </Button>
@@ -48,11 +56,6 @@ const AccountScreenComp = () => {
     </BaseScreen>
   );
 };
-
-const styles = StyleSheet.create({
-  header: { alignItems: 'center', gap: Spacing.xs, paddingVertical: Spacing.lg },
-  footer: { padding: Spacing.lg },
-});
 
 AccountScreenComp.displayName = 'AccountScreen';
 export const AccountScreen = React.memo(AccountScreenComp);

@@ -5,7 +5,7 @@ import { useQuickLogStore } from '@/store/quickLogStore';
 import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, HelperText, IconButton, Surface, Text, TextInput, useTheme } from 'react-native-paper';
+import { ActivityIndicator, HelperText, Icon, IconButton, Surface, Text, TextInput, useTheme } from 'react-native-paper';
 
 export function QuickLogCard() {
   const theme = useTheme();
@@ -43,9 +43,12 @@ export function QuickLogCard() {
 
   return (
     <Surface style={[styles.card, { backgroundColor: theme.colors.surfaceVariant }]} elevation={0}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurface }}>
-        ✨ {t('quicklog.title')}
-      </Text>
+      <View style={styles.titleRow}>
+        <Icon source="creation" size={18} color={theme.colors.primary} />
+        <Text variant="labelLarge" style={{ color: theme.colors.onSurface }}>
+          {t('quicklog.title')}
+        </Text>
+      </View>
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
@@ -70,6 +73,7 @@ export function QuickLogCard() {
 
 const styles = StyleSheet.create({
   card: { borderRadius: 16, padding: Spacing.md, gap: Spacing.xs },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   inputRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   input: { flex: 1 },
   spinner: { width: 48, height: 48, justifyContent: 'center' },

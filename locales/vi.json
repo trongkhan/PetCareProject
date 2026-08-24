@@ -27,7 +27,11 @@
     "signUpCheckEmail": "Tạo tài khoản thành công! Kiểm tra email để xác nhận.",
     "signOut": "Đăng xuất",
     "tagline": "Ngôi nhà số của mọi Boss",
-    "missingFields": "Vui lòng nhập email và mật khẩu"
+    "missingFields": "Vui lòng nhập email và mật khẩu",
+    "showPassword": "Hiện mật khẩu",
+    "hidePassword": "Ẩn mật khẩu",
+    "emailPlaceholder": "ban@email.com",
+    "passwordHintSignUp": "Tối thiểu 6 ký tự"
   },
   "settings": {
     "title": "Cài đặt",
@@ -41,7 +45,6 @@
   },
   "home": {
     "activity": "HOẠT ĐỘNG",
-    "quickStart": "BẮT ĐẦU NHANH",
     "noPetTitle": "Chưa có thú cưng nào",
     "noPetSubtitle": "Thêm thú cưng đầu tiên của bạn",
     "addPet": "Thêm thú cưng",
@@ -61,11 +64,6 @@
       "title": "Nhắc nhở",
       "empty": "Không có nhắc nhở nào đang bật",
       "count": "{{count}} nhắc nhở đang bật"
-    },
-    "quick": {
-      "logMeal": "Ghi bữa ăn",
-      "logHealth": "Ghi sức khỏe",
-      "setReminder": "Đặt nhắc nhở"
     }
   },
   "mealType": {
@@ -120,7 +118,9 @@
       "brandLabel": "Thương hiệu",
       "brandPlaceholder": "VD: Royal Canin, Whiskas...",
       "notesLabel": "Ghi chú"
-    }
+    },
+    "emptyHint": "Ghi lại bữa ăn để theo dõi khẩu phần hằng ngày",
+    "addAction": "Ghi bữa ăn"
   },
   "health": {
     "title": "Sức khỏe",
@@ -141,7 +141,10 @@
       "costPlaceholder": "VD: 150000",
       "notesLabel": "Ghi chú",
       "notesPlaceholder": "Chẩn đoán, phác đồ điều trị..."
-    }
+    },
+    "empty": "Chưa có bản ghi sức khỏe nào",
+    "emptyHint": "Ghi cân nặng, tiêm phòng và lần khám để theo dõi",
+    "addAction": "Ghi sức khỏe"
   },
   "reminders": {
     "title": "Nhắc nhở",
@@ -165,7 +168,9 @@
       "deworming": "Tẩy giun",
       "flea_tick": "Bọ chét",
       "custom": "Tùy chỉnh"
-    }
+    },
+    "emptyHint": "Đặt nhắc nhở để không quên cho ăn hay tiêm phòng",
+    "addAction": "Đặt nhắc nhở"
   },
   "pets": {
     "createTitle": "Thêm thú cưng",
@@ -244,7 +249,7 @@
     "placeholder": "Hỏi về chăm sóc thú cưng...",
     "send": "Gửi",
     "disclaimer": "Trợ lý AI — không thay thế bác sĩ thú y.",
-    "empty": "Hỏi tôi bất cứ điều gì về chăm sóc Boss của bạn 🐾",
+    "empty": "Hỏi tôi bất cứ điều gì về chăm sóc Boss của bạn",
     "error": "Có lỗi xảy ra, thử lại nhé."
   },
   "quicklog": {

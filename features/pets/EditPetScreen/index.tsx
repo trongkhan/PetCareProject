@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
-import {
-  ActivityIndicator, Appbar, Button, Surface, TextInput, useTheme,
-} from 'react-native-paper';
+import { Button, Surface, TextInput, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { LoadingState } from '@/components/LoadingState';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { DatePickerField } from '@/components/DatePickerField';
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { PetThemePicker } from '@/components/PetThemePicker';
@@ -97,18 +97,15 @@ const EditPetScreenComp = ({ petId }: Props) => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']} style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+      <BaseScreen header={false} edges={['bottom']}>
+        <LoadingState accessibilityLabel={t('pets.editTitle')} />
       </BaseScreen>
     );
   }
 
   return (
     <BaseScreen header={false} edges={['bottom']}>
-      <Appbar.Header statusBarHeight={0} style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.BackAction onPress={handlers.navigateBack} />
-        <Appbar.Content title={t('pets.editTitle')} />
-      </Appbar.Header>
+      <ScreenHeader statusBarHeight={0} title={t('pets.editTitle')} onBack={handlers.navigateBack} />
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>
         <AvatarPicker photo={photo} name={name} size={96} onChange={setPhoto} />

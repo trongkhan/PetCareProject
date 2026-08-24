@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { router } from 'expo-router';
-import { ActivityIndicator, Appbar, Card, FAB, IconButton, Text, useTheme } from 'react-native-paper';
+import { Card, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { EmptyState } from '@/components/EmptyState';
+import { LoadingState } from '@/components/LoadingState';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useQuickLogStore } from '@/store/quickLogStore';
 import { formatDate } from '@/utils/format';
@@ -48,13 +50,14 @@ const FeedingScreenComp = () => {
   const renderTodayMeals = useCallback(() => {
     if (selectors.todayMeals.length === 0) {
       return (
-        <Card mode="outlined">
-          <Card.Content>
-            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-              {t('feeding.empty')}
-            </Text>
-          </Card.Content>
-        </Card>
+        <EmptyState
+          compact
+          icon="silverware-fork-knife"
+          title={t('feeding.empty')}
+          description={t('feeding.emptyHint')}
+          actionLabel={t('feeding.addAction')}
+          onAction={() => setDialogVisible(true)}
+        />
       );
     }
     return (
@@ -111,18 +114,15 @@ const FeedingScreenComp = () => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+      <BaseScreen header={false} edges={['bottom']}>
+        <LoadingState accessibilityLabel={t('feeding.title')} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen header={false} edges={['bottom']}>
-      <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title={t('feeding.title')} />
-      </Appbar.Header>
+    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: () => setDialogVisible(true), accessibilityLabel: t('feeding.addAction') }}>
+      <ScreenHeader title={t('feeding.title')} />
       <AddMealDialog
         visible={dialogVisible}
         onDismiss={() => { setDialogVisible(false); setPrefill(undefined); }}
@@ -136,12 +136,6 @@ const FeedingScreenComp = () => {
         {renderMealHistory()}
       </ScrollView>
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => setDialogVisible(true)}
-      />
     </BaseScreen>
   );
 };

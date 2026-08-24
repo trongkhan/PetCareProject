@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { Button, Dialog, Portal, SegmentedButtons, Text, TextInput, useTheme } from 'react-native-paper';
+import { Button, Dialog, Portal, Text, TextInput, useTheme } from 'react-native-paper';
+import { SegmentedControl } from '@/components/SegmentedControl';
 import { SelectableChip } from '@/components/SelectableChip';
 import { useTranslation } from '@/hooks/useTranslation';
 import { CreateMealInput, MealType, MealUnit } from '@/models/types/Meal';
@@ -114,7 +115,7 @@ export function AddMealDialog({ visible, onDismiss, onSubmit, initial }: Props) 
   const renderUnitSection = useCallback(() => (
     <View style={styles.field}>
       <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>{t('feeding.dialog.unit')}</Text>
-      <SegmentedButtons
+      <SegmentedControl
         value={unit}
         onValueChange={val => setUnit(val as MealUnit)}
         buttons={[

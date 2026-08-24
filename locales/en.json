@@ -27,7 +27,11 @@
     "signUpCheckEmail": "Account created! Check your email to confirm.",
     "signOut": "Sign out",
     "tagline": "A Digital Home for Every Pet",
-    "missingFields": "Please enter email and password"
+    "missingFields": "Please enter email and password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "emailPlaceholder": "you@email.com",
+    "passwordHintSignUp": "At least 6 characters"
   },
   "settings": {
     "title": "Settings",
@@ -41,7 +45,6 @@
   },
   "home": {
     "activity": "ACTIVITY",
-    "quickStart": "QUICK START",
     "noPetTitle": "No pets yet",
     "noPetSubtitle": "Add your first pet",
     "addPet": "Add pet",
@@ -61,11 +64,6 @@
       "title": "Reminders",
       "empty": "No active reminders",
       "count": "{{count}} active reminders"
-    },
-    "quick": {
-      "logMeal": "Log meal",
-      "logHealth": "Log health",
-      "setReminder": "Set reminder"
     }
   },
   "mealType": {
@@ -120,7 +118,9 @@
       "brandLabel": "Brand",
       "brandPlaceholder": "e.g. Royal Canin, Whiskas...",
       "notesLabel": "Notes"
-    }
+    },
+    "emptyHint": "Log a meal to keep track of daily portions",
+    "addAction": "Log a meal"
   },
   "health": {
     "title": "Health",
@@ -141,7 +141,10 @@
       "costPlaceholder": "e.g. 150000",
       "notesLabel": "Notes",
       "notesPlaceholder": "Diagnosis, treatment plan..."
-    }
+    },
+    "empty": "No health records yet",
+    "emptyHint": "Log weight, vaccinations and vet visits to follow along",
+    "addAction": "Log health"
   },
   "reminders": {
     "title": "Reminders",
@@ -165,7 +168,9 @@
       "deworming": "Deworming",
       "flea_tick": "Flea & tick",
       "custom": "Custom"
-    }
+    },
+    "emptyHint": "Set a reminder so feeding and vaccines never slip",
+    "addAction": "Set a reminder"
   },
   "pets": {
     "createTitle": "Add pet",
@@ -244,7 +249,7 @@
     "placeholder": "Ask about pet care...",
     "send": "Send",
     "disclaimer": "AI assistant — not a substitute for a vet.",
-    "empty": "Ask me anything about caring for your pet 🐾",
+    "empty": "Ask me anything about caring for your pet",
     "error": "Something went wrong, please try again."
   },
   "quicklog": {

@@ -1,8 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { router } from 'expo-router';
-import { ActivityIndicator, Appbar, Card, FAB, IconButton, Switch, Text, useTheme } from 'react-native-paper';
+import { Card, IconButton, Switch, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { EmptyState } from '@/components/EmptyState';
+import { LoadingState } from '@/components/LoadingState';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { useTranslation } from '@/hooks/useTranslation';
 import { AddReminderDialog } from './components/AddReminderDialog';
 import { useStyles } from './styles';
@@ -34,13 +36,13 @@ const RemindersScreenComp = () => {
   const renderReminderList = useCallback(() => {
     if (selectors.reminders.length === 0) {
       return (
-        <Card mode="outlined">
-          <Card.Content>
-            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-              {t('reminders.empty')}
-            </Text>
-          </Card.Content>
-        </Card>
+        <EmptyState
+          icon="bell-outline"
+          title={t('reminders.empty')}
+          description={t('reminders.emptyHint')}
+          actionLabel={t('reminders.addAction')}
+          onAction={() => setDialogVisible(true)}
+        />
       );
     }
     return (
@@ -88,18 +90,15 @@ const RemindersScreenComp = () => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+      <BaseScreen header={false} edges={['bottom']}>
+        <LoadingState accessibilityLabel={t('reminders.title')} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen header={false} edges={['bottom']}>
-      <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title={t('reminders.title')} />
-      </Appbar.Header>
+    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: () => setDialogVisible(true), accessibilityLabel: t('reminders.addAction') }}>
+      <ScreenHeader title={t('reminders.title')} />
       <AddReminderDialog
         visible={dialogVisible}
         onDismiss={() => setDialogVisible(false)}
@@ -111,12 +110,6 @@ const RemindersScreenComp = () => {
         {renderReminderList()}
       </ScrollView>
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => setDialogVisible(true)}
-      />
     </BaseScreen>
   );
 };

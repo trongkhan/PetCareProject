@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView, View } from 'react-native';
-import { router } from 'expo-router';
-import { ActivityIndicator, Appbar, Card, Chip, FAB, IconButton, Text, useTheme } from 'react-native-paper';
+import { Card, Chip, IconButton, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { EmptyState } from '@/components/EmptyState';
+import { LoadingState } from '@/components/LoadingState';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useQuickLogStore } from '@/store/quickLogStore';
@@ -49,13 +51,7 @@ const HealthScreenComp = () => {
   const renderVaccinations = useCallback(() => {
     if (selectors.vaccinations.length === 0) {
       return (
-        <Card mode="outlined">
-          <Card.Content>
-            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
-              {t('health.noVaccinations')}
-            </Text>
-          </Card.Content>
-        </Card>
+        <EmptyState compact icon="needle" title={t('health.noVaccinations')} />
       );
     }
     return (
@@ -130,18 +126,15 @@ const HealthScreenComp = () => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+      <BaseScreen header={false} edges={['bottom']}>
+        <LoadingState accessibilityLabel={t('health.title')} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen header={false} edges={['bottom']}>
-      <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title={t('health.title')} />
-      </Appbar.Header>
+    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: () => setDialogVisible(true), accessibilityLabel: t('health.addAction') }}>
+      <ScreenHeader title={t('health.title')} />
       <AddHealthRecordDialog
         visible={dialogVisible}
         onDismiss={() => { setDialogVisible(false); setPrefill(undefined); }}
@@ -155,12 +148,6 @@ const HealthScreenComp = () => {
         {renderAllRecords()}
       </ScrollView>
 
-      <FAB
-        icon="plus"
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-        color={theme.colors.onPrimary}
-        onPress={() => setDialogVisible(true)}
-      />
     </BaseScreen>
   );
 };

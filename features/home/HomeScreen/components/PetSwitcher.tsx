@@ -13,7 +13,9 @@ interface Props {
 
 export function PetSwitcher({ pets, activePetId, onSwitch }: Props) {
   const theme = useTheme();
-  if (pets.length === 0) return null;
+  // A single pet has nothing to switch to, and its name/avatar already
+  // appear on the header card right below — showing the row would just repeat it.
+  if (pets.length < 2) return null;
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>

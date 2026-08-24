@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Image } from 'expo-image';
-import {
-  ActivityIndicator, Appbar, Button, Card, Chip, Divider, List, Text, useTheme,
-} from 'react-native-paper';
+import { Appbar, Button, Card, Chip, Divider, List, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
+import { LoadingState } from '@/components/LoadingState';
+import { ScreenHeader } from '@/components/ScreenHeader';
 import { Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { formatDate } from '@/utils/format';
@@ -142,8 +142,8 @@ const PetProfileScreenComp = ({ petId }: Props) => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']} style={styles.center}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
+      <BaseScreen header={false} edges={['bottom']}>
+        <LoadingState accessibilityLabel={t('pets.profileTitle')} />
       </BaseScreen>
     );
   }
@@ -159,11 +159,9 @@ const PetProfileScreenComp = ({ petId }: Props) => {
 
   return (
     <BaseScreen header={false} edges={['bottom']}>
-      <Appbar.Header style={{ backgroundColor: theme.colors.surface }}>
-        <Appbar.BackAction onPress={handlers.navigateBack} />
-        <Appbar.Content title={t('pets.profileTitle')} />
+      <ScreenHeader title={t('pets.profileTitle')} onBack={handlers.navigateBack}>
         <Appbar.Action icon="pencil" onPress={handlers.navigateEdit} />
-      </Appbar.Header>
+      </ScreenHeader>
 
       <ScrollView contentContainerStyle={styles.content}>
         {renderHeroCard()}

@@ -3,7 +3,8 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { PetGender } from '@/models/types/Pet';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { SegmentedButtons, Text, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
+import { SegmentedControl } from '@/components/SegmentedControl';
 
 interface Props {
   value: PetGender;
@@ -18,7 +19,7 @@ export function GenderSelector({ value, onChange }: Props) {
       <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.sm }}>
         {t('gender.label')}
       </Text>
-      <SegmentedButtons
+      <SegmentedControl
         value={value}
         onValueChange={val => onChange(val as PetGender)}
         buttons={[

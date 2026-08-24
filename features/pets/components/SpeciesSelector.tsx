@@ -3,7 +3,8 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { PetSpecies } from '@/models/types/Pet';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Chip, Text, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
+import { SelectableChip } from '@/components/SelectableChip';
 
 const SPECIES: PetSpecies[] = ['dog', 'cat', 'bird', 'hamster', 'rabbit', 'other'];
 
@@ -22,15 +23,12 @@ export function SpeciesSelector({ value, onChange }: Props) {
       </Text>
       <View style={styles.chipRow}>
         {SPECIES.map(s => (
-          <Chip
+          <SelectableChip
             key={s}
+            label={t(`species.${s}`)}
             selected={value === s}
             onPress={() => onChange(s)}
-            showSelectedCheck={false}
-            style={value === s ? { backgroundColor: theme.colors.primaryContainer } : undefined}
-          >
-            {t(`species.${s}`)}
-          </Chip>
+          />
         ))}
       </View>
     </View>

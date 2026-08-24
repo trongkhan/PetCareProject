@@ -71,3 +71,10 @@ export const Radius = {
   xl: 24,
   full: 9999,
 };
+
+/**
+ * Vertical space a scrolling screen must reserve at the bottom so a floating
+ * action button (56dp tall, offset Spacing.lg from the edge) can never cover
+ * the last row of content.
+ */
+export const FabClearance = 96;

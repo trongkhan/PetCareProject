@@ -1,9 +1,9 @@
 import { createStyles } from '@/utils/createStyles';
-import { Spacing } from '@/constants/theme';
+import { FabClearance, Spacing } from '@/constants/theme';
 
 export const useStyles = createStyles((_theme) => ({
   center: { justifyContent: 'center', alignItems: 'center' },
-  content: { padding: Spacing.md, gap: Spacing.sm, paddingBottom: Spacing.xl },
+  content: { padding: Spacing.md, gap: Spacing.sm, paddingBottom: FabClearance },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -16,5 +16,4 @@ export const useStyles = createStyles((_theme) => ({
   cardText: { flex: 1, gap: 2 },
   actions: { flexDirection: 'row', alignItems: 'center', gap: 0 },
   deleteIcon: { margin: 0 },
-  fab: { position: 'absolute', right: Spacing.lg, bottom: Spacing.lg },
 }));
