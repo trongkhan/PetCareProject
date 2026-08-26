@@ -1,4 +1,4 @@
-import { Baloo2_600SemiBold, Baloo2_700Bold, Baloo2_800ExtraBold, useFonts } from '@expo-google-fonts/baloo-2';
+import { Baloo2_400Regular, Baloo2_500Medium, Baloo2_600SemiBold, Baloo2_700Bold, Baloo2_800ExtraBold, useFonts } from '@expo-google-fonts/baloo-2';
 import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -23,7 +23,13 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 const SPLASH_MS = 1600;
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({ Baloo2_600SemiBold, Baloo2_700Bold, Baloo2_800ExtraBold });
+  const [fontsLoaded] = useFonts({
+    Baloo2_400Regular,
+    Baloo2_500Medium,
+    Baloo2_600SemiBold,
+    Baloo2_700Bold,
+    Baloo2_800ExtraBold,
+  });
   const { activePetTheme } = useActivePetStore();
   const colorScheme = useSettingsStore((s) => s.colorScheme);
   const systemScheme = useColorScheme();
@@ -35,6 +41,11 @@ export default function RootLayout() {
     [activePetTheme, isDark],
   );
   const bg = appTheme.colors.background;
+  const bgStyle = useMemo(() => ({ backgroundColor: bg }), [bg]);
+  const screenOptions = useMemo(
+    () => ({ headerShown: false, contentStyle: bgStyle }),
+    [bgStyle],
+  );
 
   const initAuth = useAuthStore((s) => s.init);
   const session = useAuthStore((s) => s.session);
@@ -81,9 +92,9 @@ export default function RootLayout() {
   }, [session, initializing, segments, router, navState?.key]);
 
   return (
-    <SafeAreaProvider style={{ backgroundColor: bg }}>
+    <SafeAreaProvider style={bgStyle}>
       <PaperProvider theme={appTheme}>
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: bg } }}>
+        <Stack screenOptions={screenOptions}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="auth" />
           <Stack.Screen name="feeding" />
@@ -95,7 +106,7 @@ export default function RootLayout() {
           <Stack.Screen name="pet/edit" options={{ presentation: 'modal' }} />
         </Stack>
         {initializing ? (
-          <View style={[StyleSheet.absoluteFill, styles.overlay, { backgroundColor: bg }]}>
+          <View style={[StyleSheet.absoluteFill, styles.overlay, bgStyle]}>
             <ActivityIndicator size="large" color={appTheme.colors.primary} />
           </View>
         ) : null}

@@ -1,42 +1,37 @@
-import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
 import { mix } from '@/utils/color';
+import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper';
 import { SEMANTIC_DARK, SEMANTIC_LIGHT, type AppTheme } from './colors';
 import { Fonts, Radius } from './theme';
 
 type AppFonts = AppTheme['fonts'];
 type AppFont = AppFonts['displayLarge'];
 
-// One shared corner radius for a softer, consistent look across the app
-// (drives Paper's `roundness`: inputs, cards, buttons, chips, dialogs, menus).
-// Generous on purpose — closer to a pill than MD3's default 4, for the
-// friendlier "pet app" look.
 const APP_ROUNDNESS = Radius.xl;
 
-// Baloo 2 (loaded in app/_layout.tsx) applied to every heading/title/button
-// tier — display/headline/title all the way down to titleSmall, plus
-// labelLarge (what Paper's <Button> label renders as). Only body copy
-// (bodyLarge/Medium/Small) and the small labelMedium/labelSmall captions
-// stay on the system font, for readability in dense text.
-// MD3LightTheme.fonts is typed loosely (`Fonts`, shared with the legacy MD2
-// theme) even though at runtime it's always the v3 typescale here — narrow it
-// back to AppFonts so the overrides below type-check against real MD3Type
-// shapes (fontSize/lineHeight/letterSpacing) instead of `any`.
 const MD3_FONTS = MD3LightTheme.fonts as unknown as AppFonts;
-function heading(base: AppFont, fontFamily: string): AppFont {
+function withFamily(base: AppFont, fontFamily: string): AppFont {
   return { ...base, fontFamily, fontWeight: 'normal' as const };
 }
 const APP_FONTS: AppFonts = {
   ...MD3_FONTS,
-  displayLarge: heading(MD3_FONTS.displayLarge, Fonts.headingExtraBold),
-  displayMedium: heading(MD3_FONTS.displayMedium, Fonts.headingExtraBold),
-  displaySmall: heading(MD3_FONTS.displaySmall, Fonts.headingExtraBold),
-  headlineLarge: heading(MD3_FONTS.headlineLarge, Fonts.headingBold),
-  headlineMedium: heading(MD3_FONTS.headlineMedium, Fonts.headingBold),
-  headlineSmall: heading(MD3_FONTS.headlineSmall, Fonts.headingBold),
-  titleLarge: heading(MD3_FONTS.titleLarge, Fonts.headingSemiBold),
-  titleMedium: heading(MD3_FONTS.titleMedium, Fonts.headingSemiBold),
-  titleSmall: heading(MD3_FONTS.titleSmall, Fonts.headingSemiBold),
-  labelLarge: heading(MD3_FONTS.labelLarge, Fonts.headingSemiBold),
+  displayLarge: withFamily(MD3_FONTS.displayLarge, Fonts.headingExtraBold),
+  displayMedium: withFamily(MD3_FONTS.displayMedium, Fonts.headingExtraBold),
+  displaySmall: withFamily(MD3_FONTS.displaySmall, Fonts.headingExtraBold),
+  headlineLarge: withFamily(MD3_FONTS.headlineLarge, Fonts.headingBold),
+  headlineMedium: withFamily(MD3_FONTS.headlineMedium, Fonts.headingBold),
+  headlineSmall: withFamily(MD3_FONTS.headlineSmall, Fonts.headingBold),
+  titleLarge: withFamily(MD3_FONTS.titleLarge, Fonts.headingSemiBold),
+  titleMedium: withFamily(MD3_FONTS.titleMedium, Fonts.headingSemiBold),
+  titleSmall: withFamily(MD3_FONTS.titleSmall, Fonts.headingSemiBold),
+  labelLarge: withFamily(MD3_FONTS.labelLarge, Fonts.headingSemiBold),
+  // Body copy and the smaller labels use the same Baloo 2 family for a
+  // consistent typeface app-wide, but a lighter (non-heading) cut so
+  // paragraph-length text doesn't read as bold as a title.
+  bodyLarge: withFamily(MD3_FONTS.bodyLarge, Fonts.bodyRegular),
+  bodyMedium: withFamily(MD3_FONTS.bodyMedium, Fonts.bodyRegular),
+  bodySmall: withFamily(MD3_FONTS.bodySmall, Fonts.bodyRegular),
+  labelMedium: withFamily(MD3_FONTS.labelMedium, Fonts.bodyMedium),
+  labelSmall: withFamily(MD3_FONTS.labelSmall, Fonts.bodyMedium),
 };
 
 export interface PetThemeConfig {
@@ -140,10 +135,13 @@ function buildLightTheme(t: PetThemeConfig): AppTheme {
       onTertiaryContainer: '#4C1D95',
       surface: '#FFFFFF',
       surfaceVariant: '#F5F5F5',
-      background: '#FFFBF5',
+      background: '#FFFFFF',
       error: '#B00020',
       onSurface: '#1C1B1F',
-      onSurfaceVariant: '#49454F',
+      // A touch darker than MD3's stock '#49454F' — this is the color most
+      // body/secondary text in the app is explicitly set to, so lightening
+      // it there reads as "default text" being too thin.
+      onSurfaceVariant: '#3A3640',
       outline: '#79747E',
       outlineVariant: '#CAC4D0',
     },
@@ -151,8 +149,6 @@ function buildLightTheme(t: PetThemeConfig): AppTheme {
 }
 
 function buildDarkTheme(t: PetThemeConfig): AppTheme {
-  // Lighten the pet accent a touch so it reads on a dark surface, and derive
-  // dark-tinted containers by mixing the accent with the dark background.
   const accent = mix(t.primary, '#FFFFFF', 0.18);
   const secondaryAccent = mix(t.secondary, '#FFFFFF', 0.18);
   return {

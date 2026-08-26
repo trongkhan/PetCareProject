@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { ScrollView, View } from 'react-native';
 import { Divider, List, Switch, useTheme } from 'react-native-paper';
 import { SegmentedControl } from '@/components/SegmentedControl';
@@ -8,22 +8,16 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
-import type { ISettingsScreenUICallback } from './types';
 
 const SettingsScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
   const { t } = useTranslation();
 
-  const handleUICallbackFn = useCallback(
-    (action: ISettingsScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
 
   return (
-    <BaseScreen header={false} edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false}>
       <ScreenHeader title={t('settings.title')} />
 
       <ScrollView contentContainerStyle={styles.content}>

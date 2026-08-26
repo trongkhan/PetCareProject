@@ -17,7 +17,6 @@ import { SpeciesSelector } from '../components/SpeciesSelector';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
-import type { IEditPetScreenUICallback } from './types';
 
 interface Props {
   petId: string;
@@ -39,12 +38,7 @@ const EditPetScreenComp = ({ petId }: Props) => {
   const [birthday, setBirthday] = useState('');
   const [notes, setNotes] = useState('');
 
-  const handleUICallbackFn = useCallback(
-    (action: IEditPetScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ petId, handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ petId, handleUICallback });
 
   useEffect(() => {
     if (selectors.pet) {
@@ -97,7 +91,7 @@ const EditPetScreenComp = ({ petId }: Props) => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']}>
+      <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false}>
         <LoadingState accessibilityLabel={t('pets.editTitle')} />
       </BaseScreen>
     );

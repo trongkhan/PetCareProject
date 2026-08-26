@@ -62,18 +62,18 @@ export function TimePickerField({ label, value, onChange }: Props) {
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={closePicker} />
         <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={4}>
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+          <Text variant="titleMedium" style={[styles.sheetTitle, { color: theme.colors.onSurface }]}>
             {label}
           </Text>
           <View style={styles.colLabels}>
-            <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.hour')}</Text>
+            <Text variant="bodySmall" style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.hour')}</Text>
             <View style={styles.colonSpace} />
-            <Text style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.minute')}</Text>
+            <Text variant="bodySmall" style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: 1 }]}>{t('timePicker.minute')}</Text>
           </View>
           <View style={styles.pickers}>
             <WheelPicker flex={1} items={HOURS} selectedIndex={hour} onChange={setHour} />
             <View style={styles.colon}>
-              <Text style={[styles.colonText, { color: theme.colors.onSurface }]}>:</Text>
+              <Text variant="headlineSmall" style={[styles.colonText, { color: theme.colors.onSurface }]}>:</Text>
             </View>
             <WheelPicker flex={1} items={MINUTES} selectedIndex={minute} onChange={setMinute} />
           </View>
@@ -110,6 +110,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16, borderTopRightRadius: 16,
     padding: Spacing.lg, paddingBottom: Spacing.xxl,
   },
+  sheetTitle: { marginBottom: Spacing.sm },
   colLabels: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
   colLabel: { fontSize: 11, textAlign: 'center' },
   colonSpace: { width: 28 },

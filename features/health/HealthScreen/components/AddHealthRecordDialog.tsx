@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Dialog, Portal, Text, TextInput, useTheme } from 'react-native-paper';
 import { SelectableChip } from '@/components/SelectableChip';
 import { DatePickerField } from '@/components/DatePickerField';
 import { CreateHealthRecordInput, HealthRecordType } from '@/models/types/HealthRecord';
-import { Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export interface HealthPrefill {
@@ -176,30 +176,35 @@ export function AddHealthRecordDialog({ visible, onDismiss, onSubmit, initial }:
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss} style={styles.dialog}>
         <Dialog.Title>{t('health.dialog.title')}</Dialog.Title>
-        <Dialog.ScrollArea style={styles.scrollArea}>
-          <ScrollView contentContainerStyle={styles.content}>
-            {renderTypeSection()}
-            {renderMainFields()}
-            {!isWeightType && renderExtraFields()}
-          </ScrollView>
-        </Dialog.ScrollArea>
-        <Dialog.Actions>
-          <Button onPress={handleDismiss}>{t('common.cancel')}</Button>
-          <Button
-            mode="contained"
-            onPress={handleSubmit}
-            disabled={isWeightType ? !weightKg.trim() || !date : !title.trim() || !date}
-          >
-            {t('common.save')}
-          </Button>
-        </Dialog.Actions>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <Dialog.ScrollArea style={styles.scrollArea}>
+            <ScrollView contentContainerStyle={styles.content}>
+              {renderTypeSection()}
+              {renderMainFields()}
+              {!isWeightType && renderExtraFields()}
+            </ScrollView>
+          </Dialog.ScrollArea>
+          <Dialog.Actions>
+            <Button onPress={handleDismiss}>{t('common.cancel')}</Button>
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              disabled={isWeightType ? !weightKg.trim() || !date : !title.trim() || !date}
+            >
+              {t('common.save')}
+            </Button>
+          </Dialog.Actions>
+        </KeyboardAvoidingView>
       </Dialog>
     </Portal>
   );
 }
 
 const styles = StyleSheet.create({
-  dialog: { maxHeight: '90%' },
+  // See AddMealDialog.tsx: Dialog's borderRadius is 7 * theme.roundness,
+  // which balloons on a full-size surface using the app's pill-tuned
+  // global roundness.
+  dialog: { maxHeight: '90%', borderRadius: Radius.lg },
   scrollArea: { paddingHorizontal: 0 },
   content: { padding: Spacing.md, gap: Spacing.md },
   field: { gap: Spacing.sm },

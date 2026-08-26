@@ -10,20 +10,16 @@ import { AddReminderDialog } from './components/AddReminderDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
-import type { IRemindersScreenUICallback } from './types';
 
 const RemindersScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
   const { t } = useTranslation();
   const [dialogVisible, setDialogVisible] = useState(false);
+  const openDialog = useCallback(() => setDialogVisible(true), []);
+  const closeDialog = useCallback(() => setDialogVisible(false), []);
 
-  const handleUICallbackFn = useCallback(
-    (action: IRemindersScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
 
   const renderSectionHeader = useCallback(() => (
     <View style={styles.sectionHeader}>
@@ -41,7 +37,7 @@ const RemindersScreenComp = () => {
           title={t('reminders.empty')}
           description={t('reminders.emptyHint')}
           actionLabel={t('reminders.addAction')}
-          onAction={() => setDialogVisible(true)}
+          onAction={openDialog}
         />
       );
     }
@@ -55,7 +51,7 @@ const RemindersScreenComp = () => {
           >
             <Card.Content style={styles.cardContent}>
               <View style={styles.cardText}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <View style={styles.titleRow}>
                   <Text variant="titleSmall" style={{ color: theme.colors.onSurface }}>
                     {reminder.title}
                   </Text>
@@ -86,22 +82,22 @@ const RemindersScreenComp = () => {
         ))}
       </>
     );
-  }, [selectors.reminders, handlers, styles, theme, t]);
+  }, [selectors.reminders, handlers, styles, theme, t, openDialog]);
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']}>
+      <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false}>
         <LoadingState accessibilityLabel={t('reminders.title')} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: () => setDialogVisible(true), accessibilityLabel: t('reminders.addAction') }}>
+    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: openDialog, accessibilityLabel: t('reminders.addAction') }}>
       <ScreenHeader title={t('reminders.title')} />
       <AddReminderDialog
         visible={dialogVisible}
-        onDismiss={() => setDialogVisible(false)}
+        onDismiss={closeDialog}
         onSubmit={handlers.addReminder}
       />
 

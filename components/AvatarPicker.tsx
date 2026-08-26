@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import 'react-native-get-random-values';
@@ -61,35 +61,42 @@ export function AvatarPicker({ photo, name, size = 96, onChange }: Props) {
 
   const badgeSize = size * 0.3;
 
+  const circleSizeStyle = useMemo(
+    () => ({ width: size, height: size, borderRadius: size / 2 }),
+    [size],
+  );
+  const initialTextStyle = useMemo(() => ({ fontSize: size * 0.38 }), [size]);
+  const badgeSizeStyle = useMemo(
+    () => ({ width: badgeSize, height: badgeSize, borderRadius: badgeSize / 2 }),
+    [badgeSize],
+  );
+
   // The photo itself, or a coloured circle with the pet's initial as a fallback.
   const renderAvatar = useCallback(() => (
     photo ? (
       <Image
         source={{ uri: photo }}
-        style={{ width: size, height: size, borderRadius: size / 2 }}
+        style={circleSizeStyle}
         contentFit="cover"
       />
     ) : (
-      <View style={[styles.initial, { width: size, height: size, borderRadius: size / 2, backgroundColor: theme.colors.primaryContainer }]}>
-        <Text style={{ fontSize: size * 0.38, fontWeight: '700', color: theme.colors.primary }}>
+      <View style={[styles.initial, circleSizeStyle, { backgroundColor: theme.colors.primaryContainer }]}>
+        <Text variant="bodyMedium" style={[styles.initialText, initialTextStyle, { color: theme.colors.primary }]}>
           {(name.charAt(0) || '?').toUpperCase()}
         </Text>
       </View>
     )
-  ), [photo, size, theme, name]);
+  ), [photo, circleSizeStyle, initialTextStyle, theme, name]);
 
   // The small camera badge overlaid on the bottom-right corner.
   const renderBadge = useCallback(() => (
-    <View style={[
-      styles.badge,
-      { backgroundColor: theme.colors.primary, width: badgeSize, height: badgeSize, borderRadius: badgeSize / 2 },
-    ]}>
+    <View style={[styles.badge, badgeSizeStyle, { backgroundColor: theme.colors.primary }]}>
       <Icon source="camera" size={Math.floor(size * 0.17)} color={theme.colors.onPrimary} />
     </View>
-  ), [theme, badgeSize, size]);
+  ), [theme, badgeSizeStyle, size]);
 
   return (
-    <Pressable onPress={onPress} style={[styles.wrapper, { width: size, height: size }]}>
+    <Pressable onPress={onPress} style={[styles.wrapper, circleSizeStyle]}>
       {renderAvatar()}
       {renderBadge()}
     </Pressable>
@@ -99,6 +106,7 @@ export function AvatarPicker({ photo, name, size = 96, onChange }: Props) {
 const styles = StyleSheet.create({
   wrapper: { position: 'relative', alignSelf: 'center' },
   initial: { justifyContent: 'center', alignItems: 'center' },
+  initialText: { fontWeight: '700' },
   badge: {
     position: 'absolute',
     bottom: 0,

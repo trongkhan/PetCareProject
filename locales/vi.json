@@ -207,7 +207,8 @@
     "ageYears": "{{count}} tuổi",
     "ageMonths": "{{count}} tháng tuổi",
     "ageUnderMonth": "Dưới 1 tháng",
-    "viewFullProfile": "Xem hồ sơ đầy đủ"
+    "viewFullProfile": "Xem hồ sơ đầy đủ",
+    "switchTitle": "Chọn thú cưng"
   },
   "datePicker": {
     "placeholder": "Chọn ngày",

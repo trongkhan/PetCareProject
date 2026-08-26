@@ -28,7 +28,6 @@ interface Handlers {
   switchPet: (petId: string) => void;
   refresh: () => void;
   navigateCreatePet: () => void;
-  navigatePetProfile: (petId: string) => void;
   navigateFeeding: () => void;
   navigateHealth: () => void;
   navigateReminders: () => void;
@@ -90,10 +89,6 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
     handleUICallback({ type: HomeScreenActionsEnum.NavigateCreatePet });
   }, [handleUICallback]);
 
-  const navigatePetProfile = useCallback((petId: string) => {
-    handleUICallback({ type: HomeScreenActionsEnum.NavigatePetProfile, payload: { petId } });
-  }, [handleUICallback]);
-
   const navigateFeeding = useCallback(() => {
     handleUICallback({ type: HomeScreenActionsEnum.NavigateFeeding });
   }, [handleUICallback]);
@@ -108,6 +103,6 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
 
   return {
     selectors: { pet, allPets, todayMeals, upcomingReminders, upcomingVaccinations, isLoading },
-    handlers: { switchPet, refresh: load, navigateCreatePet, navigatePetProfile, navigateFeeding, navigateHealth, navigateReminders },
+    handlers: { switchPet, refresh: load, navigateCreatePet, navigateFeeding, navigateHealth, navigateReminders },
   };
 };

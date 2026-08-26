@@ -16,7 +16,7 @@ export function GenderSelector({ value, onChange }: Props) {
   const { t } = useTranslation();
   return (
     <View style={styles.container}>
-      <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.sm }}>
+      <Text variant="labelLarge" style={[styles.label, { color: theme.colors.onSurfaceVariant }]}>
         {t('gender.label')}
       </Text>
       <SegmentedControl
@@ -33,4 +33,5 @@ export function GenderSelector({ value, onChange }: Props) {
 
 const styles = StyleSheet.create({
   container: { gap: Spacing.sm },
+  label: { marginBottom: Spacing.sm },
 });

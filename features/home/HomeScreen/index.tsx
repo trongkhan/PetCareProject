@@ -1,18 +1,16 @@
 import { BaseScreen } from '@/components/BaseScreen';
 import { LoadingState } from '@/components/LoadingState';
-import { Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { Button, Text, useTheme } from 'react-native-paper';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import { PetHeaderCard } from './components/PetHeaderCard';
-import { PetSwitcher } from './components/PetSwitcher';
+import { PetHeaderTrigger } from './components/PetHeaderTrigger';
+import { PetPickerSheet } from './components/PetPickerSheet';
 import { QuickLogCard } from './components/QuickLogCard';
 import { SectionCard } from './components/SectionCard';
 import { VaccinationWarning } from './components/VaccinationWarning';
 import { useStyles } from './styles';
-import type { IHomeScreenUICallback } from './types';
 import { handleUICallback } from './uiCallback';
 import { useViewModel } from './viewModel';
 
@@ -21,12 +19,10 @@ const HomeScreenComp = () => {
   const styles = useStyles(theme);
   const { t } = useTranslation();
 
-  const handleUICallbackFn = useCallback(
-    (action: IHomeScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const openPicker = useCallback(() => setPickerVisible(true), []);
+  const closePicker = useCallback(() => setPickerVisible(false), []);
 
   const renderFeedingCard = useCallback(() => {
     const count = selectors.todayMeals.length;
@@ -34,16 +30,16 @@ const HomeScreenComp = () => {
     return (
       <SectionCard icon="silverware-fork-knife" title={t('home.feeding.title')} onPress={handlers.navigateFeeding}>
         {count === 0 ? (
-          <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
+          <Text variant="bodyMedium" style={[styles.emptyItalic, { color: theme.colors.onSurfaceVariant }]}>
             {t('home.feeding.empty')}
           </Text>
         ) : (
-          <View style={{ gap: 2 }}>
-            <Text variant="bodySmall" style={{ color: theme.colors.primary, fontWeight: '600' }}>
+          <View style={styles.tightGap}>
+            <Text variant="bodyMedium" style={[styles.countLabel, { color: theme.colors.primary }]}>
               {t('home.feeding.count', { count })}
             </Text>
             {latest && (
-              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+              <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
                 {t(`mealType.${latest.type}`)} · {latest.food}
               </Text>
             )}
@@ -51,24 +47,24 @@ const HomeScreenComp = () => {
         )}
       </SectionCard>
     );
-  }, [selectors.todayMeals, handlers.navigateFeeding, theme, t]);
+  }, [selectors.todayMeals, handlers.navigateFeeding, theme, t, styles]);
 
   const renderHealthCard = useCallback(() => {
     const hasVaccination = selectors.upcomingVaccinations.length > 0;
     return (
       <SectionCard icon="heart-pulse" title={t('home.health.title')} onPress={handlers.navigateHealth}>
-        <View style={{ gap: 2 }}>
+        <View style={styles.tightGap}>
           {selectors.pet && (
-            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
               {t('home.health.currentWeight', { weight: selectors.pet.weight })}
             </Text>
           )}
           {hasVaccination ? (
-            <Text variant="bodySmall" style={styles.warningText}>
+            <Text variant="bodyMedium" style={styles.warningText}>
               {t('home.health.vaccinationSoon')}
             </Text>
           ) : (
-            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
               {t('home.health.noVaccination')}
             </Text>
           )}
@@ -83,16 +79,16 @@ const HomeScreenComp = () => {
     return (
       <SectionCard icon="bell-outline" title={t('home.reminders.title')} onPress={handlers.navigateReminders}>
         {enabled.length === 0 ? (
-          <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
+          <Text variant="bodyMedium" style={[styles.emptyItalic, { color: theme.colors.onSurfaceVariant }]}>
             {t('home.reminders.empty')}
           </Text>
         ) : (
-          <View style={{ gap: 2 }}>
-            <Text variant="bodySmall" style={{ color: theme.colors.primary, fontWeight: '600' }}>
+          <View style={styles.tightGap}>
+            <Text variant="bodyMedium" style={[styles.countLabel, { color: theme.colors.primary }]}>
               {t('home.reminders.count', { count: enabled.length })}
             </Text>
             {next && (
-              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+              <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
                 {next.time} · {next.title}
               </Text>
             )}
@@ -100,7 +96,11 @@ const HomeScreenComp = () => {
         )}
       </SectionCard>
     );
-  }, [selectors.upcomingReminders, handlers.navigateReminders, theme, t]);
+  }, [selectors.upcomingReminders, handlers.navigateReminders, theme, t, styles]);
+
+  const renderHeaderLeft = useCallback(() => (
+    <PetHeaderTrigger pet={selectors.pet!} onPress={openPicker} />
+  ), [selectors.pet, openPicker]);
 
   if (selectors.isLoading) {
     return (
@@ -114,10 +114,10 @@ const HomeScreenComp = () => {
     return (
       <BaseScreen edges={['top']}>
         <View style={styles.center}>
-          <Text variant="headlineSmall" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+          <Text variant="headlineSmall" style={[styles.noPetTitle, { color: theme.colors.onSurface }]}>
             {t('home.noPetTitle')}
           </Text>
-          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: Spacing.lg }}>
+          <Text variant="bodyMedium" style={[styles.noPetSubtitle, { color: theme.colors.onSurfaceVariant }]}>
             {t('home.noPetSubtitle')}
           </Text>
           <Button mode="contained" onPress={handlers.navigateCreatePet} icon="plus">
@@ -129,27 +129,27 @@ const HomeScreenComp = () => {
   }
 
   return (
-    <BaseScreen edges={['top']} fab={{ onPress: handlers.navigateCreatePet, accessibilityLabel: t('pets.createTitle') }}>
-      <PetSwitcher
+    <BaseScreen
+      edges={['top']}
+      fab={{ onPress: handlers.navigateCreatePet, accessibilityLabel: t('pets.createTitle') }}
+      headerLeft={renderHeaderLeft}
+    >
+      <PetPickerSheet
+        visible={pickerVisible}
         pets={selectors.allPets}
         activePetId={selectors.pet.id}
         onSwitch={handlers.switchPet}
+        onCreate={handlers.navigateCreatePet}
+        onClose={closePicker}
       />
       <ScrollView contentContainerStyle={styles.content}>
         <Animated.View entering={FadeInDown.duration(400)}>
-          <PetHeaderCard
-            key={selectors.pet.id}
-            pet={selectors.pet}
-            onNavigateProfile={handlers.navigatePetProfile}
-          />
-        </Animated.View>
-        <Animated.View entering={FadeInDown.delay(70).duration(400)}>
           <VaccinationWarning vaccinations={selectors.upcomingVaccinations} />
         </Animated.View>
-        <Animated.View entering={FadeInDown.delay(140).duration(400)}>
+        <Animated.View entering={FadeInDown.delay(70).duration(400)}>
           <QuickLogCard />
         </Animated.View>
-        <Animated.View entering={FadeInDown.delay(210).duration(400)} style={styles.sections}>
+        <Animated.View entering={FadeInDown.delay(140).duration(400)} style={styles.sections}>
           <Text variant="labelLarge" style={[styles.sectionsLabel, { color: theme.colors.onSurfaceVariant }]}>
             {t('home.activity')}
           </Text>

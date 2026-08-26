@@ -59,6 +59,8 @@ export const PetTheme = {
 // headings/CTAs, distinct from the system font used everywhere else so body
 // text stays quick to read.
 export const Fonts = {
+  bodyRegular: 'Baloo2_400Regular',
+  bodyMedium: 'Baloo2_500Medium',
   headingSemiBold: 'Baloo2_600SemiBold',
   headingBold: 'Baloo2_700Bold',
   headingExtraBold: 'Baloo2_800ExtraBold',

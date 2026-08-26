@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { View } from 'react-native';
+import React from 'react';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import { router } from 'expo-router';
 import { Avatar, Button, Divider, List, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
@@ -7,19 +7,30 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
-import type { IAccountScreenUICallback } from './types';
+
+interface ListRowIconProps {
+  color?: string;
+  style?: StyleProp<ViewStyle>;
+}
+
+function renderSettingsLeftIcon(props: ListRowIconProps) {
+  return <List.Icon {...props} icon="cog-outline" />;
+}
+
+function renderSettingsRightIcon(props: ListRowIconProps) {
+  return <List.Icon {...props} icon="chevron-right" />;
+}
+
+function navigateToSettings() {
+  router.push('/settings');
+}
 
 const AccountScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
   const { t } = useTranslation();
 
-  const handleUICallbackFn = useCallback(
-    (action: IAccountScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
 
   return (
     <BaseScreen headerTitle={t('account.title')} edges={['top']}>
@@ -36,9 +47,9 @@ const AccountScreenComp = () => {
       <Divider />
       <List.Item
         title={t('account.settings')}
-        left={(p) => <List.Icon {...p} icon="cog-outline" />}
-        right={(p) => <List.Icon {...p} icon="chevron-right" />}
-        onPress={() => router.push('/settings')}
+        left={renderSettingsLeftIcon}
+        right={renderSettingsRightIcon}
+        onPress={navigateToSettings}
       />
       <Divider />
 

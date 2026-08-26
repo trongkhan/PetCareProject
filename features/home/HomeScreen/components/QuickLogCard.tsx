@@ -75,6 +75,6 @@ const styles = StyleSheet.create({
   card: { borderRadius: 16, padding: Spacing.md, gap: Spacing.xs },
   titleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   inputRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  input: { flex: 1 },
+  input: { flex: 1, fontSize: 16 },
   spinner: { width: 48, height: 48, justifyContent: 'center' },
 });

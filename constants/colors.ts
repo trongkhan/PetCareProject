@@ -1,17 +1,9 @@
 import type { MD3Theme } from 'react-native-paper';
 
-/**
- * Semantic colors that Material Design 3 (react-native-paper) doesn't provide
- * out of the box — warning/amber accents and an explicit text palette.
- * Defined once per mode here instead of being scattered as inline
- * `theme.dark ? '#a' : '#b'` ternaries across the screens.
- */
 export interface AppSemanticColors {
-  // Warning / attention (vaccination due, allergies…)
   warning: string;
   warningStrong: string;
   warningSurface: string;
-  // Text palette
   textPrimary: string;
   textSecondary: string;
   textMuted: string;
@@ -35,7 +27,6 @@ export const SEMANTIC_DARK: AppSemanticColors = {
   textMuted: '#948F9C',
 };
 
-/** Paper's MD3 theme extended with our semantic color tokens. */
 export type AppTheme = MD3Theme & {
   colors: MD3Theme['colors'] & AppSemanticColors;
 };

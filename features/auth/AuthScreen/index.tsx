@@ -2,11 +2,10 @@ import { GoogleIcon } from '@/assets/icons';
 import { BaseScreen } from '@/components/BaseScreen';
 import { useTranslation } from '@/hooks/useTranslation';
 import { Image } from 'expo-image';
-import React, { useCallback } from 'react';
+import React from 'react';
 import { Platform, ScrollView, View } from 'react-native';
 import { Button, HelperText, Icon, Text, useTheme } from 'react-native-paper';
 import { useStyles } from './styles';
-import type { IAuthScreenUICallback } from './types';
 import { handleUICallback } from './uiCallback';
 import { useViewModel } from './viewModel';
 
@@ -15,22 +14,17 @@ const logo = require('../../../assets/images/senly-logo.png');
 // Google/Apple sign-in aren't wired to a real provider yet (no OAuth client
 // registered) — these buttons are UI-only placeholders until credentials
 // exist; see SENLY_PROGRESS.md.
-const noop = () => {};
+function noop() {}
 
 const AuthScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
   const { t } = useTranslation();
 
-  const handleUICallbackFn = useCallback(
-    (action: IAuthScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
 
   return (
-    <BaseScreen header={false}>
+    <BaseScreen header={false} bottomBarClearance={false}>
       <ScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"

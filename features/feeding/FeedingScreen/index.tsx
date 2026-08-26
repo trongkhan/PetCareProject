@@ -12,7 +12,6 @@ import { AddMealDialog, type MealPrefill } from './components/AddMealDialog';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
-import type { IFeedingScreenUICallback } from './types';
 
 const FeedingScreenComp = () => {
   const theme = useTheme();
@@ -32,12 +31,12 @@ const FeedingScreenComp = () => {
     }
   }, [pending, clearQuickLog]);
 
-  const handleUICallbackFn = useCallback(
-    (action: IFeedingScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
+  const openDialog = useCallback(() => setDialogVisible(true), []);
+  const closeDialog = useCallback(() => {
+    setDialogVisible(false);
+    setPrefill(undefined);
+  }, []);
 
   const renderSectionHeader = useCallback(() => (
     <View style={styles.sectionHeader}>
@@ -56,7 +55,7 @@ const FeedingScreenComp = () => {
           title={t('feeding.empty')}
           description={t('feeding.emptyHint')}
           actionLabel={t('feeding.addAction')}
-          onAction={() => setDialogVisible(true)}
+          onAction={openDialog}
         />
       );
     }
@@ -88,7 +87,7 @@ const FeedingScreenComp = () => {
         ))}
       </>
     );
-  }, [selectors.todayMeals, handlers, styles, theme, t]);
+  }, [selectors.todayMeals, handlers, styles, theme, t, openDialog]);
 
   const renderMealHistory = useCallback(() => {
     const historyMeals = selectors.meals.filter(m => !selectors.todayMeals.find(t => t.id === m.id));
@@ -114,18 +113,18 @@ const FeedingScreenComp = () => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']}>
+      <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false}>
         <LoadingState accessibilityLabel={t('feeding.title')} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: () => setDialogVisible(true), accessibilityLabel: t('feeding.addAction') }}>
+    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: openDialog, accessibilityLabel: t('feeding.addAction') }}>
       <ScreenHeader title={t('feeding.title')} />
       <AddMealDialog
         visible={dialogVisible}
-        onDismiss={() => { setDialogVisible(false); setPrefill(undefined); }}
+        onDismiss={closeDialog}
         onSubmit={handlers.logMeal}
         initial={prefill}
       />

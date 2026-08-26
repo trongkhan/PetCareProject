@@ -8,11 +8,13 @@ import { StyleSheet, View } from 'react-native';
 import { IconButton, Text } from 'react-native-paper';
 
 interface AppHeaderProps {
-  /** Title shown on the left. Defaults to the app name. */
+  /** Title shown on the left. Defaults to the app name. Ignored when `renderLeft` is set. */
   title?: string;
+  /** Replaces the default title text with a custom node (e.g. an avatar + name trigger). */
+  renderLeft?: () => React.ReactNode;
 }
 
-export function AppHeader({ title }: AppHeaderProps) {
+export function AppHeader({ title, renderLeft }: AppHeaderProps) {
   const theme = useAppTheme();
   const { t } = useTranslation();
   const setColorScheme = useSettingsStore((s) => s.setColorScheme);
@@ -56,7 +58,7 @@ export function AppHeader({ title }: AppHeaderProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {renderTitle()}
+      {renderLeft ? renderLeft() : renderTitle()}
       {renderActions()}
     </View>
   );

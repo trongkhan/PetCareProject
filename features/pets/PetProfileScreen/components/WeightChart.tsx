@@ -29,14 +29,14 @@ export function WeightChart({ weightHistory, currentWeight }: Props) {
 
         {history.length === 0 ? (
           <View style={styles.empty}>
-            <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, fontStyle: 'italic' }}>
+            <Text variant="bodySmall" style={[styles.emptyText, { color: theme.colors.onSurfaceVariant }]}>
               {t('pets.chart.empty')}
             </Text>
           </View>
         ) : (
           <View style={styles.chartArea}>
             {history.map(entry => (
-              <View key={entry.id} style={{ flex: 1, alignItems: 'center' }}>
+              <View key={entry.id} style={styles.barColumn}>
                 <View
                   style={[
                     styles.bar,
@@ -46,10 +46,10 @@ export function WeightChart({ weightHistory, currentWeight }: Props) {
                     },
                   ]}
                 />
-                <Text style={[styles.label, { color: theme.colors.onSurfaceVariant }]}>
+                <Text variant="bodySmall" style={[styles.label, { color: theme.colors.onSurfaceVariant }]}>
                   {entry.weight}
                 </Text>
-                <Text style={[styles.label, { color: theme.colors.onSurfaceVariant }]}>
+                <Text variant="bodySmall" style={[styles.label, { color: theme.colors.onSurfaceVariant }]}>
                   {format(new Date(entry.date), 'dd/MM')}
                 </Text>
               </View>
@@ -68,4 +68,6 @@ const styles = StyleSheet.create({
   chartArea: { height: 100, flexDirection: 'row', alignItems: 'flex-end', gap: 6, paddingTop: Spacing.sm },
   bar: { alignSelf: 'stretch', borderRadius: 4, minHeight: 4 },
   label: { fontSize: 10, textAlign: 'center', marginTop: 2 },
+  emptyText: { fontStyle: 'italic' },
+  barColumn: { flex: 1, alignItems: 'center' },
 });

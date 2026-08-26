@@ -79,12 +79,12 @@ export function DatePickerField({ label, value, onChange }: Props) {
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={closePicker} />
         <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={4}>
-          <Text variant="titleMedium" style={{ color: theme.colors.onSurface, marginBottom: Spacing.sm }}>
+          <Text variant="titleMedium" style={[styles.sheetTitle, { color: theme.colors.onSurface }]}>
             {label}
           </Text>
           <View style={styles.colLabels}>
             {[{ label: t('datePicker.day'), flex: 1 }, { label: t('datePicker.month'), flex: 1 }, { label: t('datePicker.year'), flex: 2 }].map(c => (
-              <Text key={c.label} style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: c.flex }]}>{c.label}</Text>
+              <Text key={c.label} variant="bodySmall" style={[styles.colLabel, { color: theme.colors.onSurfaceVariant, flex: c.flex }]}>{c.label}</Text>
             ))}
           </View>
           <View style={styles.pickers}>
@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16, borderTopRightRadius: 16,
     padding: Spacing.lg, paddingBottom: Spacing.xxl,
   },
+  sheetTitle: { marginBottom: Spacing.sm },
   colLabels: { flexDirection: 'row', marginBottom: 4 },
   colLabel: { fontSize: 11, textAlign: 'center' },
   pickers: { flexDirection: 'row', gap: Spacing.xs },

@@ -6,6 +6,8 @@ export const useStyles = createStyles((theme) => ({
   content: { padding: Spacing.md, gap: Spacing.md, paddingBottom: Spacing.xxl },
   heroCard: {},
   heroContent: { alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.lg },
+  petName: { fontWeight: '700' },
+  allergyRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 4 },
   allergyChip: { backgroundColor: theme.colors.warningSurface },
   allergyChipText: { color: theme.colors.warning, fontSize: 11 },
   avatar: {

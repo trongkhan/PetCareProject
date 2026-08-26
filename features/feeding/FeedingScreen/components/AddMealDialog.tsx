@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { Button, Dialog, Portal, Text, TextInput, useTheme } from 'react-native-paper';
 import { SegmentedControl } from '@/components/SegmentedControl';
 import { SelectableChip } from '@/components/SelectableChip';
 import { useTranslation } from '@/hooks/useTranslation';
 import { CreateMealInput, MealType, MealUnit } from '@/models/types/Meal';
-import { Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
 
 export interface MealPrefill {
   type?: MealType;
@@ -151,27 +151,33 @@ export function AddMealDialog({ visible, onDismiss, onSubmit, initial }: Props) 
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss} style={styles.dialog}>
         <Dialog.Title>{t('feeding.dialog.title')}</Dialog.Title>
-        <Dialog.ScrollArea style={styles.scrollArea}>
-          <ScrollView contentContainerStyle={styles.content}>
-            {renderTypeSection()}
-            {renderFoodFields()}
-            {renderUnitSection()}
-            {renderOptionalFields()}
-          </ScrollView>
-        </Dialog.ScrollArea>
-        <Dialog.Actions>
-          <Button onPress={handleDismiss}>{t('common.cancel')}</Button>
-          <Button mode="contained" onPress={handleSubmit} disabled={!food.trim()}>
-            {t('common.save')}
-          </Button>
-        </Dialog.Actions>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <Dialog.ScrollArea style={styles.scrollArea}>
+            <ScrollView contentContainerStyle={styles.content}>
+              {renderTypeSection()}
+              {renderFoodFields()}
+              {renderUnitSection()}
+              {renderOptionalFields()}
+            </ScrollView>
+          </Dialog.ScrollArea>
+          <Dialog.Actions>
+            <Button onPress={handleDismiss}>{t('common.cancel')}</Button>
+            <Button mode="contained" onPress={handleSubmit} disabled={!food.trim()}>
+              {t('common.save')}
+            </Button>
+          </Dialog.Actions>
+        </KeyboardAvoidingView>
       </Dialog>
     </Portal>
   );
 }
 
 const styles = StyleSheet.create({
-  dialog: { maxHeight: '85%' },
+  // Overrides Dialog's borderRadius (Paper: 7 * theme.roundness). The app's
+  // global roundness (Radius.xl) is tuned for pill-shaped chips/buttons — at
+  // 7x it turns a tall surface like this into a blob, so a full-size dialog
+  // needs its own smaller radius.
+  dialog: { maxHeight: '85%', borderRadius: Radius.lg },
   scrollArea: { paddingHorizontal: 0 },
   content: { padding: Spacing.md, gap: Spacing.md },
   field: { gap: Spacing.sm },

@@ -5,7 +5,6 @@ import { BaseScreen } from '@/components/BaseScreen';
 import { EmptyState } from '@/components/EmptyState';
 import { LoadingState } from '@/components/LoadingState';
 import { ScreenHeader } from '@/components/ScreenHeader';
-import { Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useQuickLogStore } from '@/store/quickLogStore';
 import { formatCurrency, formatDate } from '@/utils/format';
@@ -13,7 +12,6 @@ import { AddHealthRecordDialog, type HealthPrefill } from './components/AddHealt
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
-import type { IHealthScreenUICallback } from './types';
 
 const HealthScreenComp = () => {
   const theme = useTheme();
@@ -33,12 +31,12 @@ const HealthScreenComp = () => {
     }
   }, [pending, clearQuickLog]);
 
-  const handleUICallbackFn = useCallback(
-    (action: IHealthScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
+  const openDialog = useCallback(() => setDialogVisible(true), []);
+  const closeDialog = useCallback(() => {
+    setDialogVisible(false);
+    setPrefill(undefined);
+  }, []);
 
   const renderVaccinationsHeader = useCallback(() => (
     <View style={styles.sectionHeader}>
@@ -93,18 +91,18 @@ const HealthScreenComp = () => {
         </Text>
         {selectors.records.map(record => (
           <Card key={record.id} mode="outlined" style={styles.card}>
-            <Card.Content style={{ gap: Spacing.xs }}>
+            <Card.Content style={styles.recordContent}>
               <View style={styles.recordHeader}>
                 {record.type === 'weight' ? (
-                  <Text variant="titleSmall" style={{ color: theme.colors.primary, flex: 1 }}>
+                  <Text variant="titleSmall" style={[styles.recordTitle, { color: theme.colors.primary }]}>
                     {record.notes} kg
                   </Text>
                 ) : (
-                  <Text variant="titleSmall" style={{ color: theme.colors.onSurface, flex: 1 }}>
+                  <Text variant="titleSmall" style={[styles.recordTitle, { color: theme.colors.onSurface }]}>
                     {record.title}
                   </Text>
                 )}
-                <Chip compact textStyle={{ fontSize: 11 }}>
+                <Chip compact textStyle={styles.typeChipText}>
                   {t(`healthType.${record.type}`)}
                 </Chip>
               </View>
@@ -126,18 +124,18 @@ const HealthScreenComp = () => {
 
   if (selectors.isLoading) {
     return (
-      <BaseScreen header={false} edges={['bottom']}>
+      <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false}>
         <LoadingState accessibilityLabel={t('health.title')} />
       </BaseScreen>
     );
   }
 
   return (
-    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: () => setDialogVisible(true), accessibilityLabel: t('health.addAction') }}>
+    <BaseScreen header={false} edges={['bottom']} fab={{ onPress: openDialog, accessibilityLabel: t('health.addAction') }}>
       <ScreenHeader title={t('health.title')} />
       <AddHealthRecordDialog
         visible={dialogVisible}
-        onDismiss={() => { setDialogVisible(false); setPrefill(undefined); }}
+        onDismiss={closeDialog}
         onSubmit={handlers.addRecord}
         initial={prefill}
       />

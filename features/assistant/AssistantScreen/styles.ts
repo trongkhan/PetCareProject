@@ -1,5 +1,5 @@
+import { Spacing } from '@/constants/theme';
 import { createStyles } from '@/utils/createStyles';
-import { Spacing, TabBarClearance } from '@/constants/theme';
 
 export const useStyles = createStyles((theme) => ({
   flex: { flex: 1 },
@@ -12,13 +12,10 @@ export const useStyles = createStyles((theme) => ({
   bubbleTextAssistant: { color: theme.colors.onSurface },
   loading: { marginVertical: Spacing.xs },
   disclaimer: { textAlign: 'center', paddingHorizontal: Spacing.md, color: theme.colors.onSurfaceVariant },
-  // Bottom padding clears the floating tab bar (this screen only reserves
-  // the top safe-area edge — see AssistantScreen's `edges={['top']}`).
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
     padding: Spacing.sm,
-    paddingBottom: TabBarClearance,
   },
 }));

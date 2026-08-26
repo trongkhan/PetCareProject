@@ -7,26 +7,21 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useStyles } from './styles';
 import { useViewModel } from './viewModel';
 import { handleUICallback } from './uiCallback';
-import type { IAssistantScreenUICallback, Msg } from './types';
+import type { Msg } from './types';
 
 const AssistantScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
   const { t } = useTranslation();
 
-  const handleUICallbackFn = useCallback(
-    (action: IAssistantScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
 
   const renderItem = useCallback(
     ({ item }: { item: Msg }) => {
       const isUser = item.role === 'user';
       return (
         <View style={[styles.bubble, isUser ? styles.bubbleUser : styles.bubbleAssistant]}>
-          <Text style={isUser ? styles.bubbleTextUser : styles.bubbleTextAssistant}>{item.text}</Text>
+          <Text variant="bodyMedium" style={isUser ? styles.bubbleTextUser : styles.bubbleTextAssistant}>{item.text}</Text>
         </View>
       );
     },
@@ -34,7 +29,7 @@ const AssistantScreenComp = () => {
   );
 
   return (
-    <BaseScreen headerTitle={t('assistant.title')} edges={['top']}>
+    <BaseScreen headerTitle={t('assistant.title')} edges={['top']} avoidKeyboard={false}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}

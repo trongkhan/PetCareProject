@@ -14,7 +14,6 @@ import { Button, Surface, TextInput, useTheme } from 'react-native-paper';
 import { GenderSelector } from '../components/GenderSelector';
 import { SpeciesSelector } from '../components/SpeciesSelector';
 import { useStyles } from './styles';
-import type { ICreatePetScreenUICallback } from './types';
 import { handleUICallback } from './uiCallback';
 import { useViewModel } from './viewModel';
 
@@ -34,12 +33,7 @@ const CreatePetScreenComp = () => {
   const [birthday, setBirthday] = useState('');
   const [notes, setNotes] = useState('');
 
-  const handleUICallbackFn = useCallback(
-    (action: ICreatePetScreenUICallback) => handleUICallback(action),
-    [],
-  );
-
-  const { selectors, handlers } = useViewModel({ handleUICallback: handleUICallbackFn });
+  const { selectors, handlers } = useViewModel({ handleUICallback });
 
   const handleThemeChange = useCallback((themeId: string) => {
     setPetTheme(themeId);
@@ -77,7 +71,7 @@ const CreatePetScreenComp = () => {
   ), [handleCreate, name, selectors.isSubmitting, styles, theme, t]);
 
   return (
-    <BaseScreen header={false} edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false}>
       <ScreenHeader statusBarHeight={0} title={t('pets.createTitle')} onBack={handlers.navigateBack} />
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>

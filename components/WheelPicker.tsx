@@ -1,3 +1,4 @@
+import { Fonts } from '@/constants/theme';
 import React, { useRef, useEffect, useCallback } from 'react';
 import { ScrollView, View, Text, StyleSheet, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { useTheme } from 'react-native-paper';
@@ -96,5 +97,5 @@ const styles = StyleSheet.create({
   },
   content: { paddingVertical: ITEM_H * 2 },
   item: { height: ITEM_H, justifyContent: 'center', alignItems: 'center' },
-  text: { fontSize: 17 },
+  text: { fontSize: 17, fontFamily: Fonts.bodyMedium },
 });

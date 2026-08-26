@@ -207,7 +207,8 @@
     "ageYears": "{{count}} yr",
     "ageMonths": "{{count}} mo",
     "ageUnderMonth": "Under 1 month",
-    "viewFullProfile": "View full profile"
+    "viewFullProfile": "View full profile",
+    "switchTitle": "Choose pet"
   },
   "datePicker": {
     "placeholder": "Select date",

@@ -6,9 +6,6 @@ export const handleUICallback = (action: IHomeScreenUICallback): void => {
     case HomeScreenActionsEnum.NavigateCreatePet:
       router.push('/pet/create');
       break;
-    case HomeScreenActionsEnum.NavigatePetProfile:
-      router.push(`/pet/${action.payload?.petId as string}`);
-      break;
     case HomeScreenActionsEnum.NavigateFeeding:
       router.push('/feeding');
       break;
