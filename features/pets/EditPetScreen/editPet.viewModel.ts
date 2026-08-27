@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Pet, CreatePetInput } from '@/models/types/Pet';
 import { PetRepository } from '@/models/repositories/PetRepository';
 import { useActivePetStore } from '@/store/activePetStore';
-import { IEditPetScreenUICallback, EditPetScreenActionsEnum } from './types';
+import { IEditPetScreenUICallback, EditPetScreenActionsEnum } from './editPet.types';
 
 interface UseViewModelProps {
   petId: string;

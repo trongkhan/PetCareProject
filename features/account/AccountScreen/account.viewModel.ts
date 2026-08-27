@@ -1,5 +1,5 @@
 import { useAuthStore } from '@/store/authStore';
-import { IAccountScreenUICallback } from './types';
+import { IAccountScreenUICallback } from './account.types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IAccountScreenUICallback) => void;

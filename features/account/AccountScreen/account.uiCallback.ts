@@ -1,4 +1,4 @@
-import { AccountScreenActionsEnum, IAccountScreenUICallback } from './types';
+import { AccountScreenActionsEnum, IAccountScreenUICallback } from './account.types';
 
 export const handleUICallback = (action: IAccountScreenUICallback): void => {
   switch (action.type) {

@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useAuthStore } from '@/store/authStore';
-import { IAuthScreenUICallback } from './types';
+import { IAuthScreenUICallback } from './auth.types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IAuthScreenUICallback) => void;

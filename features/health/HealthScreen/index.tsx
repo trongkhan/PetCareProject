@@ -9,9 +9,9 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useQuickLogStore } from '@/store/quickLogStore';
 import { formatCurrency, formatDate } from '@/utils/format';
 import { AddHealthRecordDialog, type HealthPrefill } from './components/AddHealthRecordDialog';
-import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
+import { useStyles } from './health.styles';
+import { useViewModel } from './health.viewModel';
+import { handleUICallback } from './health.uiCallback';
 
 const HealthScreenComp = () => {
   const theme = useTheme();

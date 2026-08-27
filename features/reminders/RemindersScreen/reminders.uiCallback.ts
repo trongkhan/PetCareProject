@@ -1,4 +1,4 @@
-import { RemindersScreenActionsEnum, IRemindersScreenUICallback } from './types';
+import { RemindersScreenActionsEnum, IRemindersScreenUICallback } from './reminders.types';
 
 export const handleUICallback = (action: IRemindersScreenUICallback): void => {
   switch (action.type) {

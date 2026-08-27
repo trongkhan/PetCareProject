@@ -14,9 +14,9 @@ import { useActivePetStore } from '@/store/activePetStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { GenderSelector } from '../components/GenderSelector';
 import { SpeciesSelector } from '../components/SpeciesSelector';
-import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
+import { useStyles } from './editPet.styles';
+import { useViewModel } from './editPet.viewModel';
+import { handleUICallback } from './editPet.uiCallback';
 
 interface Props {
   petId: string;

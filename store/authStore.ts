@@ -1,4 +1,4 @@
-import { supabase } from '@/services/supabase';
+import { AuthService } from '@/services/AuthService';
 import type { Session, User } from '@supabase/supabase-js';
 import { create } from 'zustand';
 
@@ -20,34 +20,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   initializing: true,
 
   init: () => {
-    supabase.auth.getSession().then(({ data }) => {
-      set({ session: data.session, user: data.session?.user ?? null, initializing: false });
+    AuthService.getSession().then((session) => {
+      set({ session, user: session?.user ?? null, initializing: false });
     });
-    supabase.auth.onAuthStateChange((_event, session) => {
+    AuthService.onAuthStateChange((session) => {
       set({ session, user: session?.user ?? null, initializing: false });
     });
   },
 
-  signInWithPassword: async (email, password) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return error ? { error: error.message } : {};
-  },
+  signInWithPassword: (email, password) => AuthService.signInWithPassword(email, password),
 
-  signUp: async (email, password) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    return error ? { error: error.message } : {};
-  },
+  signUp: (email, password) => AuthService.signUp(email, password),
 
-  // Real Supabase session (session.user.is_anonymous === true) with no
-  // email/password — the auth gate in the root layout treats it like any
-  // other signed-in session. Can be upgraded to a real account later via
-  // supabase.auth.updateUser({ email, password }).
-  signInAsGuest: async () => {
-    const { error } = await supabase.auth.signInAnonymously();
-    return error ? { error: error.message } : {};
-  },
+  signInAsGuest: () => AuthService.signInAsGuest(),
 
-  signOut: async () => {
-    await supabase.auth.signOut();
-  },
+  signOut: () => AuthService.signOut(),
 }));

@@ -1,4 +1,4 @@
-import { SettingsScreenActionsEnum, ISettingsScreenUICallback } from './types';
+import { SettingsScreenActionsEnum, ISettingsScreenUICallback } from './settings.types';
 
 export const handleUICallback = (action: ISettingsScreenUICallback): void => {
   switch (action.type) {

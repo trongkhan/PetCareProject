@@ -5,9 +5,9 @@ import { Image } from 'expo-image';
 import React from 'react';
 import { Platform, ScrollView, View } from 'react-native';
 import { Button, HelperText, Icon, Text, useTheme } from 'react-native-paper';
-import { useStyles } from './styles';
-import { handleUICallback } from './uiCallback';
-import { useViewModel } from './viewModel';
+import { useStyles } from './auth.styles';
+import { handleUICallback } from './auth.uiCallback';
+import { useViewModel } from './auth.viewModel';
 
 const logo = require('../../../assets/images/senly-logo.png');
 

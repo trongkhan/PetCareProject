@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useSettingsStore } from '@/store/settingsStore';
-import { ColorSchemePreference, ISettingsScreenUICallback, Language } from './types';
+import { ColorSchemePreference, ISettingsScreenUICallback, Language } from './settings.types';
 
 interface UseViewModelProps {
   handleUICallback: (action: ISettingsScreenUICallback) => void;

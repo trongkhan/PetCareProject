@@ -3,7 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import { Meal, CreateMealInput } from '@/models/types/Meal';
 import { MealRepository } from '@/models/repositories/MealRepository';
 import { useActivePetStore } from '@/store/activePetStore';
-import { IFeedingScreenUICallback } from './types';
+import { IFeedingScreenUICallback } from './feeding.types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IFeedingScreenUICallback) => void;

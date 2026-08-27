@@ -7,9 +7,9 @@ import { LoadingState } from '@/components/LoadingState';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useTranslation } from '@/hooks/useTranslation';
 import { AddReminderDialog } from './components/AddReminderDialog';
-import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
+import { useStyles } from './reminders.styles';
+import { useViewModel } from './reminders.viewModel';
+import { handleUICallback } from './reminders.uiCallback';
 
 const RemindersScreenComp = () => {
   const theme = useTheme();

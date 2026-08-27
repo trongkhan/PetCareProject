@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import { AIService } from '@/services/AIService';
 import { useTranslation } from '@/hooks/useTranslation';
-import { IAssistantScreenUICallback, Msg } from './types';
+import { IAssistantScreenUICallback, Msg } from './assistant.types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IAssistantScreenUICallback) => void;

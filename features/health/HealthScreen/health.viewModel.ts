@@ -3,7 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import { HealthRecord, CreateHealthRecordInput, WeightEntry } from '@/models/types/HealthRecord';
 import { HealthRepository } from '@/models/repositories/HealthRepository';
 import { useActivePetStore } from '@/store/activePetStore';
-import { IHealthScreenUICallback } from './types';
+import { IHealthScreenUICallback } from './health.types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IHealthScreenUICallback) => void;

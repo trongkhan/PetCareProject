@@ -61,6 +61,10 @@ This app follows **MVVM (Model-View-ViewModel)** architecture adapted for Expo R
 │   └── settingsStore.ts          # Language, theme, notification prefs
 │
 ├── services/                     # Side-effect services (no UI, no state)
+│   ├── supabase.ts               # Supabase client singleton (the network client)
+│   ├── AuthService.ts            # Wraps every supabase.auth.* call
+│   ├── AIService.ts              # Calls the AI edge functions (ai-extract/ai-chat/ai-insight)
+│   ├── aiSchemas.ts              # zod validation for AI edge function responses
 │   ├── NotificationService.ts    # expo-notifications scheduling
 │   └── StorageService.ts         # AsyncStorage typed wrapper
 │

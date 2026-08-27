@@ -4,10 +4,10 @@ import { ActivityIndicator, IconButton, Text, TextInput, useTheme } from 'react-
 import { BaseScreen } from '@/components/BaseScreen';
 import { EmptyState } from '@/components/EmptyState';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
-import type { Msg } from './types';
+import { useStyles } from './assistant.styles';
+import { useViewModel } from './assistant.viewModel';
+import { handleUICallback } from './assistant.uiCallback';
+import type { Msg } from './assistant.types';
 
 const AssistantScreenComp = () => {
   const theme = useTheme();

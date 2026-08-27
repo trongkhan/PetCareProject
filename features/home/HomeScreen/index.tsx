@@ -10,9 +10,9 @@ import { PetPickerSheet } from './components/PetPickerSheet';
 import { QuickLogCard } from './components/QuickLogCard';
 import { SectionCard } from './components/SectionCard';
 import { VaccinationWarning } from './components/VaccinationWarning';
-import { useStyles } from './styles';
-import { handleUICallback } from './uiCallback';
-import { useViewModel } from './viewModel';
+import { useStyles } from './home.styles';
+import { handleUICallback } from './home.uiCallback';
+import { useViewModel } from './home.viewModel';
 
 const HomeScreenComp = () => {
   const theme = useTheme();

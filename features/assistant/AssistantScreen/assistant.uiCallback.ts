@@ -1,4 +1,4 @@
-import { AssistantScreenActionsEnum, IAssistantScreenUICallback } from './types';
+import { AssistantScreenActionsEnum, IAssistantScreenUICallback } from './assistant.types';
 
 export const handleUICallback = (action: IAssistantScreenUICallback): void => {
   switch (action.type) {

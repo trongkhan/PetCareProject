@@ -9,9 +9,9 @@ import { Spacing } from '@/constants/theme';
 import { useTranslation } from '@/hooks/useTranslation';
 import { formatDate } from '@/utils/format';
 import { WeightChart } from './components/WeightChart';
-import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
+import { useStyles } from './petProfile.styles';
+import { useViewModel } from './petProfile.viewModel';
+import { handleUICallback } from './petProfile.uiCallback';
 
 interface Props {
   petId: string;

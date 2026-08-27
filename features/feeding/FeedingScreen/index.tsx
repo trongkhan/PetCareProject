@@ -9,9 +9,9 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useQuickLogStore } from '@/store/quickLogStore';
 import { formatDate } from '@/utils/format';
 import { AddMealDialog, type MealPrefill } from './components/AddMealDialog';
-import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
+import { useStyles } from './feeding.styles';
+import { useViewModel } from './feeding.viewModel';
+import { handleUICallback } from './feeding.uiCallback';
 
 const FeedingScreenComp = () => {
   const theme = useTheme();

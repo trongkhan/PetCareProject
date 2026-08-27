@@ -4,9 +4,9 @@ import { router } from 'expo-router';
 import { Avatar, Button, Divider, List, Text, useTheme } from 'react-native-paper';
 import { BaseScreen } from '@/components/BaseScreen';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
+import { useStyles } from './account.styles';
+import { useViewModel } from './account.viewModel';
+import { handleUICallback } from './account.uiCallback';
 
 interface ListRowIconProps {
   color?: string;

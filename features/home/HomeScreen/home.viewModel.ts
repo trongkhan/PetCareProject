@@ -9,7 +9,7 @@ import { MealRepository } from '@/models/repositories/MealRepository';
 import { ReminderRepository } from '@/models/repositories/ReminderRepository';
 import { HealthRepository } from '@/models/repositories/HealthRepository';
 import { useActivePetStore } from '@/store/activePetStore';
-import { IHomeScreenUICallback, HomeScreenActionsEnum } from './types';
+import { IHomeScreenUICallback, HomeScreenActionsEnum } from './home.types';
 
 interface UseViewModelProps {
   handleUICallback: (action: IHomeScreenUICallback) => void;

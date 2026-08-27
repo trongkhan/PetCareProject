@@ -13,9 +13,9 @@ import { ScrollView } from 'react-native';
 import { Button, Surface, TextInput, useTheme } from 'react-native-paper';
 import { GenderSelector } from '../components/GenderSelector';
 import { SpeciesSelector } from '../components/SpeciesSelector';
-import { useStyles } from './styles';
-import { handleUICallback } from './uiCallback';
-import { useViewModel } from './viewModel';
+import { useStyles } from './createPet.styles';
+import { handleUICallback } from './createPet.uiCallback';
+import { useViewModel } from './createPet.viewModel';
 
 const CreatePetScreenComp = () => {
   const theme = useTheme();

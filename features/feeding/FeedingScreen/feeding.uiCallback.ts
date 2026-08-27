@@ -1,4 +1,4 @@
-import { FeedingScreenActionsEnum, IFeedingScreenUICallback } from './types';
+import { FeedingScreenActionsEnum, IFeedingScreenUICallback } from './feeding.types';
 
 export const handleUICallback = (action: IFeedingScreenUICallback): void => {
   switch (action.type) {

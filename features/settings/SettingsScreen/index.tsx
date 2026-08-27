@@ -5,9 +5,9 @@ import { SegmentedControl } from '@/components/SegmentedControl';
 import { BaseScreen } from '@/components/BaseScreen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useStyles } from './styles';
-import { useViewModel } from './viewModel';
-import { handleUICallback } from './uiCallback';
+import { useStyles } from './settings.styles';
+import { useViewModel } from './settings.viewModel';
+import { handleUICallback } from './settings.uiCallback';
 
 const SettingsScreenComp = () => {
   const theme = useTheme();
