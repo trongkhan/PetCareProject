@@ -2,11 +2,8 @@ import { AvatarPicker } from '@/components/AvatarPicker';
 import { BaseScreen } from '@/components/BaseScreen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { DatePickerField } from '@/components/DatePickerField';
-import { PetThemePicker } from '@/components/PetThemePicker';
-import { DEFAULT_PET_THEME_ID } from '@/constants/petThemes';
 import { Spacing } from '@/constants/theme';
 import { PetGender, PetSpecies } from '@/models/types/Pet';
-import { useActivePetStore } from '@/store/activePetStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import React, { useCallback, useState } from 'react';
 import { ScrollView } from 'react-native';
@@ -21,10 +18,8 @@ const CreatePetScreenComp = () => {
   const theme = useTheme();
   const styles = useStyles(theme);
   const { t } = useTranslation();
-  const { setActivePetTheme } = useActivePetStore();
 
   const [photo, setPhoto] = useState<string | null>(null);
-  const [petTheme, setPetTheme] = useState(DEFAULT_PET_THEME_ID);
   const [name, setName] = useState('');
   const [species, setSpecies] = useState<PetSpecies>('dog');
   const [breed, setBreed] = useState('');
@@ -35,16 +30,10 @@ const CreatePetScreenComp = () => {
 
   const { selectors, handlers } = useViewModel({ handleUICallback });
 
-  const handleThemeChange = useCallback((themeId: string) => {
-    setPetTheme(themeId);
-    setActivePetTheme(themeId);
-  }, [setActivePetTheme]);
-
   const handleCreate = useCallback(() => {
     if (!name.trim()) return;
     handlers.createPet({
       photo,
-      petTheme,
       name: name.trim(),
       species,
       breed: breed.trim(),
@@ -53,7 +42,7 @@ const CreatePetScreenComp = () => {
       birthday: birthday || undefined,
       notes: notes.trim() || undefined,
     });
-  }, [name, handlers, photo, petTheme, species, breed, gender, weight, birthday, notes]);
+  }, [name, handlers, photo, species, breed, gender, weight, birthday, notes]);
 
   const renderSubmitButton = useCallback(() => (
     <Surface style={[styles.submitArea, { backgroundColor: theme.colors.background }]} elevation={0}>
@@ -72,11 +61,10 @@ const CreatePetScreenComp = () => {
 
   return (
     <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false}>
-      <ScreenHeader statusBarHeight={0} title={t('pets.createTitle')} onBack={handlers.navigateBack} />
+      <ScreenHeader title={t('pets.createTitle')} onBack={handlers.navigateBack} />
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>
         <AvatarPicker photo={photo} name={name} size={96} onChange={setPhoto} />
-        <PetThemePicker value={petTheme} onChange={handleThemeChange} />
 
         <TextInput
           label={t('pets.nameRequired')}

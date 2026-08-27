@@ -6,11 +6,8 @@ import { LoadingState } from '@/components/LoadingState';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { DatePickerField } from '@/components/DatePickerField';
 import { AvatarPicker } from '@/components/AvatarPicker';
-import { PetThemePicker } from '@/components/PetThemePicker';
-import { DEFAULT_PET_THEME_ID } from '@/constants/petThemes';
 import { PetGender, PetSpecies } from '@/models/types/Pet';
 import { Spacing } from '@/constants/theme';
-import { useActivePetStore } from '@/store/activePetStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { GenderSelector } from '../components/GenderSelector';
 import { SpeciesSelector } from '../components/SpeciesSelector';
@@ -26,10 +23,8 @@ const EditPetScreenComp = ({ petId }: Props) => {
   const theme = useTheme();
   const styles = useStyles(theme);
   const { t } = useTranslation();
-  const { setActivePetTheme } = useActivePetStore();
 
   const [photo, setPhoto] = useState<string | null>(null);
-  const [petTheme, setPetTheme] = useState(DEFAULT_PET_THEME_ID);
   const [name, setName] = useState('');
   const [species, setSpecies] = useState<PetSpecies>('dog');
   const [breed, setBreed] = useState('');
@@ -43,7 +38,6 @@ const EditPetScreenComp = ({ petId }: Props) => {
   useEffect(() => {
     if (selectors.pet) {
       setPhoto(selectors.pet.photo ?? null);
-      setPetTheme(selectors.pet.petTheme ?? DEFAULT_PET_THEME_ID);
       setName(selectors.pet.name);
       setSpecies(selectors.pet.species);
       setBreed(selectors.pet.breed);
@@ -54,16 +48,10 @@ const EditPetScreenComp = ({ petId }: Props) => {
     }
   }, [selectors.pet]);
 
-  const handleThemeChange = useCallback((themeId: string) => {
-    setPetTheme(themeId);
-    setActivePetTheme(themeId);
-  }, [setActivePetTheme]);
-
   const handleSave = useCallback(() => {
     if (!name.trim()) return;
     handlers.savePet({
       photo,
-      petTheme,
       name: name.trim(),
       species,
       breed: breed.trim(),
@@ -99,11 +87,10 @@ const EditPetScreenComp = ({ petId }: Props) => {
 
   return (
     <BaseScreen header={false} edges={['bottom']}>
-      <ScreenHeader statusBarHeight={0} title={t('pets.editTitle')} onBack={handlers.navigateBack} />
+      <ScreenHeader title={t('pets.editTitle')} onBack={handlers.navigateBack} />
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>
         <AvatarPicker photo={photo} name={name} size={96} onChange={setPhoto} />
-        <PetThemePicker value={petTheme} onChange={handleThemeChange} />
 
         <TextInput
           label={t('pets.nameRequired')}

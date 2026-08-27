@@ -18,7 +18,7 @@ interface Handlers {
 }
 
 export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
-  const { setActivePetId, setActivePetTheme } = useActivePetStore();
+  const { setActivePetId } = useActivePetStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const createPet = useCallback((input: CreatePetInput) => {
@@ -26,12 +26,11 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
     try {
       const pet = PetRepository.create(input);
       setActivePetId(pet.id);
-      setActivePetTheme(pet.petTheme);
       handleUICallback({ type: CreatePetScreenActionsEnum.NavigateHome });
     } finally {
       setIsSubmitting(false);
     }
-  }, [setActivePetId, setActivePetTheme, handleUICallback]);
+  }, [setActivePetId, handleUICallback]);
 
   const navigateBack = useCallback(() => {
     handleUICallback({ type: CreatePetScreenActionsEnum.NavigateBack });

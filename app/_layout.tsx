@@ -9,7 +9,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppSplash } from '@/components/AppSplash';
 import { buildPaperTheme } from '@/constants/petThemes';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { useActivePetStore } from '@/store/activePetStore';
 import { useAuthStore } from '@/store/authStore';
 import { useSettingsStore } from '@/store/settingsStore';
 import { resolveIsDark } from '@/utils/theme';
@@ -30,16 +29,12 @@ export default function RootLayout() {
     Baloo2_700Bold,
     Baloo2_800ExtraBold,
   });
-  const { activePetTheme } = useActivePetStore();
   const colorScheme = useSettingsStore((s) => s.colorScheme);
   const systemScheme = useColorScheme();
 
   const isDark = resolveIsDark(colorScheme, systemScheme);
 
-  const appTheme = useMemo(
-    () => buildPaperTheme(activePetTheme, isDark),
-    [activePetTheme, isDark],
-  );
+  const appTheme = useMemo(() => buildPaperTheme(isDark), [isDark]);
   const bg = appTheme.colors.background;
   const bgStyle = useMemo(() => ({ backgroundColor: bg }), [bg]);
   const screenOptions = useMemo(
@@ -55,23 +50,26 @@ export default function RootLayout() {
   const navState = useRootNavigationState();
 
   const [splashVisible, setSplashVisible] = useState(true);
-  const splashFade = useRef(new Animated.Value(0)).current; // start transparent → fade in
+  // Starts fully OPAQUE, not transparent: this overlay is what's on screen
+  // for every frame before fonts finish loading, standing in for the native
+  // splash the instant it's gone. A transparent start (fading IN from 0) bet
+  // everything on the native splash still covering the screen for that whole
+  // fade — the moment it didn't (it can hide earlier than our JS timing
+  // assumes), Home painted straight through the invisible overlay. Only the
+  // hand-off OUT at the end still needs to fade.
+  const splashFade = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     NotificationService.requestPermissions();
     initAuth();
   }, [initAuth]);
 
-  // Native (cream) splash → fade the in-app splash IN → hold → fade it OUT.
-  // Held until Baloo 2 is loaded so headings never flash in the system font.
+  // Native (cream) splash → in-app splash (already fully opaque) → hold →
+  // fade it OUT. Held until Baloo 2 is loaded so headings never flash in the
+  // system font.
   useEffect(() => {
     if (!fontsLoaded) return;
     SplashScreen.hideAsync().catch(() => {});
-    Animated.timing(splashFade, {
-      toValue: 1,
-      duration: 450,
-      useNativeDriver: true,
-    }).start();
     const timer = setTimeout(() => {
       Animated.timing(splashFade, {
         toValue: 0,

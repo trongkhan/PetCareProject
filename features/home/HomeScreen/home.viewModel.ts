@@ -34,7 +34,7 @@ interface Handlers {
 }
 
 export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
-  const { activePetId, setActivePetId, setActivePetTheme } = useActivePetStore();
+  const { activePetId, setActivePetId } = useActivePetStore();
   const [pet, setPet] = useState<Pet | null>(null);
   const [allPets, setAllPets] = useState<Pet[]>([]);
   const [todayMeals, setTodayMeals] = useState<Meal[]>([]);
@@ -54,7 +54,6 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
       if (currentPetId) {
         const currentPet = PetRepository.getById(currentPetId);
         setPet(currentPet);
-        setActivePetTheme(currentPet?.petTheme ?? 'teal');
         setTodayMeals(MealRepository.getTodayByPetId(currentPetId));
         setUpcomingReminders(ReminderRepository.getEnabled(currentPetId));
         const now = new Date();
@@ -76,7 +75,7 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
     } finally {
       setIsLoading(false);
     }
-  }, [activePetId, setActivePetId, setActivePetTheme]);
+  }, [activePetId, setActivePetId]);
 
   useEffect(() => { load(); }, [load]);
   useFocusEffect(useCallback(() => { load(); }, [load]));

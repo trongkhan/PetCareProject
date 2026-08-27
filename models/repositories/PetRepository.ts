@@ -8,7 +8,6 @@ function rowToPet(row: Record<string, unknown>): Pet {
     id: row.id as string,
     name: row.name as string,
     photo: row.photo as string | undefined,
-    petTheme: (row.pet_theme as string | undefined) ?? 'teal',
     species: row.species as Pet['species'],
     breed: row.breed as string,
     birthday: row.birthday as string | undefined,
@@ -42,13 +41,12 @@ export const PetRepository = {
     const id = uuidv4();
     const now = new Date().toISOString();
     db.runSync(
-      `INSERT INTO pets (id, name, photo, pet_theme, species, breed, birthday, adopted_date, gender, weight, microchip, allergies, notes, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO pets (id, name, photo, species, breed, birthday, adopted_date, gender, weight, microchip, allergies, notes, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         input.name,
         input.photo ?? null,
-        input.petTheme ?? 'teal',
         input.species,
         input.breed,
         input.birthday ?? null,
@@ -79,7 +77,6 @@ export const PetRepository = {
     if (input.microchip !== undefined) { fields.push('microchip = ?'); values.push(input.microchip); }
     if (input.allergies !== undefined) { fields.push('allergies = ?'); values.push(JSON.stringify(input.allergies)); }
     if (input.notes !== undefined) { fields.push('notes = ?'); values.push(input.notes); }
-    if (input.petTheme !== undefined) { fields.push('pet_theme = ?'); values.push(input.petTheme); }
 
     if (fields.length === 0) return this.getById(id);
 
