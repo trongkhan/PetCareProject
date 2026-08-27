@@ -86,7 +86,7 @@ const EditPetScreenComp = ({ petId }: Props) => {
   }
 
   return (
-    <BaseScreen header={false} edges={['bottom']}>
+    <BaseScreen header={false} edges={['bottom']} ownPortalHost>
       <ScreenHeader title={t('pets.editTitle')} onBack={handlers.navigateBack} />
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>

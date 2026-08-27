@@ -1,9 +1,9 @@
 import { FabBottomOffset, FabClearance, Spacing, TabBarClearance } from '@/constants/theme';
 import React from 'react';
 import { KeyboardAvoidingView, Platform, StyleSheet, View, ViewStyle } from 'react-native';
-import { FAB, useTheme } from 'react-native-paper';
+import { FAB, Portal, useTheme } from 'react-native-paper';
 import Animated, { ZoomIn } from 'react-native-reanimated';
-import { Edge, SafeAreaView } from 'react-native-safe-area-context';
+import { Edge, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppHeader } from './AppHeader';
 
 interface BaseScreenProps {
@@ -29,6 +29,21 @@ interface BaseScreenProps {
    * nothing pinned near the bottom edge).
    */
   bottomBarClearance?: boolean;
+  /**
+   * Gives this screen its own Portal.Host instead of using the app-level one
+   * from PaperProvider. Needed ONLY for a screen presented as a native modal
+   * (react-native-screens `presentation: 'modal'`, e.g. pet/create,
+   * pet/edit) — that modal is its own native surface sitting in front of the
+   * root Portal.Host, so a descendant <Portal> (DatePickerField's bottom
+   * sheet, a Dialog) mounts there but renders invisibly, covered by the
+   * modal. Default false: a screen living inside the tabs navigator must
+   * NOT set this — its own Portal.Host would sit inside that screen's own
+   * subtree, which is BEHIND the floating tab bar (a sibling the tab
+   * navigator renders on top, outside any one screen), so a Portal meant to
+   * float above everything — a picker sheet opened from the header, say —
+   * would render underneath the tab bar instead of the root host it needs.
+   */
+  ownPortalHost?: boolean;
 }
 
 export function BaseScreen({
@@ -41,10 +56,23 @@ export function BaseScreen({
   fab,
   avoidKeyboard = true,
   bottomBarClearance = true,
+  ownPortalHost = false,
 }: BaseScreenProps) {
   const theme = useTheme();
-  const clearance = bottomBarClearance ? (fab ? FabClearance : TabBarClearance) : 0;
-  return (
+  const insets = useSafeAreaInsets();
+  // FloatingTabBar positions itself with `insets.bottom + TabBar.floatGap`
+  // from the true screen edge — TabBarClearance/FabClearance are the fixed
+  // part of that (the bar's own height + gap), not the device's home-
+  // indicator inset. A screen whose SafeAreaView already reserves the
+  // bottom edge (edges includes 'bottom') has that inset covered there
+  // already; adding it again here would double it. Every tab screen
+  // (Home/Assistant/Account) omits 'bottom' from edges specifically so this
+  // clearance is the ONLY thing reserving it — those need it added here, or
+  // content sits exactly on top of where the floating bar actually renders.
+  const clearance = bottomBarClearance
+    ? (fab ? FabClearance : TabBarClearance) + (edges.includes('bottom') ? 0 : insets.bottom)
+    : 0;
+  const screen = (
     <SafeAreaView
       style={[styles.root, { backgroundColor: theme.colors.background }, style]}
       edges={edges}
@@ -75,6 +103,8 @@ export function BaseScreen({
       ) : null}
     </SafeAreaView>
   );
+
+  return ownPortalHost ? <Portal.Host>{screen}</Portal.Host> : screen;
 }
 
 const styles = StyleSheet.create({

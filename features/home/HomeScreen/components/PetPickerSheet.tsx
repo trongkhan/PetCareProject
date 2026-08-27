@@ -5,6 +5,7 @@ import { Image } from 'expo-image';
 import React, { useCallback } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { Icon, Portal, Surface, Text, TouchableRipple, useTheme } from 'react-native-paper';
+import Animated, { Easing, FadeIn, FadeOut, SlideInDown, SlideOutDown } from 'react-native-reanimated';
 
 interface Props {
   visible: boolean;
@@ -81,23 +82,39 @@ export function PetPickerSheet({ visible, pets, activePetId, onSwitch, onCreate,
 
   return (
     <Portal>
-      <View style={styles.overlay}>
-        <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={4}>
-          {renderHeader()}
-          {pets.map(renderPetRow)}
-          {renderCreateRow()}
-        </Surface>
+      <View style={styles.overlayContainer} pointerEvents="box-none">
+        <Animated.View
+          entering={FadeIn.duration(200)}
+          exiting={FadeOut.duration(200)}
+          style={styles.backdrop}
+        >
+          <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
+        </Animated.View>
+        <Animated.View
+          entering={SlideInDown.duration(300).easing(Easing.out(Easing.quad))}
+          exiting={SlideOutDown.duration(220)}
+        >
+          <Surface style={[styles.sheet, { backgroundColor: theme.colors.surface }]} elevation={4}>
+            {renderHeader()}
+            {pets.map(renderPetRow)}
+            {renderCreateRow()}
+          </Surface>
+        </Animated.View>
       </View>
     </Portal>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
+  // Plain layout container (not animated itself) — positions the backdrop
+  // and sheet; each of those animates independently (fade vs slide).
+  overlayContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'flex-end',
+  },
+  backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
   },
   sheet: {
     borderTopLeftRadius: 16,

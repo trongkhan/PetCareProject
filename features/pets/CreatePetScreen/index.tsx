@@ -60,7 +60,7 @@ const CreatePetScreenComp = () => {
   ), [handleCreate, name, selectors.isSubmitting, styles, theme, t]);
 
   return (
-    <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false}>
+    <BaseScreen header={false} edges={['bottom']} bottomBarClearance={false} ownPortalHost>
       <ScreenHeader title={t('pets.createTitle')} onBack={handlers.navigateBack} />
 
       <ScrollView contentContainerStyle={styles.content} style={{ flex: 1 }}>
