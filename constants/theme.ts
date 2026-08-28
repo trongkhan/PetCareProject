@@ -55,15 +55,18 @@ export const PetTheme = {
   },
 };
 
-// Baloo 2, loaded in app/_layout.tsx — a rounded, friendly display face for
-// headings/CTAs, distinct from the system font used everywhere else so body
-// text stays quick to read.
+// Nunito, loaded in app/_layout.tsx — used for the app's whole typescale
+// (constants/petThemes.ts's APP_FONTS), not just headings. Replaced Baloo 2:
+// same rounded, friendly character, but Nunito's line-height/ascent metrics
+// behave predictably in React Native, where Baloo 2's did not (glyphs sat
+// visibly off-center in a flex row centered via `alignItems: 'center'`, most
+// noticeably in the Home header's pet-name trigger).
 export const Fonts = {
-  bodyRegular: 'Baloo2_400Regular',
-  bodyMedium: 'Baloo2_500Medium',
-  headingSemiBold: 'Baloo2_600SemiBold',
-  headingBold: 'Baloo2_700Bold',
-  headingExtraBold: 'Baloo2_800ExtraBold',
+  bodyRegular: 'Nunito_400Regular',
+  bodyMedium: 'Nunito_500Medium',
+  headingSemiBold: 'Nunito_600SemiBold',
+  headingBold: 'Nunito_700Bold',
+  headingExtraBold: 'Nunito_800ExtraBold',
 };
 
 export const Spacing = {

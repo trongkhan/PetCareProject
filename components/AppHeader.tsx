@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     paddingRight: Spacing.xs,
     paddingVertical: Spacing.xs,
   },
-  // Baloo 2 (theme.fonts.titleLarge) already carries the weight — a plain
+  // Nunito (theme.fonts.titleLarge) already carries the weight — a plain
   // '700' here fights the custom family the way AuthScreen's appName had to
   // guard against.
   title: { flex: 1, fontWeight: 'normal' },

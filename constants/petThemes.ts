@@ -24,7 +24,7 @@ const APP_FONTS: AppFonts = {
   titleMedium: withFamily(MD3_FONTS.titleMedium, Fonts.headingSemiBold),
   titleSmall: withFamily(MD3_FONTS.titleSmall, Fonts.headingSemiBold),
   labelLarge: withFamily(MD3_FONTS.labelLarge, Fonts.headingSemiBold),
-  // Body copy and the smaller labels use the same Baloo 2 family for a
+  // Body copy and the smaller labels use the same Nunito family for a
   // consistent typeface app-wide, but a lighter (non-heading) cut so
   // paragraph-length text doesn't read as bold as a title.
   bodyLarge: withFamily(MD3_FONTS.bodyLarge, Fonts.bodyRegular),

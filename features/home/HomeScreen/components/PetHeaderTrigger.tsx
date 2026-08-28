@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
   row: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 4 },
   avatar: { width: 32, height: 32, borderRadius: 16 },
   avatarFallback: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  name: { flexShrink: 1, fontWeight: 'normal', marginTop: 4 },
+  name: { flexShrink: 1, fontWeight: 'normal' },
   avatarInitial: { fontSize: 14, fontWeight: '700' },
 });

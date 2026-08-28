@@ -68,11 +68,16 @@ is exercisable end-to-end locally (point the app at local or cloud Supabase — 
   `PetThemePicker.tsx` deleted, `petTheme` dropped from `Pet`/`CreatePetInput` and
   from `PetRepository`'s SQL (the `pet_theme` SQLite column stays, unused, rather
   than a risky `DROP COLUMN`), `activePetStore` no longer tracks a theme.
-- Baloo 2 (Regular 400 / Medium 500 added, on top of the existing 600/700/800) is
-  now the font for **every** typescale variant including body/label, not just
-  headings — `constants/petThemes.ts`'s `APP_FONTS`. Audited every Paper `<Text>`
-  missing a `variant` prop (that case silently skips theme fonts and falls back to
-  system font) and fixed each one across the app.
+- App font switched **Baloo 2 → Nunito** (`@expo-google-fonts/nunito`,
+  `constants/theme.ts`'s `Fonts`). Baloo 2 was applied to every typescale variant
+  including body/label, not just headings, then turned out to have unpredictable
+  line-height/ascent metrics in React Native — glyphs sat visibly off-center in a
+  row centered via `alignItems: 'center'` (worst in the Home header's pet-name
+  trigger), and a `marginTop` hand-nudge wasn't an acceptable fix. Swapped the
+  whole family rather than patch around it; the `marginTop` hack is gone from
+  `PetHeaderTrigger.tsx`. Along the way, audited every Paper `<Text>` missing a
+  `variant` prop (that case silently skips theme fonts and falls back to system
+  font) and fixed each one across the app — still applies with Nunito.
 - `onSurfaceVariant` (light theme) darkened slightly — most body/secondary text is
   explicitly colored with this token, and it read too thin at the old value.
 

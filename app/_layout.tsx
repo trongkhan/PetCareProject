@@ -1,4 +1,4 @@
-import { Baloo2_400Regular, Baloo2_500Medium, Baloo2_600SemiBold, Baloo2_700Bold, Baloo2_800ExtraBold, useFonts } from '@expo-google-fonts/baloo-2';
+import { Nunito_400Regular, Nunito_500Medium, Nunito_600SemiBold, Nunito_700Bold, Nunito_800ExtraBold, useFonts } from '@expo-google-fonts/nunito';
 import { Stack, useRootNavigationState, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -23,11 +23,11 @@ const SPLASH_MS = 1600;
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    Baloo2_400Regular,
-    Baloo2_500Medium,
-    Baloo2_600SemiBold,
-    Baloo2_700Bold,
-    Baloo2_800ExtraBold,
+    Nunito_400Regular,
+    Nunito_500Medium,
+    Nunito_600SemiBold,
+    Nunito_700Bold,
+    Nunito_800ExtraBold,
   });
   const colorScheme = useSettingsStore((s) => s.colorScheme);
   const systemScheme = useColorScheme();
@@ -65,7 +65,7 @@ export default function RootLayout() {
   }, [initAuth]);
 
   // Native (cream) splash → in-app splash (already fully opaque) → hold →
-  // fade it OUT. Held until Baloo 2 is loaded so headings never flash in the
+  // fade it OUT. Held until Nunito is loaded so headings never flash in the
   // system font.
   useEffect(() => {
     if (!fontsLoaded) return;

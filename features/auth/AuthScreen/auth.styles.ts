@@ -16,7 +16,7 @@ export const useStyles = createStyles((theme) => ({
   appName: {
     fontFamily: Fonts.headingExtraBold,
     color: theme.colors.primary,
-    // Baloo 2 already carries the weight; MD3's displaySmall fontWeight
+    // Nunito already carries the weight; MD3's displaySmall fontWeight
     // fights the custom family on Android, so it's overridden to 'normal'.
     fontWeight: 'normal' as const,
   },
