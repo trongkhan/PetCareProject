@@ -1,7 +1,7 @@
 # Senly — Progress & Machine Handoff
 
 > Snapshot for continuing work on another MacBook.
-> Last updated: **2026-08-24**
+> Last updated: **2026-08-28**
 
 Senly is a pet-care mobile app (React Native / Expo) with a Supabase + Gemini AI
 backend. The project lives in a `Senly/` folder containing **two git repos**.
@@ -11,7 +11,7 @@ backend. The project lives in a `Senly/` folder containing **two git repos**.
 | Repo | Path | GitHub | Role |
 |------|------|--------|------|
 | **PetCareProject** | `Senly/PetCareProject` | `github.com/trongkhan/PetCareProject` | Expo app (frontend) |
-| **petcare-backend** | `Senly/petcare-backend` | `github.com/trongkhan/petcare-backend` | Supabase Edge Functions (Gemini AI proxy) |
+| **petcare-backend** | `Senly/petcare-backend` | `github.com/trongkhan/petcare-backend` | Supabase Edge Functions + DB schema |
 
 Clone both side by side into a `Senly/` folder on the new machine.
 
@@ -19,77 +19,122 @@ Clone both side by side into a `Senly/` folder on the new machine.
 
 ## Current status
 
-### petcare-backend — ✅ stable, pushed
+### petcare-backend — ✅ stable, pushed, cloud project live
 - Branch `main`, in sync with `origin/main`.
-- Supabase Edge Functions: `ai-extract`, `ai-chat`, `ai-insight` (+ shared `gemini`, `cors`, `auth`).
-- Gemini model pinned to `gemini-3.1-flash-lite`.
-- RLS migration: `supabase/migrations/0001_example_rls.sql` — only the `pets` table so
-  far; `meals` / `health_records` / `reminders` still live in the app's local SQLite,
-  not synced to the cloud yet.
+- Cloud project **`ppuinennusunlqnttajj` ("Senly", region ap-southeast-1) is alive**
+  — an earlier note in this doc claiming it was deleted was wrong (DNS/health-check
+  came back live; only the anon key needed refreshing).
+- Supabase Edge Functions: `ai-extract`, `ai-chat`, `ai-insight` (+ shared `gemini`,
+  `cors`, `auth`). Gemini model pinned to `gemini-3.1-flash-lite`.
+- DB schema — **all four app tables now exist on the cloud project with RLS**:
+  - `0001_example_rls.sql` — `pets`
+  - `0002_meals_health_reminders_rls.sql` — `meals` / `health_records` / `reminders`,
+    each mirroring the local SQLite schema (`models/db/client.ts`); RLS on these
+    joins up to the owning pet (`auth.uid() = pets.user_id`) rather than trusting a
+    second denormalized `user_id` on the child row.
+  - `0003_pets_missing_columns.sql` — backfills `adopted_date` / `microchip` /
+    `allergies` onto `pets`, present in local SQLite since the start but missing
+    from `0001`.
+  - ⚠️ Schema only — **no sync code exists yet**. The app is still 100% local
+    SQLite; nothing reads or writes these cloud tables. This was prep, not a
+    working sync feature.
+- **CI/CD**: `.github/workflows/deploy-supabase.yml` — pushing to `main` with
+  changes under `supabase/migrations/**` or `supabase/functions/**` runs
+  `supabase db push` + `supabase functions deploy` automatically. Needs the repo
+  secret `SUPABASE_ACCESS_TOKEN` (added). Nobody should run `supabase db push` /
+  `supabase functions deploy` against the cloud project from a personal machine
+  anymore — that bypasses review. First real run was triggered via a comment-only
+  commit; **check the Actions tab if you haven't confirmed it went green.**
 - `_shared/auth.ts` imports `supabase-js` via `npm:`, not `jsr:` — `jsr.io` is
   unreliable on the dev network (intermittent 403 from the host, consistent 403 from
   inside Docker), which broke the local edge runtime boot. `npm:` sidesteps it.
 
-### PetCareProject — 🟢 active branch `feat/localization-dark-mode`
-Everything below is **committed locally**. The last 2 commits (Android splash fix +
-UI/MVVM refactor) are **not yet pushed** — `git push` when ready.
+### PetCareProject — 🟢 active branch `feat/localization-dark-mode`, pushed
+Everything below is on `origin/feat/localization-dark-mode` (last commit `27f8f1e`).
 
-**Feature A — AI "Quick Log"** (main new feature)
-Type a plain-language note on Home (e.g. *"Bim had 1 cup of kibble this morning"*),
-AI parses it, and you land in a **pre-filled** Add dialog.
-- `features/home/HomeScreen/components/QuickLogCard.tsx` — Home input; calls `AIService.extract`, routes to Feeding or Health.
-- `services/aiSchemas.ts` — **zod** validation of AI output; invalid → safe `kind: 'unknown'`.
-- `store/quickLogStore.ts` — zustand store handing the parsed result to the target screen.
-- Feeding / Health screens + Add dialogs — accept an `initial` prefill prop and open pre-filled.
-- `locales/en.json` / `vi.json` — bilingual `quicklog` strings.
-- `services/AIService.ts` — returns zod-validated `ExtractResult`.
-- ⚠️ Not yet exercisable end-to-end locally: the AI functions need `GEMINI_API_KEY`
-  (see **Local dev environment** below).
+**Feature A — AI "Quick Log"**
+Type a plain-language note on Home, AI parses it, lands in a **pre-filled** Add
+dialog. `QuickLogCard.tsx` → `AIService.extract` → `services/aiSchemas.ts` (zod,
+invalid → safe `kind: 'unknown'`) → `store/quickLogStore.ts` → Feeding/Health screens
+open pre-filled. `GEMINI_API_KEY` **is now set** in `petcare-backend/.env`, so this
+is exercisable end-to-end locally (point the app at local or cloud Supabase — see
+**Local dev environment**).
 
-**Feature B — Branding / splash**
-- App renamed `TestProject` → **Senly** (`app.json`).
-- `components/AppSplash.tsx` + animated splash in `app/_layout.tsx` (native cream splash → fade-in `SENLY.png` → fade-out, no white flash).
-- **Android build fix**: `expo-splash-screen`'s prebuild plugin always writes
-  `windowSplashScreenAnimatedIcon → @drawable/splashscreen_logo` into `styles.xml`,
-  but only generates that drawable when the config has an `image`. This app's splash
-  config had `backgroundColor` only (by design — the logo animates in-app, not on the
-  native splash), so the reference dangled and `:app:processDebugResources` failed
-  with "resource drawable/splashscreen_logo not found". Fixed by pointing `image` at
-  a fully transparent PNG (`assets/images/splash-transparent.png`) for both light and
-  dark — visually unchanged, but the plugin now has something to generate.
+**Feature B — Theming**
+- Primary accent changed **teal → green** ("Grass", `#16A34A` / `#DCFCE7`),
+  `constants/petThemes.ts`.
+- The **per-pet color picker feature is gone entirely** — it used to let each pet
+  pick one of 5 preset accents; now there's one fixed app-wide theme.
+  `PetThemePicker.tsx` deleted, `petTheme` dropped from `Pet`/`CreatePetInput` and
+  from `PetRepository`'s SQL (the `pet_theme` SQLite column stays, unused, rather
+  than a risky `DROP COLUMN`), `activePetStore` no longer tracks a theme.
+- Baloo 2 (Regular 400 / Medium 500 added, on top of the existing 600/700/800) is
+  now the font for **every** typescale variant including body/label, not just
+  headings — `constants/petThemes.ts`'s `APP_FONTS`. Audited every Paper `<Text>`
+  missing a `variant` prop (that case silently skips theme fonts and falls back to
+  system font) and fixed each one across the app.
+- `onSurfaceVariant` (light theme) darkened slightly — most body/secondary text is
+  explicitly colored with this token, and it read too thin at the old value.
 
-**Feature C — Screen structure + UI pass** (this session)
-- `features/account`, `features/assistant`, `features/auth`, `features/settings` split
-  into the same `index/styles/types/uiCallback/viewModel` folder shape every other
-  screen already used (a convention introduced mid-project that these four, added in
-  the auth/nav sprint, never got backfilled into). Business logic that had been living
-  directly in Assistant/Auth's View now lives in their `viewModel` hooks.
-- New shared components: `ScreenHeader`, `LoadingState`, `EmptyState` (full + compact
-  variants), `SegmentedControl` — replacing patterns that had been copy-pasted across
-  4–7 screens each (Appbar header boilerplate, centred spinner, the
-  outlined-card-with-italic-text empty state).
-- `BaseScreen` gained an optional `fab` prop; Home/Feeding/Health/Reminders now pass
-  `fab={{ onPress, ... }}` instead of each declaring an identical `<FAB>`.
-- Fixed: FAB overlapping trailing content on scroll (new `FabClearance` constant),
-  emoji used as icons (Quick Log title, Assistant empty state → vector icons),
-  selected/unselected chip and segment colors that read backwards (Paper's default
-  `secondaryContainer` made *unselected* chips louder than *selected* ones).
-- Home: removed the pet switcher row when there's only one pet (it repeated the
-  name/avatar already on the header card below) and removed the "Quick start" chip
-  row (it duplicated the three activity cards — Feeding/Health/Reminders — shown
-  immediately above it).
-- AuthScreen redesigned: sign-up tab removed (planned as its own screen, not sharing
-  one form with sign-in), added password show/hide, autofill hints, and a
-  reserved-height feedback slot so an error appearing never shifts the layout.
+**Feature C — Home redesign**
+- Pet identity (avatar + name) moved from a body card into the **header**, replacing
+  the static "Senly" title — `PetHeaderTrigger.tsx`, tappable, opens
+  `PetPickerSheet.tsx` (a real bottom sheet, animated open/close) to switch the
+  active pet or create a new one. Replaces the old inline `PetSwitcher` row and the
+  `PetHeaderCard` gradient block (both deleted).
+- `BaseScreen` gained `bottomBarClearance` (reserves room above the floating tab bar
+  — every screen used to hand-roll `FabClearance`/`TabBarClearance` itself) and
+  `ownPortalHost` (opt-in; only `CreatePetScreen`/`EditPetScreen` need it — see bug
+  notes below).
+
+**Feature D — Services/architecture cleanup**
+- `services/AuthService.ts` (new) wraps every `supabase.auth.*` call;
+  `store/authStore.ts` goes back to holding state only, matching
+  `ARCHITECTURE.md`'s "services = side-effects, store = state" split — it no longer
+  imports the Supabase client directly.
+- Every screen's `viewModel.ts` / `uiCallback.ts` / `types.ts` / `styles.ts` renamed
+  to `<screenName>.viewModel.ts` etc. (e.g. `HomeScreen/viewModel.ts` →
+  `HomeScreen/home.viewModel.ts`) across all 11 screens — quick-open search by
+  basename used to return a dozen identically-named files with no way to tell them
+  apart without reading the full path.
+- Code-style pass: pulled non-per-item inline arrow handlers out into named
+  `useCallback`/`function` handlers; multi-property inline `style={{...}}` objects
+  moved into each screen's `StyleSheet`/theme style factory (single theme-color
+  merges via `style={[styles.x, {color: theme.colors.y}]}` were left alone — that's
+  the accepted pattern here, not something to eliminate).
+
+**Bug fixes (this session, iOS)**
+- **Splash flash**: the in-app splash overlay started at `opacity: 0` (fading IN),
+  betting that the *native* splash was still covering the screen for that whole
+  fade — the moment it wasn't, Home flashed through. Now starts fully opaque; only
+  the hand-off OUT at the end fades.
+- **Bottom clearance under the floating tab bar**: `TabBarClearance`/`FabClearance`
+  are fixed constants that never included the device's home-indicator inset, but
+  `FloatingTabBar` positions itself with `insets.bottom` baked in — so on a notched
+  iPhone, content (e.g. the Assistant input row) sat under where the tab bar
+  actually renders. `BaseScreen` now adds `insets.bottom` to the reserved clearance
+  for screens whose `SafeAreaView` doesn't already cover the bottom edge (every tab
+  screen — Home/Assistant/Account use `edges={['top']}`).
+- **DatePickerField's bottom sheet invisible on Create/Edit Pet**: those screens are
+  presented as a native modal (`presentation: 'modal'`); the app-level `Portal.Host`
+  (from `PaperProvider`, mounted once near the root) sits *behind* that modal's own
+  native surface, so a `<Portal>` opened from inside mounted but rendered invisibly.
+  Fixed via `BaseScreen`'s new opt-in `ownPortalHost` prop, set only on those two
+  screens. (First attempt made it unconditional for every screen, which broke
+  Home's `PetPickerSheet` — it got a host scoped *under* the floating tab bar
+  instead of the root one it needs. Reverted to opt-in.)
+- **`ScreenHeader` flush against the status bar** on `CreatePetScreen`/
+  `EditPetScreen`: they forced `statusBarHeight={0}`, assuming modal presentation
+  always auto-insets — true on iOS, not on Android. Removed; `Appbar.Header` now
+  falls back to its own `useSafeAreaInsets()` on both screens, matching the other
+  five screens using `ScreenHeader` that never had the override.
+- ⚠️ **Not yet re-verified on a real device** since the latest fixes — the safe-area
+  and bottom-sheet changes were pushed but the user hadn't confirmed a rebuild
+  looked right as of this doc's last update.
 
 ---
 
-## Local dev environment (this session's setup)
-
-The Supabase project ref baked into `.env.example`
-(`ppuinennusunlqnttajj.supabase.co`) **no longer exists** — confirmed via public DNS
-(NXDOMAIN), meaning the project was deleted, not paused. Until a new cloud project is
-provisioned, dev runs against **Supabase local** via Docker.
+## Local dev environment
 
 ```bash
 cd petcare-backend
@@ -100,24 +145,20 @@ cd ../PetCareProject
 npx expo start --clear                      # Metro; --clear picks up new .env values
 ```
 
-- `PetCareProject/.env` (gitignored, recreate manually) points
-  `EXPO_PUBLIC_SUPABASE_URL` at the **host's LAN IP**, e.g. `http://10.x.x.x:54321` —
-  not `127.0.0.1` — so a physical device or emulator can reach it.
-  (`http://10.0.2.2:54321` also works, Android-emulator-only.) The debug Android
-  manifest already sets `usesCleartextTraffic="true"`, so plain HTTP is fine.
+- `PetCareProject/.env` (gitignored, recreate manually) currently points
+  `EXPO_PUBLIC_SUPABASE_URL` at **`http://localhost:54321`** — by explicit choice,
+  this only works from the **iOS simulator or web** (shares the host's network). A
+  physical device or Android emulator can't reach `localhost` on itself; swap to the
+  host's LAN IP (`http://10.x.x.x:54321`) or, Android-emulator-only,
+  `http://10.0.2.2:54321` if you need those.
 - `petcare-backend/.env` (gitignored) must **not** define `SUPABASE_URL` /
   `SUPABASE_ANON_KEY` — the edge runtime injects those itself; the CLI silently skips
   any var starting with `SUPABASE_`.
-- `GEMINI_API_KEY` is still **empty** in `petcare-backend/.env` — the three AI
-  functions return `"Error: GEMINI_API_KEY is not set"` until it's filled in from
-  [Google AI Studio](https://aistudio.google.com/apikey). Auth, local DB and the rest
-  of the app work fine without it.
-- Only the `pets` table exists in local Postgres so far (see migration note above);
-  meals/health/reminders are SQLite-only, not yet synced.
-
-**When moving to Supabase cloud:** provision a new project, `supabase db push` the
-migration, `supabase secrets set GEMINI_API_KEY=... GEMINI_MODEL=...`, deploy the
-three functions, then swap `PetCareProject/.env` back to the cloud URL + anon key.
+- `GEMINI_API_KEY` **is set** in `petcare-backend/.env` — Quick Log / Assistant work
+  end-to-end now, no more "GEMINI_API_KEY is not set" errors.
+- The cloud project's real anon key (for pointing `.env` at cloud instead of local)
+  is in `petcare-backend`'s operator notes / whoever set up CI — `.env.example`'s
+  anon key is still a placeholder, deliberately not filled in there.
 
 ---
 
@@ -143,9 +184,9 @@ cd PetCareProject
 cp .env.example .env
 ```
 Then fill in real values — see **Local dev environment** above for local Supabase, or
-use cloud project URL + anon key once one exists. The Supabase **anon key** is
-public-by-design (protected by RLS). The **Gemini key is never in the frontend** — it
-lives only in backend secrets.
+the cloud project URL + anon key. The Supabase **anon key** is public-by-design
+(protected by RLS). The **Gemini key is never in the frontend** — it lives only in
+backend secrets.
 
 ### 3. Install & run frontend
 ```bash
@@ -162,23 +203,27 @@ cp .env.example .env          # fill Gemini secret (gitignored); see note on SUP
 supabase start                 # local Postgres + Auth + Edge Functions runtime
 supabase functions serve --env-file .env
 ```
-For cloud deploys: `supabase functions deploy ai-extract ai-chat ai-insight` and
-`supabase db push`, with the Gemini key set as a **Supabase secret**, not committed.
+For cloud deploys: push to `main` (see CI/CD above) — don't run `supabase db push` /
+`supabase functions deploy` by hand against the cloud project anymore.
 
 ---
 
 ## Tech stack (frontend)
 Expo Router · React Native Paper (theming) · zustand (state) · zod (validation) ·
 Supabase JS (auth + edge functions) · expo-sqlite (local data) · i18n (VI/EN) ·
-dark/light mode · husky + lint-staged pre-commit.
+dark/light mode · react-native-reanimated (animations) · husky + lint-staged
+pre-commit.
 
 **Screen convention**: every screen lives in `features/<area>/<Name>Screen/` with
-`index.tsx` (View), `viewModel.ts` (state + actions, returns `{ selectors, handlers }`),
-`styles.ts` (`useStyles` via `createStyles`), `types.ts` (UI callback action enum),
-`uiCallback.ts` (callback handler stub). See `ARCHITECTURE.md` — note it still
-describes an older flat-file convention (`FeedingScreen.tsx` /
-`useFeedingViewModel.ts`) that was superseded by the folder shape before this
-session; worth updating separately.
+`index.tsx` (View), `<name>.viewModel.ts` (state + actions, returns
+`{ selectors, handlers }`), `<name>.styles.ts` (`useStyles` via `createStyles`),
+`<name>.types.ts` (UI callback action enum), `<name>.uiCallback.ts` (callback
+handler stub) — `<name>` is the screen name without its `Screen` suffix, lowercase
+first letter (e.g. `HomeScreen/home.viewModel.ts`,
+`CreatePetScreen/createPet.viewModel.ts`). See `ARCHITECTURE.md` — its `services/`
+listing is current, but the top-level folder tree still shows an older flat-file
+convention (`FeedingScreen.tsx` / `useFeedingViewModel.ts`) that predates even the
+un-prefixed folder shape; still worth a pass.
 
 ## Handy commands
 ```bash
@@ -189,16 +234,18 @@ git checkout feat/localization-dark-mode   # the active branch
 ```
 
 ## Next steps / open items
-- **Push** the 2 local commits on `feat/localization-dark-mode`
-  (`fix(android): add transparent splash image...`,
-  `refactor(ui): align screens to MVVM folder format...`) — not pushed yet.
-- Provision a new Supabase cloud project (the old ref is gone) and migrate off local
-  dev once ready; extend the RLS migration beyond `pets` to `meals` /
-  `health_records` / `reminders`.
-- Set `GEMINI_API_KEY` locally to actually exercise Quick Log / Assistant end-to-end.
-- Merge `feat/localization-dark-mode` → `main` once Quick Log is reviewed/tested.
-- Build a dedicated sign-up screen (removed from AuthScreen this session; currently
-  no way to create a new account from the UI — `authStore.signUp` still exists and
-  works, just isn't wired to any screen).
-- Update `ARCHITECTURE.md` to describe the current per-screen folder convention.
-- Consider handling the `unknown` AI result more helpfully (currently just an error hint).
+- **Verify the iOS fixes on a real rebuild** — safe-area/bottom-sheet/animation
+  changes above were pushed but not yet re-confirmed working end to end.
+- **Confirm the first `deploy-supabase` Actions run went green** (Actions tab on
+  `petcare-backend`) — triggered but not confirmed as of this doc's update.
+- Write the actual SQLite ↔ Supabase **sync logic** — the cloud schema exists
+  (pets/meals/health_records/reminders, all RLS'd) but nothing reads or writes it
+  yet; the app is still 100% local-only.
+- Build a dedicated sign-up screen — explicitly on hold per direct instruction, do
+  **not** start this without being asked again. `authStore.signUp` /
+  `AuthService.signUp` still exist and work, just aren't wired to any screen.
+- Update `ARCHITECTURE.md`'s folder-tree diagram to match the current per-screen
+  file convention (the `services/` section is already current).
+- Consider handling the `unknown` AI result more helpfully (currently just an error
+  hint, `quicklog.unknown`).
+- Merge `feat/localization-dark-mode` → `main` once reviewed/tested.
