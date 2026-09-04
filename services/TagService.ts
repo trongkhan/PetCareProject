@@ -8,7 +8,9 @@ import type { CreateTagInput, Tag, TagScan } from '@/models/types/Tag';
  * that user — so no query here needs to filter by user_id defensively.
  */
 
-const SUPABASE_URL = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
+// The finder web page (hosted on Vercel), not the Supabase function — Supabase
+// forces text/plain on HTML, so presentation lives on the web host.
+const FINDER_BASE = process.env.EXPO_PUBLIC_FINDER_BASE_URL ?? '';
 
 function rowToTag(r: Record<string, any>): Tag {
   return {
@@ -126,7 +128,6 @@ export const TagService = {
     return (data ?? []).map(rowToScan);
   },
 
-  /** The URL to encode on the physical tag (QR/NFC). Uses the short code. */
-  publicUrl: (tag: Tag): string =>
-    `${SUPABASE_URL}/functions/v1/tag-public?tag=${tag.code}`,
+  /** The URL to encode on the physical tag (QR/NFC) — the Vercel finder page. */
+  publicUrl: (tag: Tag): string => `${FINDER_BASE}/t/${tag.code}`,
 };
