@@ -3,6 +3,7 @@ export enum HomeScreenActionsEnum {
   NavigateFeeding = 'NavigateFeeding',
   NavigateHealth = 'NavigateHealth',
   NavigateReminders = 'NavigateReminders',
+  NavigateTag = 'NavigateTag',
 }
 
 export interface IHomeScreenUICallback {

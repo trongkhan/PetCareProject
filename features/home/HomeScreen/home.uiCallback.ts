@@ -15,6 +15,9 @@ export const handleUICallback = (action: IHomeScreenUICallback): void => {
     case HomeScreenActionsEnum.NavigateReminders:
       router.push('/reminders');
       break;
+    case HomeScreenActionsEnum.NavigateTag:
+      router.push('/tag');
+      break;
     default:
       break;
   }

@@ -156,6 +156,11 @@ const HomeScreenComp = () => {
           {renderFeedingCard()}
           {renderHealthCard()}
           {renderRemindersCard()}
+          <SectionCard icon="map-marker-radius" title={t('tag.title')} onPress={handlers.navigateTag}>
+            <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+              {t('tag.homeHint')}
+            </Text>
+          </SectionCard>
         </Animated.View>
       </ScrollView>
     </BaseScreen>

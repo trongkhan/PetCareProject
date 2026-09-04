@@ -261,5 +261,24 @@
     "placeholder": "e.g. Bim had 1 cup of kibble this morning...",
     "unknown": "Couldn't parse — try describing it more clearly",
     "error": "Something went wrong, please try again"
+  },
+  "tag": {
+    "title": "Tracking",
+    "homeHint": "Attach a tag so anyone who finds your pet can reach you",
+    "forPet": "Tag for {{name}}",
+    "noPet": "Add a pet first to create a tag",
+    "empty": "No tag yet — create one below",
+    "create": "Create tag",
+    "code": "Code",
+    "urlHint": "Write this link onto the tag's QR / NFC",
+    "lostOn": "🚨 Marked as lost",
+    "lostOff": "Mark as lost",
+    "phone": "Contact phone",
+    "note": "Note for finder (reward…)",
+    "saveContact": "Save",
+    "scans": "Sightings ({{count}})",
+    "noScans": "No sightings yet",
+    "noLocation": "No location shared",
+    "openMap": "Map"
   }
 }

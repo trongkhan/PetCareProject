@@ -31,6 +31,7 @@ interface Handlers {
   navigateFeeding: () => void;
   navigateHealth: () => void;
   navigateReminders: () => void;
+  navigateTag: () => void;
 }
 
 export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selectors: Selectors; handlers: Handlers } => {
@@ -100,8 +101,12 @@ export const useViewModel = ({ handleUICallback }: UseViewModelProps): { selecto
     handleUICallback({ type: HomeScreenActionsEnum.NavigateReminders });
   }, [handleUICallback]);
 
+  const navigateTag = useCallback(() => {
+    handleUICallback({ type: HomeScreenActionsEnum.NavigateTag });
+  }, [handleUICallback]);
+
   return {
     selectors: { pet, allPets, todayMeals, upcomingReminders, upcomingVaccinations, isLoading },
-    handlers: { switchPet, refresh: load, navigateCreatePet, navigateFeeding, navigateHealth, navigateReminders },
+    handlers: { switchPet, refresh: load, navigateCreatePet, navigateFeeding, navigateHealth, navigateReminders, navigateTag },
   };
 };

@@ -261,5 +261,24 @@
     "placeholder": "VD: sáng nay Bim ăn 1 chén hạt...",
     "unknown": "Chưa nhận ra — thử mô tả rõ hơn nhé",
     "error": "Lỗi xử lý, thử lại nhé"
+  },
+  "tag": {
+    "title": "Theo dõi",
+    "homeHint": "Gắn thẻ để ai nhặt được thú cưng có thể liên hệ bạn",
+    "forPet": "Thẻ của {{name}}",
+    "noPet": "Thêm thú cưng trước để tạo thẻ",
+    "empty": "Chưa có thẻ — tạo một thẻ bên dưới",
+    "create": "Tạo thẻ",
+    "code": "Mã",
+    "urlHint": "Ghi/dán link này lên QR/NFC của thẻ",
+    "lostOn": "🚨 Đang báo lạc",
+    "lostOff": "Bật báo lạc",
+    "phone": "SĐT liên hệ",
+    "note": "Lời nhắn cho người nhặt (hậu tạ…)",
+    "saveContact": "Lưu",
+    "scans": "Lần được quét ({{count}})",
+    "noScans": "Chưa có lần quét nào",
+    "noLocation": "Chưa chia sẻ vị trí",
+    "openMap": "Bản đồ"
   }
 }

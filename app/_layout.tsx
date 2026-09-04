@@ -98,6 +98,7 @@ export default function RootLayout() {
           <Stack.Screen name="feeding" />
           <Stack.Screen name="health" />
           <Stack.Screen name="reminders" />
+          <Stack.Screen name="tag" />
           <Stack.Screen name="settings" />
           <Stack.Screen name="pet/create" options={{ presentation: 'modal' }} />
           <Stack.Screen name="pet/[id]" />
