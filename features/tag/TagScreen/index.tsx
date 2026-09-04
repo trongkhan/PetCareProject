@@ -59,7 +59,7 @@ const TagScreenComp = () => {
   };
 
   return (
-    <BaseScreen edges={['top']} header={false}>
+    <BaseScreen header={false} edges={['bottom']}>
       <ScreenHeader title={t('tag.title')} />
       <View style={{ flex: 1 }}>{renderBody()}</View>
     </BaseScreen>

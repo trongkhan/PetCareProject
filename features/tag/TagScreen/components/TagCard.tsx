@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Linking, View } from 'react-native';
-import { Button, Card, IconButton, Switch, Text, TextInput, useTheme } from 'react-native-paper';
+import { Button, Divider, IconButton, Switch, Text, TextInput, useTheme } from 'react-native-paper';
 import { useTranslation } from '@/hooks/useTranslation';
 import { formatDate } from '@/utils/format';
 import type { Tag, TagScan } from '@/models/types/Tag';
@@ -28,36 +28,58 @@ export function TagCard({ tag, scans, publicUrl, onToggleLost, onSaveContact, on
   const dirty = phone !== (tag.contactPhone ?? '') || note !== (tag.contactNote ?? '');
 
   return (
-    <Card mode="outlined" style={styles.card}>
-      <Card.Content style={styles.cardBody}>
-        {/* Code + delete */}
-        <View style={styles.row}>
-          <View style={styles.codeRow}>
-            <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>
-              {t('tag.code')}
-            </Text>
-            <Text variant="titleMedium" style={styles.code}>{tag.code}</Text>
-          </View>
-          <IconButton icon="delete-outline" size={20} onPress={onDelete} />
+    <View
+      style={[
+        styles.card,
+        { borderColor: theme.colors.outlineVariant, backgroundColor: theme.colors.surface },
+      ]}
+    >
+      {/* Header: code block + delete */}
+      <View style={styles.headerRow}>
+        <View style={styles.codeBlock}>
+          <Text variant="labelSmall" style={[styles.codeCaption, { color: theme.colors.onSurfaceVariant }]}>
+            {t('tag.code')}
+          </Text>
+          <Text variant="titleLarge" style={[styles.code, { color: theme.colors.onSurface }]}>
+            {tag.code}
+          </Text>
         </View>
+        {tag.lost ? <View style={[styles.statusDot, { backgroundColor: theme.colors.error }]} /> : null}
+        <IconButton icon="delete-outline" size={20} onPress={onDelete} style={styles.deleteBtn} />
+      </View>
 
-        {/* Public URL to write on the tag (QR/NFC) */}
-        <Text selectable variant="bodySmall" style={[styles.url, { color: theme.colors.primary }]}>
-          {publicUrl}
-        </Text>
+      {/* Public URL to write on the tag */}
+      <View style={styles.urlGroup}>
+        <View style={[styles.urlBox, { backgroundColor: theme.colors.surfaceVariant }]}>
+          <Text selectable variant="bodySmall" style={[styles.url, { color: theme.colors.primary }]}>
+            {publicUrl}
+          </Text>
+        </View>
         <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
           {t('tag.urlHint')}
         </Text>
+      </View>
 
-        {/* Lost toggle */}
-        <View style={styles.lostRow}>
-          <Text variant="titleSmall" style={{ color: tag.lost ? theme.colors.error : theme.colors.onSurface }}>
-            {tag.lost ? t('tag.lostOn') : t('tag.lostOff')}
-          </Text>
-          <Switch value={tag.lost} onValueChange={onToggleLost} color={theme.colors.error} />
-        </View>
+      <Divider />
 
-        {/* Contact shown to finders */}
+      {/* Lost toggle */}
+      <View style={styles.lostRow}>
+        <Text
+          variant="titleSmall"
+          style={{ color: tag.lost ? theme.colors.error : theme.colors.onSurface }}
+        >
+          {tag.lost ? t('tag.lostOn') : t('tag.lostOff')}
+        </Text>
+        <Switch value={tag.lost} onValueChange={onToggleLost} color={theme.colors.error} />
+      </View>
+
+      <Divider />
+
+      {/* Contact shown to finders */}
+      <View style={styles.group}>
+        <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>
+          {t('tag.contactSection')}
+        </Text>
         <TextInput
           mode="outlined"
           dense
@@ -66,21 +88,19 @@ export function TagCard({ tag, scans, publicUrl, onToggleLost, onSaveContact, on
           value={phone}
           onChangeText={setPhone}
         />
-        <TextInput
-          mode="outlined"
-          dense
-          label={t('tag.note')}
-          value={note}
-          onChangeText={setNote}
-        />
+        <TextInput mode="outlined" dense label={t('tag.note')} value={note} onChangeText={setNote} />
         {dirty ? (
-          <Button mode="contained-tonal" onPress={() => onSaveContact(phone, note)}>
+          <Button mode="contained-tonal" onPress={() => onSaveContact(phone, note)} style={styles.saveBtn}>
             {t('tag.saveContact')}
           </Button>
         ) : null}
+      </View>
 
-        {/* Sightings */}
-        <Text variant="labelLarge" style={[styles.sectionLabel, { color: theme.colors.onSurfaceVariant }]}>
+      <Divider />
+
+      {/* Sightings */}
+      <View style={styles.group}>
+        <Text variant="labelLarge" style={{ color: theme.colors.onSurfaceVariant }}>
           {t('tag.scans', { count: scans.length })}
         </Text>
         {scans.length === 0 ? (
@@ -91,7 +111,9 @@ export function TagCard({ tag, scans, publicUrl, onToggleLost, onSaveContact, on
           scans.map((s) => (
             <View key={s.id} style={styles.scanItem}>
               <View style={styles.scanMeta}>
-                <Text variant="bodyMedium">{formatDate(s.scannedAt, language)}</Text>
+                <Text variant="bodyMedium" style={{ color: theme.colors.onSurface }}>
+                  {formatDate(s.scannedAt, language)}
+                </Text>
                 <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
                   {s.lat != null && s.lng != null
                     ? `${s.lat.toFixed(4)}, ${s.lng.toFixed(4)}`
@@ -106,7 +128,7 @@ export function TagCard({ tag, scans, publicUrl, onToggleLost, onSaveContact, on
             </View>
           ))
         )}
-      </Card.Content>
-    </Card>
+      </View>
+    </View>
   );
 }

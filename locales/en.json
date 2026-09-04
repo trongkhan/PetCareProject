@@ -273,6 +273,7 @@
     "urlHint": "Write this link onto the tag's QR / NFC",
     "lostOn": "🚨 Marked as lost",
     "lostOff": "Mark as lost",
+    "contactSection": "Contact shown to finders",
     "phone": "Contact phone",
     "note": "Note for finder (reward…)",
     "saveContact": "Save",
