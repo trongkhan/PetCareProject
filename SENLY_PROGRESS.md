@@ -189,6 +189,15 @@ yarn expo start --clear                     # Metro; --clear picks up new env va
   `package-lock.json`, `git checkout yarn.lock`, then `yarn install --ignore-engines`
   (needed because `@supabase/supabase-js` declares node ≥22 and this machine is 20;
   harmless for RN/Metro).
+- **After ANY node_modules reinstall, re-run `pod install`.** Native pods generate
+  files at build time (e.g. `expo-sqlite`'s podspec `prepare_command` copies a 9 MB
+  `sqlite3.c` into `node_modules/expo-sqlite/ios/`). Reinstalling node_modules wipes
+  that copy; if pods aren't reinstalled, the iOS build fails with
+  `Build input file cannot be found: .../sqlite3.c` and a wall of
+  `cannot find 'exsqlite3_*' in scope`. Fix: `npx pod-install`. If it still fails
+  after that, the Xcode build cache is stale — `rm -rf ios/build` and clear
+  DerivedData, or regenerate native: `rm -rf ios && npx expo prebuild --clean -p ios
+  && npx pod-install`. (`ios/` is gitignored/CNG-generated, so deleting it is safe.)
 - `petcare-backend/.env` (gitignored) must **not** define `SUPABASE_URL` /
   `SUPABASE_ANON_KEY` — the edge runtime injects those; the CLI skips `SUPABASE_*`.
 - `GEMINI_API_KEY` is set in `petcare-backend/.env` — Quick Log / Assistant work E2E.
