@@ -23,9 +23,15 @@ export const useStyles = createStyles((_theme) => ({
   statusDot: { width: 10, height: 10, borderRadius: 5 },
   deleteBtn: { margin: 0 },
 
+  qrWrap: { alignItems: 'center', gap: Spacing.xs },
+  qrBox: { backgroundColor: '#ffffff', padding: Spacing.sm, borderRadius: 12 },
+
   urlGroup: { gap: Spacing.xs },
   urlBox: { borderRadius: 10, paddingVertical: Spacing.sm, paddingHorizontal: Spacing.sm },
   url: { lineHeight: 18 },
+  urlActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
+
+  map: { height: 180, borderRadius: 12, overflow: 'hidden' },
 
   lostRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
 
