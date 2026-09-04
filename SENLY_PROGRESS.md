@@ -1,7 +1,7 @@
 # Senly — Progress & Machine Handoff
 
 > Snapshot for continuing work on another MacBook.
-> Last updated: **2026-08-28**
+> Last updated: **2026-09-04**
 
 Senly is a pet-care mobile app (React Native / Expo) with a Supabase + Gemini AI
 backend. The project lives in a `Senly/` folder containing **two git repos**.
@@ -19,35 +19,60 @@ Clone both side by side into a `Senly/` folder on the new machine.
 
 ## Current status
 
-### petcare-backend — ✅ stable, pushed, cloud project live
-- Branch `main`, in sync with `origin/main`.
-- Cloud project **`ppuinennusunlqnttajj` ("Senly", region ap-southeast-1) is alive**
-  — an earlier note in this doc claiming it was deleted was wrong (DNS/health-check
-  came back live; only the anon key needed refreshing).
+### petcare-backend — ✅ stable, pushed, **CI/CD green + cloud verified (2026-09-04)**
+- Branch `main`, in sync with `origin/main`. Cloud project `ppuinennusunlqnttajj`
+  ("Senly", ap-southeast-1) is Active. Note: Supabase **auto-pauses** the free-tier
+  project when idle — if a deploy fails with `project is paused`, restore it from
+  the dashboard first.
 - Supabase Edge Functions: `ai-extract`, `ai-chat`, `ai-insight` (+ shared `gemini`,
   `cors`, `auth`). Gemini model pinned to `gemini-3.1-flash-lite`.
-- DB schema — **all four app tables now exist on the cloud project with RLS**:
-  - `0001_example_rls.sql` — `pets`
-  - `0002_meals_health_reminders_rls.sql` — `meals` / `health_records` / `reminders`,
-    each mirroring the local SQLite schema (`models/db/client.ts`); RLS on these
-    joins up to the owning pet (`auth.uid() = pets.user_id`) rather than trusting a
-    second denormalized `user_id` on the child row.
-  - `0003_pets_missing_columns.sql` — backfills `adopted_date` / `microchip` /
-    `allergies` onto `pets`, present in local SQLite since the start but missing
-    from `0001`.
-  - ⚠️ Schema only — **no sync code exists yet**. The app is still 100% local
-    SQLite; nothing reads or writes these cloud tables. This was prep, not a
-    working sync feature.
-- **CI/CD**: `.github/workflows/deploy-supabase.yml` — pushing to `main` with
-  changes under `supabase/migrations/**` or `supabase/functions/**` runs
-  `supabase db push` + `supabase functions deploy` automatically. Needs the repo
-  secret `SUPABASE_ACCESS_TOKEN` (added). Nobody should run `supabase db push` /
-  `supabase functions deploy` against the cloud project from a personal machine
-  anymore — that bypasses review. First real run was triggered via a comment-only
-  commit; **check the Actions tab if you haven't confirmed it went green.**
-- `_shared/auth.ts` imports `supabase-js` via `npm:`, not `jsr:` — `jsr.io` is
-  unreliable on the dev network (intermittent 403 from the host, consistent 403 from
-  inside Docker), which broke the local edge runtime boot. `npm:` sidesteps it.
+- **⚠️ Correction to earlier notes:** the CI/CD had **never actually succeeded**
+  before 2026-09-04 (every run failed) and the cloud tables did **not** exist yet,
+  despite prior claims here. Three bugs were found and fixed:
+  1. Workflow referenced secret `SUPABASE_ACCESS_TOKEN`, but the repo secret is
+     named `PETCARE_BE_CI` → "Access token not provided". Fixed to use the real name.
+  2. `supabase db push` on GitHub runners hit "IPv6 is not supported" — needs the
+     DB password to use the IPv4 pooler. Added secret `SUPABASE_DB_PASSWORD` and
+     `db push -p "$SUPABASE_DB_PASSWORD"`.
+  3. The project was paused; restored from the dashboard.
+  The first green run deployed migrations `0001`–`0004` and all functions, and the
+  cloud endpoints were verified live.
+- **CI/CD**: `.github/workflows/deploy-supabase.yml` — push to `main` touching
+  `supabase/migrations/**` or `supabase/functions/**` runs `db push` + deploys
+  **all** functions (no hardcoded list). Secrets required: `PETCARE_BE_CI` (access
+  token) + `SUPABASE_DB_PASSWORD`. Don't deploy from a personal machine — it
+  bypasses review.
+- DB schema on cloud (all deployed + RLS):
+  - `0001` pets · `0002` meals/health_records/reminders · `0003` pets column backfill.
+  - `0004_tags_and_scans.sql` — the tag tracking feature (see below). **First tables
+    actually used by a shipped feature.** meals/health/pets are still 100% local
+    SQLite — no sync engine exists; only tags live in the cloud.
+- `_shared/auth.ts` imports `supabase-js` via `npm:`, not `jsr:` (jsr.io flaky on the
+  dev network / 403 inside Docker, broke the local edge runtime boot).
+
+### Tag tracking — 🆕 core "find a lost pet" feature (backend live, app MVP built)
+Physical QR/NFC tag on the collar → a stranger who finds the pet opens a public web
+page (no app, no login) and sends the owner a sighting.
+- **Backend** (`0004` + `tag-public` / `tag-scan` functions, both `verify_jwt=false`):
+  - `tags` (uuid + short printable `code` like `K7M2Q9`) + `tag_scans` (unified
+    location log; `source` is `'scan'` now, `'gps'` in Phase 2 — same table, so the
+    app map/history never changes when GPS is added).
+  - **Pets live in local SQLite**, so the tag **snapshots** the pet's display fields
+    (`pet_name`/`pet_species`/`pet_photo`) instead of a cloud FK — the finder page is
+    self-contained, no pet-sync needed. `pet_id` is a plain local reference.
+  - Public functions use the service role and expose only hand-picked fields; RLS +
+    explicit table GRANTs (migrations create tables that otherwise lack API grants).
+  - `tag-public?tag=<uuid or code>` renders the lost-pet HTML (case-insensitive,
+    resolves either ref via `_shared/tags.ts`); `tag-scan` appends one sighting.
+  - Local dev: `make dev` in petcare-backend, seed tag code **`DEMO01`**.
+- **App MVP** (`feat/localization-dark-mode`): `services/TagService.ts` (talks to the
+  cloud tags tables — the app's first cloud feature), `features/tag/TagScreen/` +
+  `app/tag.tsx`, entry on Home ("Theo dõi"). Create tag → shows code + URL to write
+  on the tag, "đang lạc" toggle, contact phone/reward, scan list with "open in Maps".
+  **No NFC/Maps native deps yet** — lean MVP; NFC write + real map are the next step.
+- **Physical tags**: blank **NTAG215** (~12k on Shopee) for dev; custom printed
+  QR+NFC tags with instructions for real use (a finder must see "quét mã để báo chủ",
+  so the tag needs a QR + printed short code, not just an invisible NFC chip).
 
 ### PetCareProject — 🟢 active branch `feat/localization-dark-mode`, pushed
 Everything below is on `origin/feat/localization-dark-mode` (last commit `27f8f1e`).
@@ -142,28 +167,35 @@ is exercisable end-to-end locally (point the app at local or cloud Supabase — 
 ## Local dev environment
 
 ```bash
-cd petcare-backend
-supabase start                              # Postgres + Auth + Storage + Studio
-supabase functions serve --env-file .env    # Edge Functions
+cd petcare-backend && make dev              # Supabase stack + Edge Functions (one cmd)
 
 cd ../PetCareProject
-npx expo start --clear                      # Metro; --clear picks up new .env values
+yarn install                                # ⚠️ YARN project — never `npm install`
+yarn expo start --clear                     # Metro; --clear picks up new env values
 ```
 
-- `PetCareProject/.env` (gitignored, recreate manually) currently points
-  `EXPO_PUBLIC_SUPABASE_URL` at **`http://localhost:54321`** — by explicit choice,
-  this only works from the **iOS simulator or web** (shares the host's network). A
-  physical device or Android emulator can't reach `localhost` on itself; swap to the
-  host's LAN IP (`http://10.x.x.x:54321`) or, Android-emulator-only,
-  `http://10.0.2.2:54321` if you need those.
+**Env files (frontend)** — Expo picks one by mode automatically, no manual switching:
+- `.env.development` (committed) → **LOCAL** Supabase; loaded by `yarn expo start`.
+- `.env.production` (committed) → **CLOUD** Supabase; loaded by production builds.
+- `.env.development.local` (gitignored) → per-machine override; **highest priority**.
+- Both committed files carry only the public anon key (safe — RLS protects data).
+- `127.0.0.1` in `.env.development` only reaches the Mac from the **iOS Simulator**.
+  For a physical device / Android emulator, or to dev against cloud, create
+  `.env.development.local` — see `.env.example` for the exact values.
+
+**Gotchas**
+- **Yarn project** (only `yarn.lock` is tracked). Running `npm install` creates a
+  stray `package-lock.json` and can rewrite `yarn.lock` — if that happens, delete
+  `package-lock.json`, `git checkout yarn.lock`, then `yarn install --ignore-engines`
+  (needed because `@supabase/supabase-js` declares node ≥22 and this machine is 20;
+  harmless for RN/Metro).
 - `petcare-backend/.env` (gitignored) must **not** define `SUPABASE_URL` /
-  `SUPABASE_ANON_KEY` — the edge runtime injects those itself; the CLI silently skips
-  any var starting with `SUPABASE_`.
-- `GEMINI_API_KEY` **is set** in `petcare-backend/.env` — Quick Log / Assistant work
-  end-to-end now, no more "GEMINI_API_KEY is not set" errors.
-- The cloud project's real anon key (for pointing `.env` at cloud instead of local)
-  is in `petcare-backend`'s operator notes / whoever set up CI — `.env.example`'s
-  anon key is still a placeholder, deliberately not filled in there.
+  `SUPABASE_ANON_KEY` — the edge runtime injects those; the CLI skips `SUPABASE_*`.
+- `GEMINI_API_KEY` is set in `petcare-backend/.env` — Quick Log / Assistant work E2E.
+
+**Next DevOps step (deferred):** for a safe staging environment, add a separate
+Supabase project + a `staging` branch/pipeline. Not done yet — only one (prod)
+project exists; premature until prod has real users.
 
 ---
 
